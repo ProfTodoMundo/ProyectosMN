@@ -55,6 +55,28 @@ Academia de Matemáticas \\
 \maketitle
 \tableofcontents
 
+%===========================================
+\section{Sobre el curso}
+%===========================================
+
+El curso se llevará a cabo tres veces a la semana,  con sesiones de 1.5 horas,  de las cuales una de ellas se realizará en el laboratorio de cómputo 3.
+
+%---------------------------------------------------
+\subsection{Requisitos para acreditar la materia}
+%---------------------------------------------------
+
+El curso por su naturaleza implica que la/el estudiante implemente los distintos algoritmos que se revisan en el curso,  por lo tanto es importante que demuestre que efectivamente puede implementar, revisar y mejorar los algoritmos ya existentes.\bigskip
+
+Hay dos maneras de certificar la materia: a) Portafolio y b) Examen de certificación.  Al menos una semana antes de que termine el curso las y los estudiantes tendrán conocimiento de sus calificaciones parciales y por tanto de la calificación promedio obtenida al momento, para que sea el/la mismo(a) estudiante quién decida si certifica por la modalidad de portafolio,  o por la modalidad de examen de certificación.\bigskip
+
+
+El portafolio se conforma de evaluaciones ($40\%$), programas, ($40\%$) tareas ($10\%$), tareitas ($5\%$)y trabajos adicionales ($5\%$). Mientras que la certificación es un examen elaborado por el comité de certificación y que será presentado por todas y todos los estudiantes que se inscriban en esta modalidad en las fechas establecidas por la Coordinación de Certificación y Registro.  En cualquiera de las dos modalidades es indispensable que el/la estudiante se registre a este proceso para que su calificación pueda ser asignada al final del proceso de Certificación.
+
+%---------------------------------------------------
+\subsection{De la naturaleza del curso}
+%---------------------------------------------------
+
+El curso tiene un fuerte sustento en la programación constante, sin embargo, es importante resaltar que los conceptos teóricos deben ser dominados por las y los estudiantes, por lo tanto las evaluaciones y las tareas tendrán estas dos componentes principales.  Al contrario de lo que pueda pensarse la asistencia al curso es obligatoria pero no influye directamente en la calificación obtenida.  Sin embargo,  hay que mencionar que si la asistencia se realiza de manera intermitente es probable que cueste un poco de trabajo reincorporarse a la dinámica de trabajo que se irá construyendo con el grupo con el transcurso de las clases. 
 
 %===========================================
 \section{Introducción}
@@ -439,10 +461,131 @@ return( ... ) #valor que retorna (o también la última instrucción, si ésta r
 }
 \end{verbatim}
 
-%-------------------------------------------------------------------
-\subsection{Definiciones de variables y asignación de valores}
-%-------------------------------------------------------------------
 
+
+
+\section{Programas y rutinas en R}
+
+
+\begin{verbatim}
+#---- SESION 1 ----
+##---- OPERADORES LOGICOS ----
+17<5
+17>5
+17<=5
+17>=5
+17!=5
+17==5
+##---- OPERADORES ARITMETICOS ----
+# SUMA, RESTA, MULTIPLICACION, DIVISION, POTENCIA, MODULO, DIVISION ENTERA
+17+5
+17*5
+17*5
+17^5
+17%/%5
+17%%5
+##---- LOGARITMOS Y EXPONENCIALES ----
+log(1)
+log(12)
+log(12,2)
+exp(12)
+exp(1)
+##---- FUNCIONES TRIGONOMETRICAS ----
+sin(45)
+cos(45)
+tan(45)
+asin(0.96)
+acos(0.97)
+atan(0.45)
+##---- FUNCIONES VARIAS ----
+abs(-34)
+sqrt(8)
+floor(1.56)
+ceiling(1.56)
+max(4,7,2,12)
+min(4,7,2,12)
+sign(-45)
+##---- EJERCICIOS DE PRACTICA ----
+# calcular la expresion cos(pi/6+pi/2)+e^2
+# calcular la expresion cos(pi/6+pi/2)+e^2*log(5)+arc cos(1/raiz(2))
+# introducir las siguientes expresiones: 
+# a) 1/7
+# b) options(digits=3); 1/7
+# c) options(digits=6); 1/7
+# d) round(67.45)
+# e) round(75.324568,2)
+# f) options(digits=7);
+# g) signif(56.345458234234,2)
+# h) signif(56.345458234234)
+# i) exp(-30)
+# j) options(scipen= 999)
+# k) exp(-30)
+# l) options(scipen=0)
+#---- SESION 2 ----
+##---- DEFINICION DE CONSTANTES ----
+e = exp(1); 
+x = 0.0034
+e <- exp(1)
+x <- 0.034;
+x0 = e^(2*x)
+##---- CONCATENAR Y PEGAR EXPRESIONES ----
+txt = "El valor de x0 es _"
+cat(txt, x0)
+paste(txt,x0)
+paste0(txt,x0)
+##---- ASIGNACION E IMPRESION ----
+x0 <- 1
+x1 <- x0 - pi*x0 + 1 
+(x1 <- x0 - pi*x0 + 1 ) 
+print(x1)
+##---- LISTADO DE OBJETOS DEFINIDOS ----
+ls()
+# Eliminar todos los objetos
+rm(list= ls())
+ls()
+##---- IMPRIMIR PEGAR AVANZADO ----
+x0 <- 1
+x1 <- x0 - pi*x0 + 1
+cat("x0 =", x0, "\n","x1 =", x1) 
+##---- EJERCICIOS DE PRACTICA ----
+
+#---- SESION 3 ----
+
+##---- DEFINICION DE FUNCIONES ----
+# nombre_funcion <- function(param1,param2,param3,...,paramn){
+# instruccion 1
+# instruccion 2
+# return(valor_de_retorno)
+#}
+###---- Ejemplo 1 ----
+fun1 <- function(x,a,b,h,k){
+  res <- a+b*cos(hx+k)
+  return(res)
+}
+###---- Ejemplo 2 ----
+Discriminante <- function(a,b,c){
+  res <- b^2-4*a*c
+  return(res)
+}
+##---- GRAFICAS ----
+fun2 <- function(x,h,k){
+  res <- 1/h*sin(k*x)
+  return(res)
+}
+f2 <- fun2(1:100,2,3)
+plot(f2,type="l", col= "red", lwd=2,
+     main= "Grafico de la funcion f2",
+     xlab= "x",
+     ylab="f(x)=1/h*sin(k*x)",
+     axes= TRUE)
+###---- EJEMPLOS DE PRACTICA ----
+# Graficar: rectas, parabolas, cubicas, polinomios, exponenciales, logaritmos
+
+#---- SESION 4 ----
+##---- MATRICES Y VECTORES ----
+
+
+\end{verbatim}
 
 
 

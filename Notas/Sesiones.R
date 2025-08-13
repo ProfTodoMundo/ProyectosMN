@@ -82,5 +82,38 @@ cat("x0 =", x0, "\n","x1 =", x1)
 #---- SESION 3 ----
 
 ##---- DEFINICION DE FUNCIONES ----
+# nombre_funcion <- function(param1,param2,param3,...,paramn){
+# instruccion 1
+# instruccion 2
+# return(valor_de_retorno)
+#}
+###---- Ejemplo 1 ----
+fun1 <- function(x,a,b,h,k){
+  res <- a+b*cos(hx+k)
+  return(res)
+}
+###---- Ejemplo 2 ----
+Discriminante <- function(a,b,c){
+  res <- b^2-4*a*c
+  return(res)
+}
+##---- GRAFICAS ----
+fun2 <- function(x,h,k){
+  res <- 1/h*sin(k*x)
+  return(res)
+}
+f2 <- fun2(1:100,2,3)
+plot(f2,type="l", col= "red", lwd=2,
+     main= "Grafico de la funcion f2",
+     xlab= "x",
+     ylab="f(x)=1/h*sin(k*x)",
+     axes= TRUE)
+###---- EJEMPLOS DE PRACTICA ----
+# Graficar: rectas, parabolas, cubicas, polinomios, exponenciales, logaritmos
+
+#---- SESION 4 ----
+##---- MATRICES Y VECTORES ----
+
+
 
 
