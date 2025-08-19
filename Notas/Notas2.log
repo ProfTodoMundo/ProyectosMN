@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.10)  18 AUG 2025 20:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.10)  18 AUG 2025 20:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**NotasMetodosNumericosv1.tex
-(./NotasMetodosNumericosv1.tex
+**Notas2.tex
+(./Notas2.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
 (/usr/local/texlive/2024/texmf-dist/tex/latex/base/article.cls
@@ -572,8 +572,8 @@ File: l3backend-pdftex.def 2024-02-20 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count332
 \l__pdf_internal_box=\box105
 )
-(./NotasMetodosNumericosv1.aux)
-\openout1 = `NotasMetodosNumericosv1.aux'.
+No file Notas2.aux.
+\openout1 = `Notas2.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
 LaTeX Font Info:    ... okay on input line 54.
@@ -594,15 +594,12 @@ LaTeX Font Info:    ... okay on input line 54.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 54.
 LaTeX Font Info:    ... okay on input line 54.
 Package hyperref Info: Link coloring OFF on input line 54.
- (./NotasMetodosNumericosv1.out)
-(./NotasMetodosNumericosv1.out)
 \@outlinefile=\write3
-\openout3 = `NotasMetodosNumericosv1.out'.
+\openout3 = `Notas2.out'.
 
 LaTeX Info: Redefining \. on input line 54.
 LaTeX Info: Redefining \% on input line 54.
 \c@lstlisting=\count333
-
 (/usr/local/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count334
@@ -1672,12 +1669,12 @@ l.56 \tableofcontents
                      
 (That makes 100 errors; please try again.) 
 Here is how much of TeX's memory you used:
- 15777 strings out of 474116
- 248454 string characters out of 5743681
+ 15769 strings out of 474116
+ 248053 string characters out of 5743681
  1926187 words of memory out of 5000000
- 37932 multiletter control sequences out of 15000+600000
+ 37930 multiletter control sequences out of 15000+600000
  562621 words of font info for 53 fonts, out of 8000000 for 9000
  1142 hyphenation exceptions out of 8191
- 75i,11n,79p,560b,365s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,543b,365s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 !  ==> Fatal error occurred, no output PDF file produced!
