@@ -113,7 +113,11 @@ plot(f2,type="l", col= "red", lwd=2,
 
 #---- SESION 4 ----
 ##---- MATRICES Y VECTORES ----
-
-
+tel <- c("a","b","c")
+muestra <- sample(tel,15,TRUE)
+sort(muestra)
+table(muestra)
+t <- table(muestra)
+barplot(t,col=rainbow(10))
 
 
