@@ -1,0 +1,1015 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{book}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage[spanish]{babel}
+\usepackage{multicol}
+\usepackage{titlesec}
+\renewcommand{\chaptername}{Capítulo}
+\usepackage{fancyhdr} \pagestyle{fancy} \fancyhf{} \fancyfoot[C]{\thepage} \fancyfoot[L]{\ifodd\value{page}\textit{\small Notas de Métodos Numéricos }\else\textit{\small Carlos E Martínez-Rodríguez}\fi} \fancyfoot[R]{\ifodd\value{page}\textit{\small Carlos E Martínez-Rodríguez}\else\textit{\small Notas de Métodos Numéricos}\fi}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=3cm]{geometry}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\fancyhead[LE,RO]{\nouppercase{\rightmark}}
+\fancyhead[LO,RE]{\nouppercase{\leftmark}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Resolución de sistemas de Ecuaciones Lineales},
+  pdfauthor={Carlos E Martínez-Rodríguez},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Resolución de sistemas de Ecuaciones Lineales}
+\author{Carlos E Martínez-Rodríguez}
+\date{12 septiembre, 2025}
+
+\begin{document}
+\frontmatter
+\maketitle
+
+{
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+\mainmatter
+\chapter{Métodos de eliminación}\label{muxe9todos-de-eliminaciuxf3n}
+
+\section{Gaussiana Simple}\label{gaussiana-simple}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gauss\_simple }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, b, tolerancia, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.numeric}\NormalTok{(b)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"b debe ser numérico."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{ncol}\NormalTok{(A) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser cuadrada."}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(b) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"Longitud de b debe ser igual al número de filas de A."}\NormalTok{)}
+\NormalTok{  Ab }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(A, b);  numcols }\OtherTok{=} \FunctionTok{ncol}\NormalTok{(Ab)}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{(n }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)) \{}
+\NormalTok{    pivote }\OtherTok{\textless{}{-}}\NormalTok{ Ab[k, k]}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(pivote) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia) \{}
+      \FunctionTok{stop}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Pivote casi cero en fila \%d (\%.3e). El método sin pivoteo falla."}\NormalTok{, k, pivote))}
+\NormalTok{    \}}
+    \ControlFlowTok{if}\NormalTok{ (k }\SpecialCharTok{+} \DecValTok{1} \SpecialCharTok{\textless{}=}\NormalTok{ n) \{}
+      \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ (k }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{        m }\OtherTok{\textless{}{-}}\NormalTok{ Ab[i, k] }\SpecialCharTok{/}\NormalTok{ pivote;Ab[i, k}\SpecialCharTok{:}\NormalTok{numcols] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[i, k}\SpecialCharTok{:}\NormalTok{numcols] }\SpecialCharTok{{-}}\NormalTok{ m }\SpecialCharTok{*}\NormalTok{ Ab[k, k}\SpecialCharTok{:}\NormalTok{numcols]}
+        \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(Ab[i, k]) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia) Ab[i, k] }\OtherTok{\textless{}{-}} \DecValTok{0}
+        \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"k=\%d, i=\%d, m=\%.6g}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, k, i, m));}\FunctionTok{print}\NormalTok{(Ab)\}}
+\NormalTok{      \}}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{  x }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(n)}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ n}\SpecialCharTok{:}\DecValTok{1}\NormalTok{) \{}
+    \ControlFlowTok{if}\NormalTok{ (i }\SpecialCharTok{==}\NormalTok{ n) \{}
+\NormalTok{      suma }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{suma }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(Ab[i, (i }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n] }\SpecialCharTok{*}\NormalTok{ x[(i }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n])\}}
+\NormalTok{    x[i] }\OtherTok{\textless{}{-}}\NormalTok{ (Ab[i, n }\SpecialCharTok{+} \DecValTok{1}\NormalTok{] }\SpecialCharTok{{-}}\NormalTok{ suma) }\SpecialCharTok{/}\NormalTok{ Ab[i, i]}
+\NormalTok{  \}}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{x=}\NormalTok{x,}\AttributeTok{U=}\NormalTok{Ab[, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{n],}\AttributeTok{Ab=}\NormalTok{Ab)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Ejemplo}\label{ejemplo}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{2}\NormalTok{,  }\DecValTok{1}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{2}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{2}\NormalTok{,  }\DecValTok{1}\NormalTok{,  }\DecValTok{2}
+\NormalTok{), }\AttributeTok{nrow =} \DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{11}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{);tolerancia }\OtherTok{\textless{}{-}} \FloatTok{1e{-}12}\NormalTok{;}
+\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{gauss\_simple}\NormalTok{(A, b,tolerancia);res }\OtherTok{\textless{}{-}} \FunctionTok{gauss\_simple}\NormalTok{(A, b,tolerancia, }\AttributeTok{verbose =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## k=1, i=2, m=-1.5
+##                   b
+## [1,]  2 1.0 -1.0  8
+## [2,]  0 0.5  0.5  1
+## [3,] -2 1.0  2.0 -3
+## k=1, i=3, m=-1
+##                 b
+## [1,] 2 1.0 -1.0 8
+## [2,] 0 0.5  0.5 1
+## [3,] 0 2.0  1.0 5
+## k=2, i=3, m=4
+##                 b
+## [1,] 2 1.0 -1.0 8
+## [2,] 0 0.5  0.5 1
+## [3,] 0 0.0 -1.0 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res}\SpecialCharTok{$}\NormalTok{x;res}\SpecialCharTok{$}\NormalTok{U;res}\SpecialCharTok{$}\NormalTok{Ab;A }\SpecialCharTok{\%*\%}\NormalTok{ res}\SpecialCharTok{$}\NormalTok{x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1]  2  3 -1
+\end{verbatim}
+
+\begin{verbatim}
+##                
+## [1,] 2 1.0 -1.0
+## [2,] 0 0.5  0.5
+## [3,] 0 0.0 -1.0
+\end{verbatim}
+
+\begin{verbatim}
+##                 b
+## [1,] 2 1.0 -1.0 8
+## [2,] 0 0.5  0.5 1
+## [3,] 0 0.0 -1.0 1
+\end{verbatim}
+
+\begin{verbatim}
+##      [,1]
+## [1,]    8
+## [2,]  -11
+## [3,]   -3
+\end{verbatim}
+
+\section{Gaussiana con pivoteo
+parcial}\label{gaussiana-con-pivoteo-parcial}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gauss\_piv\_parcial }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, b, tolerancia, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A); }\ControlFlowTok{if}\NormalTok{ (}\FunctionTok{ncol}\NormalTok{(A) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser cuadrada."}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(b) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"Dimensiones de b incorrectas."}\NormalTok{)}
+\NormalTok{  Ab }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(A, b)}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{(n}\DecValTok{{-}1}\NormalTok{)) \{}
+    \CommentTok{\# Selección del pivote (máximo en valor absoluto en la columna k desde la fila k)}
+\NormalTok{    max\_row }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(}\FunctionTok{abs}\NormalTok{(Ab[k}\SpecialCharTok{:}\NormalTok{n, k])) }\SpecialCharTok{+}\NormalTok{ (k }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(Ab[max\_row, k]) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia)\{}\FunctionTok{stop}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Pivote casi nulo en columna \%d"}\NormalTok{, k))\}}
+    \CommentTok{\# Intercambio de filas si es necesario}
+    \ControlFlowTok{if}\NormalTok{ (max\_row }\SpecialCharTok{!=}\NormalTok{ k) \{}
+\NormalTok{      Ab[}\FunctionTok{c}\NormalTok{(k, max\_row), ] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[}\FunctionTok{c}\NormalTok{(max\_row, k), ]}
+      \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Intercambio de fila \%d con fila \%d}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, k, max\_row)); }\FunctionTok{print}\NormalTok{(Ab)\}}
+\NormalTok{    \}}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ (k }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{      m }\OtherTok{\textless{}{-}}\NormalTok{ Ab[i, k] }\SpecialCharTok{/}\NormalTok{ Ab[k, k];Ab[i, k}\SpecialCharTok{:}\FunctionTok{ncol}\NormalTok{(Ab)] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[i, k}\SpecialCharTok{:}\FunctionTok{ncol}\NormalTok{(Ab)] }\SpecialCharTok{{-}}\NormalTok{ m }\SpecialCharTok{*}\NormalTok{ Ab[k, k}\SpecialCharTok{:}\FunctionTok{ncol}\NormalTok{(Ab)]}
+      \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(Ab[i, k]) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia) Ab[i, k] }\OtherTok{\textless{}{-}} \DecValTok{0}
+      \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"k=\%d, i=\%d, m=\%.6g}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, k, i, m));}\FunctionTok{print}\NormalTok{(Ab)\}}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{  x }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(n)}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ n}\SpecialCharTok{:}\DecValTok{1}\NormalTok{) \{}
+    \ControlFlowTok{if}\NormalTok{ (i }\SpecialCharTok{==}\NormalTok{ n) \{}
+\NormalTok{      suma }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{suma }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(Ab[i, (i }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n] }\SpecialCharTok{*}\NormalTok{ x[(i }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n])\}}
+\NormalTok{    x[i] }\OtherTok{\textless{}{-}}\NormalTok{ (Ab[i, n }\SpecialCharTok{+} \DecValTok{1}\NormalTok{] }\SpecialCharTok{{-}}\NormalTok{ suma) }\SpecialCharTok{/}\NormalTok{ Ab[i, i]}
+\NormalTok{  \}}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{x =}\NormalTok{ x,}\AttributeTok{U =}\NormalTok{ Ab[, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{n],}\AttributeTok{Ab =}\NormalTok{ Ab)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Ejemplo}\label{ejemplo-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{,}
+  \DecValTok{1}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{,}
+  \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{2}
+\NormalTok{), }\AttributeTok{nrow =} \DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{);tolerancia }\OtherTok{\textless{}{-}} \FloatTok{1e{-}12}
+\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{gauss\_piv\_parcial}\NormalTok{(A, b, tolerancia, }\AttributeTok{verbose =} \ConstantTok{TRUE}\NormalTok{);res}\SpecialCharTok{$}\NormalTok{x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Intercambio de fila 1 con fila 2
+##                b
+## [1,]  1 -2 -3 -3
+## [2,]  0  2  1  3
+## [3,] -1  1  2 -1
+## k=1, i=2, m=0
+##                b
+## [1,]  1 -2 -3 -3
+## [2,]  0  2  1  3
+## [3,] -1  1  2 -1
+## k=1, i=3, m=-1
+##               b
+## [1,] 1 -2 -3 -3
+## [2,] 0  2  1  3
+## [3,] 0 -1 -1 -4
+## k=2, i=3, m=-0.5
+##                   b
+## [1,] 1 -2 -3.0 -3.0
+## [2,] 0  2  1.0  3.0
+## [3,] 0  0 -0.5 -2.5
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 10 -1  5
+\end{verbatim}
+
+\section{Gauss Jordan}\label{gauss-jordan}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gauss\_jordan }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, b, tolerancia, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A); m }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(A)}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.null}\NormalTok{(b) }\SpecialCharTok{\&\&} \FunctionTok{length}\NormalTok{(b) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"Dimensiones incompatibles entre A y b."}\NormalTok{)}
+\NormalTok{  Ab }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(A, }\FunctionTok{as.matrix}\NormalTok{(b));  ncols }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(Ab); row }\OtherTok{\textless{}{-}} \DecValTok{1}
+  \ControlFlowTok{for}\NormalTok{ (col }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{m) \{}
+    \ControlFlowTok{if}\NormalTok{ (row }\SpecialCharTok{\textgreater{}}\NormalTok{ n) }\ControlFlowTok{break}
+\NormalTok{    pivot\_row\_rel }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(}\FunctionTok{abs}\NormalTok{(Ab[row}\SpecialCharTok{:}\NormalTok{n, col]))}
+\NormalTok{    pivot\_row }\OtherTok{\textless{}{-}}\NormalTok{ row }\SpecialCharTok{+}\NormalTok{ pivot\_row\_rel }\SpecialCharTok{{-}} \DecValTok{1}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(Ab[pivot\_row, col]) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia) \{}
+      \ControlFlowTok{if}\NormalTok{ (verbose) }\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Sin pivote usable en col=\%d (|piv|\textless{}tol). Se omite columna.}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, col))}
+      \ControlFlowTok{next}
+\NormalTok{    \}}
+    \ControlFlowTok{if}\NormalTok{ (pivot\_row }\SpecialCharTok{!=}\NormalTok{ row) \{}
+\NormalTok{      Ab[}\FunctionTok{c}\NormalTok{(row, pivot\_row), ] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[}\FunctionTok{c}\NormalTok{(pivot\_row, row), ]}
+      \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Swap filas \%d \textless{}{-}\textgreater{} \%d (col=\%d)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, row, pivot\_row, col));}\FunctionTok{print}\NormalTok{(Ab)\}}
+\NormalTok{    \}}
+\NormalTok{    pivote }\OtherTok{\textless{}{-}}\NormalTok{ Ab[row, col];    Ab[row, ] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[row, ] }\SpecialCharTok{/}\NormalTok{ pivote}
+    \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Normaliza fila \%d por pivote \%.6g (col=\%d)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, row, pivote, col));}\FunctionTok{print}\NormalTok{(Ab)\}}
+    \ControlFlowTok{for}\NormalTok{ (r }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n) \{}
+      \ControlFlowTok{if}\NormalTok{ (r }\SpecialCharTok{==}\NormalTok{ row) }\ControlFlowTok{next}
+\NormalTok{      factor }\OtherTok{\textless{}{-}}\NormalTok{ Ab[r, col]}
+      \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(factor) }\SpecialCharTok{\textgreater{}}\NormalTok{ tolerancia) \{}
+\NormalTok{        Ab[r, ] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[r, ] }\SpecialCharTok{{-}}\NormalTok{ factor }\SpecialCharTok{*}\NormalTok{ Ab[row, ]}
+        \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"R\%d := R\%d {-} (\%.6g)*R\%d (col=\%d)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, r, r, factor, row, col));}\FunctionTok{print}\NormalTok{(Ab)\}}
+\NormalTok{      \}}
+\NormalTok{    \}}
+\NormalTok{    row }\OtherTok{\textless{}{-}}\NormalTok{ row }\SpecialCharTok{+} \DecValTok{1}
+\NormalTok{  \}}
+\NormalTok{  Ab[}\FunctionTok{abs}\NormalTok{(Ab) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia] }\OtherTok{\textless{}{-}} \DecValTok{0}\NormalTok{;  out }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{RREF =}\NormalTok{ Ab);  X }\OtherTok{\textless{}{-}}\NormalTok{ Ab[, (m }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{ncols, drop }\OtherTok{=} \ConstantTok{FALSE}\NormalTok{]}
+\NormalTok{  out}\SpecialCharTok{$}\NormalTok{x }\OtherTok{\textless{}{-}} \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{ncol}\NormalTok{(X) }\SpecialCharTok{==} \DecValTok{1}\NormalTok{) }\FunctionTok{as.vector}\NormalTok{(X) }\ControlFlowTok{else}\NormalTok{ X}
+  \FunctionTok{return}\NormalTok{(out)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Ejemplo}\label{ejemplo-2}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{2}\NormalTok{,  }\DecValTok{1}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{2}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{2}\NormalTok{,  }\DecValTok{1}\NormalTok{,  }\DecValTok{2}
+\NormalTok{), }\AttributeTok{nrow =} \DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{11}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{);tolerancia }\OtherTok{\textless{}{-}} \FloatTok{1e{-}12}\NormalTok{;res }\OtherTok{\textless{}{-}} \FunctionTok{gauss\_jordan}\NormalTok{(A, b, tolerancia, }\AttributeTok{verbose =} \ConstantTok{TRUE}\NormalTok{);res}\SpecialCharTok{$}\NormalTok{x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Swap filas 1 <-> 2 (col=1)
+##      [,1] [,2] [,3] [,4]
+## [1,]   -3   -1    2  -11
+## [2,]    2    1   -1    8
+## [3,]   -2    1    2   -3
+## Normaliza fila 1 por pivote -3 (col=1)
+##      [,1]      [,2]       [,3]      [,4]
+## [1,]    1 0.3333333 -0.6666667  3.666667
+## [2,]    2 1.0000000 -1.0000000  8.000000
+## [3,]   -2 1.0000000  2.0000000 -3.000000
+## R2 := R2 - (2)*R1 (col=1)
+##      [,1]      [,2]       [,3]       [,4]
+## [1,]    1 0.3333333 -0.6666667  3.6666667
+## [2,]    0 0.3333333  0.3333333  0.6666667
+## [3,]   -2 1.0000000  2.0000000 -3.0000000
+## R3 := R3 - (-2)*R1 (col=1)
+##      [,1]      [,2]       [,3]      [,4]
+## [1,]    1 0.3333333 -0.6666667 3.6666667
+## [2,]    0 0.3333333  0.3333333 0.6666667
+## [3,]    0 1.6666667  0.6666667 4.3333333
+## Swap filas 2 <-> 3 (col=2)
+##      [,1]      [,2]       [,3]      [,4]
+## [1,]    1 0.3333333 -0.6666667 3.6666667
+## [2,]    0 1.6666667  0.6666667 4.3333333
+## [3,]    0 0.3333333  0.3333333 0.6666667
+## Normaliza fila 2 por pivote 1.66667 (col=2)
+##      [,1]      [,2]       [,3]      [,4]
+## [1,]    1 0.3333333 -0.6666667 3.6666667
+## [2,]    0 1.0000000  0.4000000 2.6000000
+## [3,]    0 0.3333333  0.3333333 0.6666667
+## R1 := R1 - (0.333333)*R2 (col=2)
+##      [,1]      [,2]       [,3]      [,4]
+## [1,]    1 0.0000000 -0.8000000 2.8000000
+## [2,]    0 1.0000000  0.4000000 2.6000000
+## [3,]    0 0.3333333  0.3333333 0.6666667
+## R3 := R3 - (0.333333)*R2 (col=2)
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0 -0.8  2.8
+## [2,]    0    1  0.4  2.6
+## [3,]    0    0  0.2 -0.2
+## Normaliza fila 3 por pivote 0.2 (col=3)
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0 -0.8  2.8
+## [2,]    0    1  0.4  2.6
+## [3,]    0    0  1.0 -1.0
+## R1 := R1 - (-0.8)*R3 (col=3)
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0  0.0  2.0
+## [2,]    0    1  0.4  2.6
+## [3,]    0    0  1.0 -1.0
+## R2 := R2 - (0.4)*R3 (col=3)
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0    2
+## [2,]    0    1    0    3
+## [3,]    0    0    1   -1
+\end{verbatim}
+
+\begin{verbatim}
+## [1]  2  3 -1
+\end{verbatim}
+
+\section{Cálculo de Inversa}\label{cuxe1lculo-de-inversa}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gauss\_jordan\_inversa }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A,tolerancia, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A); m }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(A)}
+  \ControlFlowTok{if}\NormalTok{ (n }\SpecialCharTok{!=}\NormalTok{ m) }\FunctionTok{stop}\NormalTok{(}\StringTok{"Para invertir, A debe ser cuadrada."}\NormalTok{)}
+\NormalTok{  Ab }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(A, }\FunctionTok{diag}\NormalTok{(n)); ncols }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(Ab);  row }\OtherTok{\textless{}{-}} \DecValTok{1}
+  \ControlFlowTok{for}\NormalTok{ (col }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{m) \{}
+    \ControlFlowTok{if}\NormalTok{ (row }\SpecialCharTok{\textgreater{}}\NormalTok{ n) }\ControlFlowTok{break}
+\NormalTok{    pivot\_row\_rel }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(}\FunctionTok{abs}\NormalTok{(Ab[row}\SpecialCharTok{:}\NormalTok{n, col]))}
+\NormalTok{    pivot\_row }\OtherTok{\textless{}{-}}\NormalTok{ row }\SpecialCharTok{+}\NormalTok{ pivot\_row\_rel }\SpecialCharTok{{-}} \DecValTok{1}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(Ab[pivot\_row, col]) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia) \{}
+      \FunctionTok{stop}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"No hay pivote en la columna \%d (|piv|\textless{}tol)."}\NormalTok{, col))}
+\NormalTok{    \}}
+    \ControlFlowTok{if}\NormalTok{ (pivot\_row }\SpecialCharTok{!=}\NormalTok{ row) \{}
+\NormalTok{      Ab[}\FunctionTok{c}\NormalTok{(row, pivot\_row), ] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[}\FunctionTok{c}\NormalTok{(pivot\_row, row), ]}
+      \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Intercambia filas \%d \textless{}{-}\textgreater{} \%d (col=\%d)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, row, pivot\_row, col)); }\FunctionTok{print}\NormalTok{(Ab)\}}
+\NormalTok{    \}}
+\NormalTok{    pivote }\OtherTok{\textless{}{-}}\NormalTok{ Ab[row, col];Ab[row, ] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[row, ] }\SpecialCharTok{/}\NormalTok{ pivote}
+    \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Normaliza fila \%d por pivote \%.6g (col=\%d)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, row, pivote, col));}\FunctionTok{print}\NormalTok{(Ab)\}}
+    \ControlFlowTok{for}\NormalTok{ (r }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n) \{}
+      \ControlFlowTok{if}\NormalTok{ (r }\SpecialCharTok{==}\NormalTok{ row) }\ControlFlowTok{next}
+\NormalTok{      factor }\OtherTok{\textless{}{-}}\NormalTok{ Ab[r, col]}
+      \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(factor) }\SpecialCharTok{\textgreater{}}\NormalTok{ tolerancia) \{}
+\NormalTok{        Ab[r, ] }\OtherTok{\textless{}{-}}\NormalTok{ Ab[r, ] }\SpecialCharTok{{-}}\NormalTok{ factor }\SpecialCharTok{*}\NormalTok{ Ab[row, ]}
+        \ControlFlowTok{if}\NormalTok{ (verbose)\{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"R\%d := R\%d {-} (\%.6g)*R\%d (col=\%d)}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, r, r, factor, row, col)); }\FunctionTok{print}\NormalTok{(Ab)\}}
+\NormalTok{      \}}
+\NormalTok{    \}}
+\NormalTok{    row }\OtherTok{\textless{}{-}}\NormalTok{ row }\SpecialCharTok{+} \DecValTok{1}
+\NormalTok{  \}}
+\NormalTok{  Ab[}\FunctionTok{abs}\NormalTok{(Ab) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia] }\OtherTok{\textless{}{-}} \DecValTok{0}\NormalTok{;  LHS }\OtherTok{\textless{}{-}}\NormalTok{ Ab[, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{m, drop }\OtherTok{=} \ConstantTok{FALSE}\NormalTok{]}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{all}\NormalTok{(LHS }\SpecialCharTok{==} \FunctionTok{diag}\NormalTok{(n))) \{}\FunctionTok{stop}\NormalTok{(}\StringTok{"La matriz es singular o la tolerancia es muy estricta."}\NormalTok{)\}}
+\NormalTok{  Ainv }\OtherTok{\textless{}{-}}\NormalTok{ Ab[, (m }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{ncols, drop }\OtherTok{=} \ConstantTok{FALSE}\NormalTok{]}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{Ainv =}\NormalTok{ Ainv, }\AttributeTok{RREF =}\NormalTok{ Ab)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Ejemplo}\label{ejemplo-3}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tolerancia }\OtherTok{\textless{}{-}} \FloatTok{1e{-}12}
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{,}
+  \DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{4}\NormalTok{,}
+  \DecValTok{5}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{0}
+\NormalTok{), }\AttributeTok{nrow =} \DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{gauss\_jordan\_inversa}\NormalTok{(A, tolerancia, }\AttributeTok{verbose =} \ConstantTok{TRUE}\NormalTok{);res}\SpecialCharTok{$}\NormalTok{Ainv;}\FunctionTok{round}\NormalTok{(A }\SpecialCharTok{\%*\%}\NormalTok{ res}\SpecialCharTok{$}\NormalTok{Ainv, }\DecValTok{6}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Intercambia filas 1 <-> 3 (col=1)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    5    6    0    0    0    1
+## [2,]    0    1    4    0    1    0
+## [3,]    1    2    3    1    0    0
+## Normaliza fila 1 por pivote 5 (col=1)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1  1.2    0    0    0  0.2
+## [2,]    0  1.0    4    0    1  0.0
+## [3,]    1  2.0    3    1    0  0.0
+## R3 := R3 - (1)*R1 (col=1)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1  1.2    0    0    0  0.2
+## [2,]    0  1.0    4    0    1  0.0
+## [3,]    0  0.8    3    1    0 -0.2
+## Normaliza fila 2 por pivote 1 (col=2)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1  1.2    0    0    0  0.2
+## [2,]    0  1.0    4    0    1  0.0
+## [3,]    0  0.8    3    1    0 -0.2
+## R1 := R1 - (1.2)*R2 (col=2)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1  0.0 -4.8    0 -1.2  0.2
+## [2,]    0  1.0  4.0    0  1.0  0.0
+## [3,]    0  0.8  3.0    1  0.0 -0.2
+## R3 := R3 - (0.8)*R2 (col=2)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1    0 -4.8    0 -1.2  0.2
+## [2,]    0    1  4.0    0  1.0  0.0
+## [3,]    0    0 -0.2    1 -0.8 -0.2
+## Normaliza fila 3 por pivote -0.2 (col=3)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1    0 -4.8    0 -1.2  0.2
+## [2,]    0    1  4.0    0  1.0  0.0
+## [3,]    0    0  1.0   -5  4.0  1.0
+## R1 := R1 - (-4.8)*R3 (col=3)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1    0    0  -24   18    5
+## [2,]    0    1    4    0    1    0
+## [3,]    0    0    1   -5    4    1
+## R2 := R2 - (4)*R3 (col=3)
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1    0    0  -24   18    5
+## [2,]    0    1    0   20  -15   -4
+## [3,]    0    0    1   -5    4    1
+\end{verbatim}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]  -24   18    5
+## [2,]   20  -15   -4
+## [3,]   -5    4    1
+\end{verbatim}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]    1    0    0
+## [2,]    0    1    0
+## [3,]    0    0    1
+\end{verbatim}
+
+\section{Factorización LU}\label{factorizaciuxf3n-lu}
+
+\subsection{Sin Pivoteo}\label{sin-pivoteo}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lu\_simple }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, }\AttributeTok{tol =} \FloatTok{1e{-}12}\NormalTok{, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A); m }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(A)}
+  \ControlFlowTok{if}\NormalTok{ (n }\SpecialCharTok{!=}\NormalTok{ m) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser cuadrada."}\NormalTok{)}
+\NormalTok{  U }\OtherTok{\textless{}{-}}\NormalTok{ A;  L }\OtherTok{\textless{}{-}} \FunctionTok{diag}\NormalTok{(n)}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{(n }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)) \{}
+\NormalTok{    piv }\OtherTok{\textless{}{-}}\NormalTok{ U[k, k]}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(piv) }\SpecialCharTok{\textless{}}\NormalTok{ tol) \{}\FunctionTok{stop}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Pivote casi cero en k=\%d. No se puede continuar."}\NormalTok{, k))\}}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ (k }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{      m }\OtherTok{\textless{}{-}}\NormalTok{ U[i, k] }\SpecialCharTok{/}\NormalTok{ piv;L[i, k] }\OtherTok{\textless{}{-}}\NormalTok{ m;U[i, k}\SpecialCharTok{:}\NormalTok{n] }\OtherTok{\textless{}{-}}\NormalTok{ U[i, k}\SpecialCharTok{:}\NormalTok{n] }\SpecialCharTok{{-}}\NormalTok{ m }\SpecialCharTok{*}\NormalTok{ U[k, k}\SpecialCharTok{:}\NormalTok{n]}
+      \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"k=\%d, i=\%d, m=\%.6g}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, k, i, m));}\FunctionTok{print}\NormalTok{(U)\}}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{L =}\NormalTok{ L, }\AttributeTok{U =}\NormalTok{ U)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Ejemplo}\label{ejemplo-4}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{2}\NormalTok{,  }\DecValTok{1}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{2}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{2}\NormalTok{,  }\DecValTok{1}\NormalTok{,  }\DecValTok{2}
+\NormalTok{), }\DecValTok{3}\NormalTok{, }\DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{lu }\OtherTok{\textless{}{-}} \FunctionTok{lu\_simple}\NormalTok{(A);lu}\SpecialCharTok{$}\NormalTok{L; lu}\SpecialCharTok{$}\NormalTok{U}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]  1.0    0    0
+## [2,] -1.5    1    0
+## [3,] -1.0    4    1
+\end{verbatim}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]    2  1.0 -1.0
+## [2,]    0  0.5  0.5
+## [3,]    0  0.0 -1.0
+\end{verbatim}
+
+\subsection{Con Pivoteo}\label{con-pivoteo}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lu\_piv\_parcial }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, }\AttributeTok{tol =} \FloatTok{1e{-}12}\NormalTok{, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A); m }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(A); }\ControlFlowTok{if}\NormalTok{ (n }\SpecialCharTok{!=}\NormalTok{ m) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser cuadrada."}\NormalTok{)}
+\NormalTok{  U }\OtherTok{\textless{}{-}}\NormalTok{ A;  L }\OtherTok{\textless{}{-}} \FunctionTok{diag}\NormalTok{(n);  P }\OtherTok{\textless{}{-}} \FunctionTok{diag}\NormalTok{(n)}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{(n }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)) \{}
+\NormalTok{    max\_row }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(}\FunctionTok{abs}\NormalTok{(U[k}\SpecialCharTok{:}\NormalTok{n, k])) }\SpecialCharTok{+}\NormalTok{ (k }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(U[max\_row, k]) }\SpecialCharTok{\textless{}}\NormalTok{ tol) \{}\FunctionTok{stop}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Matriz singular (pivote \textasciitilde{} 0)."}\NormalTok{, k))\}}
+    \ControlFlowTok{if}\NormalTok{ (max\_row }\SpecialCharTok{!=}\NormalTok{ k) \{}
+\NormalTok{      U[}\FunctionTok{c}\NormalTok{(k, max\_row), ] }\OtherTok{\textless{}{-}}\NormalTok{ U[}\FunctionTok{c}\NormalTok{(max\_row, k), ];P[}\FunctionTok{c}\NormalTok{(k, max\_row), ] }\OtherTok{\textless{}{-}}\NormalTok{ P[}\FunctionTok{c}\NormalTok{(max\_row, k), ]}
+      \ControlFlowTok{if}\NormalTok{ (k }\SpecialCharTok{\textgreater{}} \DecValTok{1}\NormalTok{) \{L[}\FunctionTok{c}\NormalTok{(k, max\_row), }\DecValTok{1}\SpecialCharTok{:}\NormalTok{(k }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)] }\OtherTok{\textless{}{-}}\NormalTok{ L[}\FunctionTok{c}\NormalTok{(max\_row, k), }\DecValTok{1}\SpecialCharTok{:}\NormalTok{(k }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)]\}}
+      \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Intercambia filas \%d \textless{}{-}\textgreater{} \%d}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, k, max\_row)); }\FunctionTok{print}\NormalTok{(U)\}}
+\NormalTok{    \}}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ (k }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{      m }\OtherTok{\textless{}{-}}\NormalTok{ U[i, k] }\SpecialCharTok{/}\NormalTok{ U[k, k];L[i, k] }\OtherTok{\textless{}{-}}\NormalTok{ m;U[i, k}\SpecialCharTok{:}\NormalTok{n] }\OtherTok{\textless{}{-}}\NormalTok{ U[i, k}\SpecialCharTok{:}\NormalTok{n] }\SpecialCharTok{{-}}\NormalTok{ m }\SpecialCharTok{*}\NormalTok{ U[k, k}\SpecialCharTok{:}\NormalTok{n];}
+      \ControlFlowTok{if}\NormalTok{ (verbose) \{}\FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"k=\%d, i=\%d, m=\%.6g}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, k, i, m));}\FunctionTok{print}\NormalTok{(U)\}}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{P =}\NormalTok{ P, }\AttributeTok{L =}\NormalTok{ L, }\AttributeTok{U =}\NormalTok{ U)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Ejemplo}\label{ejemplo-5}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{0}\NormalTok{,  }\DecValTok{2}\NormalTok{,  }\DecValTok{1}\NormalTok{,}
+  \DecValTok{1}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{1}\NormalTok{,  }\DecValTok{2}
+\NormalTok{), }\DecValTok{3}\NormalTok{, }\DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{lu }\OtherTok{\textless{}{-}} \FunctionTok{lu\_piv\_parcial}\NormalTok{(A, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{); lu}\SpecialCharTok{$}\NormalTok{P; lu}\SpecialCharTok{$}\NormalTok{L; lu}\SpecialCharTok{$}\NormalTok{U}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]    0    1    0
+## [2,]    1    0    0
+## [3,]    0    0    1
+\end{verbatim}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]    1  0.0    0
+## [2,]    0  1.0    0
+## [3,]   -1 -0.5    1
+\end{verbatim}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]    1   -2 -3.0
+## [2,]    0    2  1.0
+## [3,]    0    0 -0.5
+\end{verbatim}
+
+\subsection{Solucion vía LU}\label{solucion-vuxeda-lu}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{forward\_sub }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(L, b) \{}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(L);  y }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(n)}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n) \{y[i] }\OtherTok{\textless{}{-}}\NormalTok{ (b[i] }\SpecialCharTok{{-}} \FunctionTok{sum}\NormalTok{(L[i, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{(i }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)] }\SpecialCharTok{*}\NormalTok{ y[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{(i }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)]))\}}
+\NormalTok{  y}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# x en Ux = y}
+\NormalTok{back\_sub }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(U, y, }\AttributeTok{tol =} \FloatTok{1e{-}12}\NormalTok{) \{}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(U);  x }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(n)}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ n}\SpecialCharTok{:}\DecValTok{1}\NormalTok{) \{}
+\NormalTok{    s }\OtherTok{\textless{}{-}} \ControlFlowTok{if}\NormalTok{ (i }\SpecialCharTok{==}\NormalTok{ n) }\DecValTok{0} \ControlFlowTok{else} \FunctionTok{sum}\NormalTok{(U[i, (i }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n] }\SpecialCharTok{*}\NormalTok{ x[(i }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n])}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(U[i, i]) }\SpecialCharTok{\textless{}}\NormalTok{ tol) }\FunctionTok{stop}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Pivote \textasciitilde{}0 en U[\%d,\%d]."}\NormalTok{, i, i))}
+\NormalTok{    x[i] }\OtherTok{\textless{}{-}}\NormalTok{ (y }\SpecialCharTok{{-}}\NormalTok{ s) }\SpecialCharTok{/}\NormalTok{ U[i, i]}
+\NormalTok{  \}}
+\NormalTok{  x}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Resolucion sin pivoteo}\label{resolucion-sin-pivoteo}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{solve\_lu\_simple }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, b, }\AttributeTok{tol =} \FloatTok{1e{-}12}\NormalTok{) \{}
+\NormalTok{  lu }\OtherTok{\textless{}{-}} \FunctionTok{lu\_simple}\NormalTok{(A, }\AttributeTok{tol =}\NormalTok{ tol);}
+\NormalTok{  y }\OtherTok{\textless{}{-}} \FunctionTok{forward\_sub}\NormalTok{(lu}\SpecialCharTok{$}\NormalTok{L, b)}
+\NormalTok{  x }\OtherTok{\textless{}{-}} \FunctionTok{back\_sub}\NormalTok{(lu}\SpecialCharTok{$}\NormalTok{U, y, }\AttributeTok{tol =}\NormalTok{ tol)}
+\NormalTok{  x}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Resolucion con pivoteo}\label{resolucion-con-pivoteo}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{solve\_lu\_piv\_parcial }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, b, }\AttributeTok{tol =} \FloatTok{1e{-}12}\NormalTok{) \{}
+\NormalTok{  lu }\OtherTok{\textless{}{-}} \FunctionTok{lu\_piv\_parcial}\NormalTok{(A, }\AttributeTok{tol =}\NormalTok{ tol);}
+\NormalTok{  Pb }\OtherTok{\textless{}{-}}\NormalTok{ lu}\SpecialCharTok{$}\NormalTok{P }\SpecialCharTok{\%*\%}\NormalTok{ b}
+\NormalTok{  y  }\OtherTok{\textless{}{-}} \FunctionTok{forward\_sub}\NormalTok{(lu}\SpecialCharTok{$}\NormalTok{L, }\FunctionTok{as.vector}\NormalTok{(Pb))}
+\NormalTok{  x  }\OtherTok{\textless{}{-}} \FunctionTok{back\_sub}\NormalTok{(lu}\SpecialCharTok{$}\NormalTok{U, y, }\AttributeTok{tol =}\NormalTok{ tol)}
+\NormalTok{  x}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Ejemplo}\label{ejemplo-6}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{0}\NormalTok{,  }\DecValTok{2}\NormalTok{,  }\DecValTok{1}\NormalTok{,}
+  \DecValTok{1}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{1}\NormalTok{,  }\DecValTok{2}
+\NormalTok{), }\DecValTok{3}\NormalTok{, }\DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{); x }\OtherTok{\textless{}{-}} \FunctionTok{solve\_lu\_piv\_parcial}\NormalTok{(A, b);x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in x[i] <- (y - s)/U[i, i]: número de elementos para sustituir no es un
+## múltiplo de la longitud del reemplazo
+## Warning in x[i] <- (y - s)/U[i, i]: número de elementos para sustituir no es un
+## múltiplo de la longitud del reemplazo
+## Warning in x[i] <- (y - s)/U[i, i]: número de elementos para sustituir no es un
+## múltiplo de la longitud del reemplazo
+\end{verbatim}
+
+\begin{verbatim}
+## [1]  6.0 -4.5  6.0
+\end{verbatim}
+
+\section{Factorización de Cholesky}\label{factorizaciuxf3n-de-cholesky}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tolerancia }\OtherTok{\textless{}{-}} \FloatTok{1e{-}12}
+\NormalTok{cholesky\_fact }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A,tolerancia) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{ncol}\NormalTok{(A) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser cuadrada."}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{all}\NormalTok{(}\FunctionTok{abs}\NormalTok{(A }\SpecialCharTok{{-}} \FunctionTok{t}\NormalTok{(A)) }\SpecialCharTok{\textless{}}\NormalTok{ tolerancia)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser simétrica."}\NormalTok{)}
+\NormalTok{  L }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\DecValTok{0}\NormalTok{, n, n)}
+  \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{    suma }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(L[j, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{(j}\DecValTok{{-}1}\NormalTok{)]}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{    val }\OtherTok{\textless{}{-}}\NormalTok{ A[j, j] }\SpecialCharTok{{-}}\NormalTok{ suma}
+    \ControlFlowTok{if}\NormalTok{ (val }\SpecialCharTok{\textless{}=} \DecValTok{0}\NormalTok{) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A no es definida positiva (falló Cholesky)."}\NormalTok{)}
+\NormalTok{    L[j, j] }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(val)}
+    \ControlFlowTok{if}\NormalTok{ (j }\SpecialCharTok{\textless{}}\NormalTok{ n) \{}
+      \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ (j}\SpecialCharTok{+}\DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{        suma }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(L[i, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{(j}\DecValTok{{-}1}\NormalTok{)] }\SpecialCharTok{*}\NormalTok{ L[j, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{(j}\DecValTok{{-}1}\NormalTok{)])}
+\NormalTok{        L[i, j] }\OtherTok{\textless{}{-}}\NormalTok{ (A[i, j] }\SpecialCharTok{{-}}\NormalTok{ suma) }\SpecialCharTok{/}\NormalTok{ L[j, j]}
+\NormalTok{      \}}
+\NormalTok{    \}}
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Paso j=\%d}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, j))}
+    \FunctionTok{print}\NormalTok{(L)}
+\NormalTok{  \}}
+  \FunctionTok{return}\NormalTok{(L)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Ejemplo}\label{ejemplo-7}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Matriz simétrica definida positiva}
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{4}\NormalTok{,  }\DecValTok{12}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{16}\NormalTok{,}
+ \DecValTok{12}\NormalTok{,  }\DecValTok{37}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{43}\NormalTok{,}
+\SpecialCharTok{{-}}\DecValTok{16}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{43}\NormalTok{,  }\DecValTok{98}
+\NormalTok{), }\AttributeTok{nrow =} \DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{L }\OtherTok{\textless{}{-}} \FunctionTok{cholesky\_fact}\NormalTok{(A,tolerancia)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Paso j=1
+##      [,1] [,2] [,3]
+## [1,]    2    0    0
+## [2,]    6    0    0
+## [3,]   -8    0    0
+## Paso j=2
+##      [,1] [,2] [,3]
+## [1,]    2    0    0
+## [2,]    6    1    0
+## [3,]   -8    5    0
+## Paso j=3
+##      [,1] [,2] [,3]
+## [1,]    2    0    0
+## [2,]    6    1    0
+## [3,]   -8    5    3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{L}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1] [,2] [,3]
+## [1,]    2    0    0
+## [2,]    6    1    0
+## [3,]   -8    5    3
+\end{verbatim}
+
+\section{Solución vía Cholesky}\label{soluciuxf3n-vuxeda-cholesky}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tolerancia }\OtherTok{\textless{}{-}} \FloatTok{1e{-}12}
+\NormalTok{solve\_cholesky }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, b, tolerancia) \{}
+\NormalTok{  L }\OtherTok{\textless{}{-}} \FunctionTok{cholesky\_fact}\NormalTok{(A, tolerancia)}
+\NormalTok{  y }\OtherTok{\textless{}{-}} \FunctionTok{forward\_sub}\NormalTok{(L, b)}
+\NormalTok{  x }\OtherTok{\textless{}{-}} \FunctionTok{back\_sub}\NormalTok{(}\FunctionTok{t}\NormalTok{(L), y, tolerancia)}
+\NormalTok{  x}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Ejemplo}\label{ejemplo-8}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{)}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{solve\_cholesky}\NormalTok{(A, b,tolerancia)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Paso j=1
+##      [,1] [,2] [,3]
+## [1,]    2    0    0
+## [2,]    6    0    0
+## [3,]   -8    0    0
+## Paso j=2
+##      [,1] [,2] [,3]
+## [1,]    2    0    0
+## [2,]    6    1    0
+## [3,]   -8    5    0
+## Paso j=3
+##      [,1] [,2] [,3]
+## [1,]    2    0    0
+## [2,]    6    1    0
+## [3,]   -8    5    3
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in x[i] <- (y - s)/U[i, i]: número de elementos para sustituir no es un
+## múltiplo de la longitud del reemplazo
+## Warning in x[i] <- (y - s)/U[i, i]: número de elementos para sustituir no es un
+## múltiplo de la longitud del reemplazo
+## Warning in x[i] <- (y - s)/U[i, i]: número de elementos para sustituir no es un
+## múltiplo de la longitud del reemplazo
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1]  3.8333333 -0.6666667  0.3333333
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\SpecialCharTok{\%*\%}\NormalTok{ x   }\CommentTok{\# ≈ b}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##               [,1]
+## [1,]  2.000000e+00
+## [2,]  7.000000e+00
+## [3,] -7.105427e-15
+\end{verbatim}
+
+\chapter{Métodos Iterativos}\label{muxe9todos-iterativos}
+
+\section{Gauss Jacobi}\label{gauss-jacobi}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{jacobi }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, b, }\AttributeTok{x0 =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{tol =} \FloatTok{1e{-}8}\NormalTok{, }\AttributeTok{maxiter =} \DecValTok{1000}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{ncol}\NormalTok{(A) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser cuadrada."}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(b) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"Dimensiones de b incompatibles."}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.null}\NormalTok{(x0)) x0 }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, n)}
+\NormalTok{  x }\OtherTok{\textless{}{-}}\NormalTok{ x0;  D }\OtherTok{\textless{}{-}} \FunctionTok{diag}\NormalTok{(}\FunctionTok{diag}\NormalTok{(A));  R }\OtherTok{\textless{}{-}}\NormalTok{ A }\SpecialCharTok{{-}}\NormalTok{ D;}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{maxiter) \{}
+\NormalTok{    x\_new }\OtherTok{\textless{}{-}}\NormalTok{ (b }\SpecialCharTok{{-}}\NormalTok{ R }\SpecialCharTok{\%*\%}\NormalTok{ x) }\SpecialCharTok{/} \FunctionTok{diag}\NormalTok{(D)}
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Iter \%d: \%s}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, k, }\FunctionTok{paste}\NormalTok{(}\FunctionTok{round}\NormalTok{(x\_new, }\DecValTok{6}\NormalTok{), }\AttributeTok{collapse =} \StringTok{" "}\NormalTok{)))}
+    \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{((x\_new }\SpecialCharTok{{-}}\NormalTok{ x)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\textless{}}\NormalTok{ tol) \{}\FunctionTok{return}\NormalTok{(}\FunctionTok{list}\NormalTok{(}\AttributeTok{x =} \FunctionTok{as.vector}\NormalTok{(x\_new), }\AttributeTok{iter =}\NormalTok{ k, }\AttributeTok{convergencia =} \ConstantTok{TRUE}\NormalTok{))\}}
+\NormalTok{    x }\OtherTok{\textless{}{-}}\NormalTok{ x\_new}
+\NormalTok{  \}}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{x =} \FunctionTok{as.vector}\NormalTok{(x), }\AttributeTok{iter =}\NormalTok{ maxiter, }\AttributeTok{convergencia =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Ejemplo}\label{ejemplo-9}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{4}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{0}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{4}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}
+  \DecValTok{0}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{3}
+\NormalTok{), }\DecValTok{3}\NormalTok{, }\DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+
+\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{15}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{10}\NormalTok{)}
+\NormalTok{res\_jacobi }\OtherTok{\textless{}{-}} \FunctionTok{jacobi}\NormalTok{(A, b, }\AttributeTok{x0 =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{tol =} \FloatTok{1e{-}8}\NormalTok{); res\_jacobi}\SpecialCharTok{$}\NormalTok{x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Iter 1: 3.75 2.5 3.333333
+## Iter 2: 4.375 4.270833 4.166667
+## Iter 3: 4.817708 4.635417 4.756944
+## Iter 4: 4.908854 4.893663 4.878472
+## Iter 5: 4.973416 4.946832 4.964554
+## Iter 6: 4.986708 4.984493 4.982277
+## Iter 7: 4.996123 4.992246 4.994831
+## Iter 8: 4.998062 4.997738 4.997415
+## Iter 9: 4.999435 4.998869 4.999246
+## Iter 10: 4.999717 4.99967 4.999623
+## Iter 11: 4.999918 4.999835 4.99989
+## Iter 12: 4.999959 4.999952 4.999945
+## Iter 13: 4.999988 4.999976 4.999984
+## Iter 14: 4.999994 4.999993 4.999992
+## Iter 15: 4.999998 4.999996 4.999998
+## Iter 16: 4.999999 4.999999 4.999999
+## Iter 17: 5 4.999999 5
+## Iter 18: 5 5 5
+## Iter 19: 5 5 5
+## Iter 20: 5 5 5
+## Iter 21: 5 5 5
+## Iter 22: 5 5 5
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 5 5 5
+\end{verbatim}
+
+\section{Gauss Seidel}\label{gauss-seidel}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gauss\_seidel }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(A, b, }\AttributeTok{x0 =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{tol =} \FloatTok{1e{-}8}\NormalTok{, }\AttributeTok{maxiter =} \DecValTok{1000}\NormalTok{, }\AttributeTok{verbose =} \ConstantTok{FALSE}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(A)) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser una matriz."}\NormalTok{)}
+\NormalTok{  n }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(A)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{ncol}\NormalTok{(A) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"A debe ser cuadrada."}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(b) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"Dimensiones de b incompatibles."}\NormalTok{)}
+\NormalTok{  x }\OtherTok{\textless{}{-}} \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{is.null}\NormalTok{(x0)) }\FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, n) }\ControlFlowTok{else} \FunctionTok{as.numeric}\NormalTok{(x0)}
+  \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{length}\NormalTok{(x) }\SpecialCharTok{!=}\NormalTok{ n) }\FunctionTok{stop}\NormalTok{(}\StringTok{"Dimensión de x0 incompatible con A."}\NormalTok{)}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{maxiter) \{}
+\NormalTok{    x\_old }\OtherTok{\textless{}{-}}\NormalTok{ x}
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n) \{}
+\NormalTok{      aii }\OtherTok{\textless{}{-}}\NormalTok{ A[i, i]}
+      \ControlFlowTok{if}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(aii) }\SpecialCharTok{\textless{}}\NormalTok{ .Machine}\SpecialCharTok{$}\NormalTok{double.eps) \{}\FunctionTok{stop}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"A[\%d,\%d] = 0: Gauss–Seidel No se puede aplicar"}\NormalTok{, i, i))\}}
+\NormalTok{      s1 }\OtherTok{\textless{}{-}} \ControlFlowTok{if}\NormalTok{ (i }\SpecialCharTok{\textgreater{}} \DecValTok{1}\NormalTok{) }\FunctionTok{sum}\NormalTok{(A[i, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{(i }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)] }\SpecialCharTok{*}\NormalTok{ x[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{(i }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)]) }\ControlFlowTok{else} \DecValTok{0}
+\NormalTok{      s2 }\OtherTok{\textless{}{-}} \ControlFlowTok{if}\NormalTok{ (i }\SpecialCharTok{\textless{}}\NormalTok{ n) }\FunctionTok{sum}\NormalTok{(A[i, (i }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n] }\SpecialCharTok{*}\NormalTok{ x\_old[(i }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{n]) }\ControlFlowTok{else} \DecValTok{0}
+\NormalTok{      x[i] }\OtherTok{\textless{}{-}}\NormalTok{ (b[i] }\SpecialCharTok{{-}}\NormalTok{ s1 }\SpecialCharTok{{-}}\NormalTok{ s2) }\SpecialCharTok{/}\NormalTok{ aii}
+\NormalTok{    \}}
+\NormalTok{    dx  }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{((x }\SpecialCharTok{{-}}\NormalTok{ x\_old)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{));res }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{((b }\SpecialCharTok{{-}}\NormalTok{ A }\SpecialCharTok{\%*\%}\NormalTok{ x)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{))}
+    \FunctionTok{cat}\NormalTok{(}\FunctionTok{sprintf}\NormalTok{(}\StringTok{"Iter \%4d |dx|=\%.3e  |res|=\%.3e   x=\%s}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{,k, dx, res, }\FunctionTok{paste}\NormalTok{(}\FunctionTok{round}\NormalTok{(x, }\DecValTok{6}\NormalTok{), }\AttributeTok{collapse=}\StringTok{" "}\NormalTok{)))}
+    \ControlFlowTok{if}\NormalTok{ (dx }\SpecialCharTok{\textless{}}\NormalTok{ tol }\SpecialCharTok{\&\&}\NormalTok{ res }\SpecialCharTok{\textless{}}\NormalTok{ tol) \{}
+      \FunctionTok{return}\NormalTok{(}\FunctionTok{list}\NormalTok{(}\AttributeTok{x =} \FunctionTok{as.vector}\NormalTok{(x), }\AttributeTok{iter =}\NormalTok{ k, }\AttributeTok{convergencia =} \ConstantTok{TRUE}\NormalTok{,}\AttributeTok{delta =}\NormalTok{ dx, }\AttributeTok{residuo =}\NormalTok{ res))}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{x =} \FunctionTok{as.vector}\NormalTok{(x), }\AttributeTok{iter =}\NormalTok{ maxiter, }\AttributeTok{convergencia =} \ConstantTok{FALSE}\NormalTok{,}
+       \AttributeTok{delta =} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{((x }\SpecialCharTok{{-}}\NormalTok{ x)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)), }\AttributeTok{residuo =} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{((b }\SpecialCharTok{{-}}\NormalTok{ A }\SpecialCharTok{\%*\%}\NormalTok{ x)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Ejemplo}\label{ejemplo-10}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{A }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}
+  \DecValTok{4}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{0}\NormalTok{,}
+ \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{4}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}
+  \DecValTok{0}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,  }\DecValTok{3}
+\NormalTok{), }\DecValTok{3}\NormalTok{, }\DecValTok{3}\NormalTok{, }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{b }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{15}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{10}\NormalTok{)}
+\NormalTok{res\_gs }\OtherTok{\textless{}{-}} \FunctionTok{gauss\_seidel}\NormalTok{(A, b, }\AttributeTok{x0 =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{), }\AttributeTok{tol =} \FloatTok{1e{-}8}\NormalTok{);res\_gs}\SpecialCharTok{$}\NormalTok{x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Iter    1 |dx|=6.778e+00  |res|=5.646e+00   x=3.75 3.4375 4.479167
+## Iter    2 |dx|=1.649e+00  |res|=1.407e+00   x=4.609375 4.772135 4.924045
+## Iter    3 |dx|=3.917e-01  |res|=2.052e-01   x=4.943034 4.96677 4.988923
+## Iter    4 |dx|=5.712e-02  |res|=2.992e-02   x=4.991692 4.995154 4.998385
+## Iter    5 |dx|=8.330e-03  |res|=4.363e-03   x=4.998788 4.999293 4.999764
+## Iter    6 |dx|=1.215e-03  |res|=6.363e-04   x=4.999823 4.999897 4.999966
+## Iter    7 |dx|=1.772e-04  |res|=9.280e-05   x=4.999974 4.999985 4.999995
+## Iter    8 |dx|=2.584e-05  |res|=1.353e-05   x=4.999996 4.999998 4.999999
+## Iter    9 |dx|=3.768e-06  |res|=1.974e-06   x=4.999999 5 5
+## Iter   10 |dx|=5.495e-07  |res|=2.878e-07   x=5 5 5
+## Iter   11 |dx|=8.013e-08  |res|=4.197e-08   x=5 5 5
+## Iter   12 |dx|=1.169e-08  |res|=6.121e-09   x=5 5 5
+## Iter   13 |dx|=1.704e-09  |res|=8.926e-10   x=5 5 5
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 5 5 5
+\end{verbatim}
+
+\backmatter
+\end{document}
