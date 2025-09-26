@@ -1,0 +1,75 @@
+---
+title: "Clase de métodos 24 de septiembre"
+author: "Carlos E Martínez-Rodríguez"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    code_folding: show
+    theme: bootstrap
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+A <- matrix(c(1,1,1,1,
+              2,3,1,5,
+              -1,1,-5,3,
+              3,1,7,-2), nrow = 4,byrow = TRUE)
+(A)
+b<- matrix(c(10,31,-2,18),nrow=4);(b)
+```
+
+```{r}
+Ab <- cbind(A,b); (Ab)
+```
+
+Se realiza la eliminacion
+
+```{r}
+l21 <- Ab[2,1]/Ab[1,1];
+l31 <- Ab[3,1]/Ab[1,1];
+l41 <- Ab[4,1]/Ab[1,1];
+A21 <- Ab[2,]-l21*Ab[1,1]; (A21)
+A31 <- Ab[3,]-l31*Ab[1,1]; (A31)
+A41 <- Ab[4,]-l31*Ab[1,1]; (A41)
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
