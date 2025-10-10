@@ -1,0 +1,87 @@
+---
+title: "Clase de Métodos Numéricos - Métodos iterativos"
+author: "Carlos E Martínez-Rodríguez"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 6
+    code_folding: show
+    #theme: flatly
+    theme: journal
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# sistemas de punto flotante
+
+## historia de los metodos numericos
+
+## Conversion de base 10 a base 2
+
+## tipos de error
+
+
+# Sistemas de Ecuaciones lineales
+
+![Ejercicio de tal para tal cosa](logoUACM.jpg){width=450}
+
+
+## Metodos Directos
+
+
+### Gauss simple
+
+#### Ejemplo/ejercicio
+
+##### Paso 1
+
+##### Paso 2
+
+
+### Gauss con pivoteo parcial
+
+#### Ejemplo/ejercicio
+
+##### Paso 1
+
+##### Paso 2
+
+
+
+
+## Metodos Interativos
+
+
+### Gauss-seidel
+#### Ejemplo/ejercicio
+
+##### Paso 1
+
+##### Paso 2
+
+### Gauss-Jacobi
+#### Ejemplo/ejercicio
+
+##### Paso 1
+
+##### Paso 2
+
+
+# Raices de funciones
+
+# Solucion numeerica de ecuaciones diferenciales
+
+# Practicas de laboratorio
+
+# Revision de programas
+
+# Mis notas
+
+
