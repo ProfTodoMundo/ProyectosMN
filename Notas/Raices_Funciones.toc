@@ -1,6 +1,0 @@
-\babel@toc {spanish}{}\relax 
-\contentsline {section}{\numberline {1}Introducci\'on}{1}{section.1}%
-\contentsline {section}{\numberline {2}Practica}{2}{section.2}%
-\contentsline {section}{\numberline {3}Ejemplos}{4}{section.3}%
-\contentsline {section}{\numberline {4}Ejercicios}{8}{section.4}%
-\contentsline {section}{\numberline {5}Implementaciones num\'ericas}{9}{section.5}%
