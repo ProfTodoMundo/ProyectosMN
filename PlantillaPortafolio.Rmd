@@ -76,6 +76,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Raices de funciones
 
+# Interpolación y aproximación
+
 # Solucion numeerica de ecuaciones diferenciales
 
 # Practicas de laboratorio
