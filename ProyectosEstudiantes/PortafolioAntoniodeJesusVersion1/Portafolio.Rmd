@@ -1,0 +1,1720 @@
+---
+title: "Clase de Métodos Numéricos - Portafolio"
+author: "Antonio de Jesus Velazquez Montes de Oca"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 6
+    code_folding: show
+    #theme: flatly
+    theme: journal
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+![](logoUACM.jpg){width=450}
+
+# Sistemas de punto flotante
+
+## Historia de los metodos numericos
+La historia de los métodos numéricos se remonta a 1650 a.C. con los Papiros de Rhynd, que presentaban métodos para resolver expresiones matemáticas sin álgebra. A lo largo de los siglos, se han desarrollado diversas técnicas, como el Método de Exhaustión de Euclides (250 a.C.) y los algoritmos de Al Juarismi en el siglo IX. En el siglo XVII, John Napier inventó los huesos de Napier, y más tarde, Isaac Newton desarrolló los procesos de interpolación polinomial.
+El cálculo diferencial fue creado por Leibnitz en el siglo XVIII, y Euler propuso soluciones aproximadas a ecuaciones diferenciales en 1768. Charles Babbage inventó la Máquina diferencial en 1822, y Ada Lovelace publicó notas sobre la máquina analítica en 1843. La historia avanza con IBM tabulando el censo estadounidense en 1890 y el diseño del analizador diferencial por Vannevar Bush en 1931.
+En 1937, Alan Turing presenta conceptos fundamentales sobre la computación. Los avances continúan en la década de 1940, cuando John Von Neumann redacta el informe sobre EDVAC y se desarrollan proyectos de computadoras para aplicaciones militares en cálculos balísticos 
+
+## Conversion de base 10 a base 2
+La conversión de un número de base 10 a base 2 se realiza mediante sucesivas divisiones entre 2 y registrando el residuo en cada paso. Por ejemplo, para convertir el número 24563 a binario, se divide el número por 2 repetidamente, cada vez tomando el residuo hasta llegar a cero. Luego, se ordenan los residuos desde el último hasta el primero para obtener la representación binaria. En el caso de 24563, el resultado es (101111111110011)₂. Este método se aplica a cualquier número entero positivo para obtener su correspondiente representación en binario, para la parte desimal se hace lo contrario osea que se va a multiplicar solo la parte decimal por 2, cada vez tomando el entero hasta llegar a uno. Luego, se ordenan los residuos desde el primero hasta el ultimo.
+A continucion de pone una imajen de un ejercicio de la tarea como ejemplo:
+![Ejercicio de conversion de base 10 a base 2](Conversionbase10abase2.jpeg){width=450}
+
+## Tipos de error
+Incertidumbres: son inherentes a las dimensiones físicas que no pueden medirse con exactitud debido a la naturaleza de la materia y las imperfecciones en los instrumentos. 
+
+Verdaderas equivocaciones: son errores que ocurren durante la lectura de instrumentos o la transmisión de información.
+
+Truncamiento: es causado por la imposibilidad de calcular con un número infinito de términos.
+
+Redondeo: se produce durante el proceso de cálculo.
+
+Error absoluto: es la diferencia entre el valor real y el valor aproximado.
+
+Error relativo: se expresa como un porcentaje del error absoluto. Mientras que el error absoluto tiene dimensiones físicas, el error relativo es adimensional, lo que a menudo lo hace más comprensible en términos prácticos.
+
+# Sistemas de Ecuaciones lineales
+
+## Metodos Directos
+
+### Gauss simple
+
+#### Ejercicio
+```{r}
+gauss_simple <- function(A, b, tolerancia = 1e-10, verbose = FALSE) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incorrectas.")
+  
+  Ab <- cbind(A, b)
+  
+  for (k in 1:(n - 1)) {
+    if (abs(Ab[k, k]) < tolerancia) {
+      stop(sprintf("Pivote casi nulo en la columna %d. Método no puede continuar.", k))
+    }
+    
+    for (i in (k + 1):n) {
+      m <- Ab[i, k] / Ab[k, k]
+      Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - m * Ab[k, k:ncol(Ab)]
+      if (abs(Ab[i, k]) < tolerancia) Ab[i, k] <- 0
+      
+      if (verbose) {
+        cat(sprintf("k= %d, i= %d, m= %.6g\n", k, i, m))
+        print(Ab)
+      }
+    }
+  }
+  
+  # Sustitución hacia atrás
+  x <- numeric(n)
+  for (i in n:1) {
+    suma <- if (i == n) 0 else sum(Ab[i, (i + 1):n] * x[(i + 1):n])
+    x[i] <- (Ab[i, n + 1] - suma) / Ab[i, i]
+  }
+  
+  list(x = x, U = Ab[, 1:n], Ab = Ab)
+}
+```
+
+##### Paso 1 (k=1)
+```{r}
+gauss_simple_k1 <- function(A, b, tolerancia = 1e-10, verbose = FALSE) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incorrectas.")
+  
+  Ab <- cbind(A, b)
+  k <- 1  # Solo se hace la primera iteración
+  
+  if (abs(Ab[k, k]) < tolerancia) {
+    stop(sprintf("Pivote casi nulo en la columna %d. Método no puede continuar.", k))
+  }
+  
+  for (i in (k + 1):n) {
+    m <- Ab[i, k] / Ab[k, k]
+    Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - m * Ab[k, k:ncol(Ab)]
+    if (abs(Ab[i, k]) < tolerancia) Ab[i, k] <- 0
+    
+    if (verbose) {
+      cat(sprintf("k = %d, i = %d, m = %.6g\n", k, i, m))
+      print(Ab)
+    }
+  }
+  
+  return(list(Ab_modificada = Ab))
+}
+```
+Ejemplo:
+```{r}
+A <- matrix(c(2, 1, -1,
+              -3, -1, 2,
+              -2, 1, 2), nrow = 3, byrow = TRUE)
+b <- c(8, -11, -3)
+
+resultado <- gauss_simple_k1(A, b, verbose = TRUE)
+```
+##### Paso 2 (k=2)
+```{r}
+gauss_simple_k2 <- function(A, b, tolerancia = 1e-10, verbose = FALSE) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incorrectas.")
+  
+  Ab <- cbind(A, b)
+  
+  # Iteración k = 1 (primera eliminación)
+  k <- 1
+  if (abs(Ab[k, k]) < tolerancia) {
+    stop(sprintf("Pivote casi nulo en columna %d", k))
+  }
+  for (i in (k + 1):n) {
+    m <- Ab[i, k] / Ab[k, k]
+    Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - m * Ab[k, k:ncol(Ab)]
+    if (abs(Ab[i, k]) < tolerancia) Ab[i, k] <- 0
+  }
+  
+  # Iteración k = 2 (segunda eliminación)
+  k <- 2
+  if (abs(Ab[k, k]) < tolerancia) {
+    stop(sprintf("Pivote casi nulo en columna %d", k))
+  }
+  for (i in (k + 1):n) {
+    m <- Ab[i, k] / Ab[k, k]
+    Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - m * Ab[k, k:ncol(Ab)]
+    if (abs(Ab[i, k]) < tolerancia) Ab[i, k] <- 0
+    if (verbose) {
+      cat(sprintf("k = %d, i = %d, m = %.6g\n", k, i, m))
+      print(Ab)
+    }
+  }
+  
+  return(list(Ab_modificada = Ab))
+}
+```
+Ejemplo:
+```{r}
+A <- matrix(c(2, 1, -1,
+              -3, -1, 2,
+              -2, 1, 2), nrow = 3, byrow = TRUE)
+b <- c(8, -11, -3)
+
+resultado <- gauss_simple_k2(A, b, verbose = TRUE)
+```
+
+### Gauss con pivoteo parcial
+
+#### Ejercicio
+```{r}
+gauss_piv_parcial <- function(A, b, tolerancia, verbose = FALSE) {
+if (!is.matrix(A)) stop("A debe ser una matriz.")
+n <- nrow(A); if (ncol(A) != n) stop("A debe ser cuadrada.")
+if (length(b) != n) stop("Dimensiones de b incorrectas.")
+Ab <- cbind(A, b)
+for (k in 1:(n-1)) {
+# Selección del pivote (máximo en valor absoluto en la columna k desde la fila k)
+max_row <- which.max(abs(Ab[k:n, k])) + (k - 1)
+if (abs(Ab[max_row, k]) < tolerancia){stop(sprintf("Pivote casi nulo en columna %d", k))}
+# Intercambio de filas si es necesario
+if (max_row != k) {
+Ab[c(k, max_row), ] <- Ab[c(max_row, k), ]
+if (verbose) {cat(sprintf("Intercambio de fila %d con fila %d\n", k, max_row)); print(Ab)}
+}
+for (i in (k + 1):n) {
+m <- Ab[i, k] / Ab[k, k];Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - m * Ab[k, k:ncol(Ab)]
+if (abs(Ab[i, k]) < tolerancia) Ab[i, k] <- 0
+if (verbose) {cat(sprintf("k= %d, i= %d, m= %.6g\n", k, i, m));print(Ab)}
+}
+}
+x <- numeric(n)
+for (i in n:1) {
+if (i == n) {
+suma <- 0
+} else {suma <- sum(Ab[i, (i + 1):n] * x[(i + 1):n])}
+x[i] <- (Ab[i, n + 1] - suma) / Ab[i, i]
+}
+list(x = x,U = Ab[, 1:n],Ab = Ab)
+}
+```
+
+##### Paso 1 (K=1)
+```{r}
+gauss_piv_parcial_k1 <- function(A, b, tolerancia, verbose = FALSE) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incorrectas.")
+
+  Ab <- cbind(A, b)
+  k <- 1  # Fijamos k = 1
+
+  # Selección del pivote (máximo en valor absoluto en la columna 1 desde la fila 1)
+  max_row <- which.max(abs(Ab[k:n, k])) + (k - 1)
+  if (abs(Ab[max_row, k]) < tolerancia) {
+    stop(sprintf("Pivote casi nulo en columna %d", k))
+  }
+
+  # Intercambio de filas si es necesario
+  if (max_row != k) {
+    Ab[c(k, max_row), ] <- Ab[c(max_row, k), ]
+    if (verbose) {
+      cat(sprintf("Intercambio de fila %d con fila %d\n", k, max_row))
+      print(Ab)
+    }
+  }
+
+  # Eliminación hacia adelante solo para k = 1
+  for (i in (k + 1):n) {
+    m <- Ab[i, k] / Ab[k, k]
+    Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - m * Ab[k, k:ncol(Ab)]
+    if (abs(Ab[i, k]) < tolerancia) Ab[i, k] <- 0
+    if (verbose) {
+      cat(sprintf("k= %d, i= %d, m= %.6g\n", k, i, m))
+      print(Ab)
+    }
+  }
+
+  # No se resuelve el sistema completo, solo se retorna la matriz modificada
+  list(Ab = Ab)
+}
+```
+Ejemplo:
+```{r}
+A <- matrix(c(2, -1, 1,
+              1,  3, 2,
+              1, -1, 2), nrow = 3, byrow = TRUE)
+b <- c(8, 13, 3)
+tolerancia <- 1e-10
+Ab <- cbind(A, b)
+#Selección del pivote en columna 1
+max_row <- which.max(abs(Ab[1:3, 1])) + 0  # = 1
+#Eliminación hacia adelante
+m <- Ab[2,1] / Ab[1,1]
+Ab[2, 1:4] <- Ab[2, 1:4] - 0.5 * Ab[1, 1:4]
+m <- Ab[3,1] / Ab[1,1]  
+Ab[3, 1:4] <- Ab[3, 1:4] - 0.5 * Ab[1, 1:4]
+(Ab)
+```
+##### Paso 2 (k=2)
+```{r}
+gauss_piv_parcial_k2 <- function(Ab, tolerancia, verbose = FALSE) {
+  n <- nrow(Ab)
+  k <- 2
+  max_row <- which.max(abs(Ab[k:n, k])) + (k - 1)
+  if (abs(Ab[max_row, k]) < tolerancia) stop("Pivote casi nulo")
+  if (max_row != k) Ab[c(k, max_row), ] <- Ab[c(max_row, k), ]
+  for (i in (k + 1):n) {
+    m <- Ab[i, k] / Ab[k, k]
+    Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - m * Ab[k, k:ncol(Ab)]
+    if (abs(Ab[i, k]) < tolerancia) Ab[i, k] <- 0
+  }
+  return(Ab)
+}
+```
+Ejemplo:
+```{r}
+A <- matrix(c(2, -1, 1,
+              1,  3, 2,
+              1, -1, 2), nrow = 3, byrow = TRUE)
+b <- c(8, 13, 3)
+tolerancia <- 1e-10
+Ab <- cbind(A, b)
+
+m <- Ab[2,1] / Ab[1,1]
+Ab[2, ] <- Ab[2, ] - m * Ab[1, ]
+m <- Ab[3,1] / Ab[1,1]
+Ab[3, ] <- Ab[3, ] - m * Ab[1, ]
+
+k <- 2
+# Selección del pivote en columna 2 desde fila 2
+max_row <- which.max(abs(Ab[k:3, k])) + (k - 1) 
+if (abs(Ab[max_row, k]) < tolerancia) stop("Pivote casi nulo en columna 2")
+
+# Intercambio de filas si es necesario
+if (max_row != k) {
+  Ab[c(k, max_row), ] <- Ab[c(max_row, k), ]
+  cat(sprintf("Intercambio de fila %d con fila %d\n", k, max_row))
+}
+
+# Eliminación hacia adelante para fila 3
+m <- Ab[3, k] / Ab[2, k]
+Ab[3, ] <- Ab[3, ] - m * Ab[2, ]
+print(Ab)
+```
+## Metodos Interativos
+
+### Gauss-seidel
+#### Ejercicio
+```{r}
+gauss_seidel <- function(A, b, x0 = NULL, tol = 1e-8, maxiter = 1000, verbose = FALSE) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incompatibles.")
+
+  x <- if (is.null(x0)) rep(0, n) else as.numeric(x0)
+  if (length(x) != n) stop("Dimensión de x0 incompatible con A.")
+
+  for (k in 1:maxiter) {
+    x_old <- x
+
+    for (i in 1:n) {
+      aii <- A[i, i]
+      if (abs(aii) < .Machine$double.eps) {
+        stop(sprintf("A[%d, %d] = 0: Gauss–Seidel no se puede aplicar", i, i))
+      }
+      s1 <- if (i > 1) sum(A[i, 1:(i - 1)] * x[1:(i - 1)]) else 0
+      s2 <- if (i < n) sum(A[i, (i + 1):n] * x_old[(i + 1):n]) else 0
+      x[i] <- (b[i] - s1 - s2) / aii
+    }
+
+    dx <- sqrt(sum((x - x_old)^2))
+    res <- sqrt(sum((b - A %*% x)^2))
+
+    cat(sprintf("Iter %4d |dx|= %.3e |res|= %.3e x= %s\n", k, dx, res, paste(round(x, 6), collapse = " ")))
+
+    if (dx < tol && res < tol) {
+      return(list(x = as.vector(x), iter = k, convergencia = TRUE, delta = dx, residuo = res))
+    }
+  }
+
+  list(x = as.vector(x), iter = maxiter, convergencia = FALSE,
+       delta = sqrt(sum((x - x)^2)), residuo = sqrt(sum((b - A %*% x)^2)))
+}
+```
+##### Paso 1
+```{r}
+gauss_seidel <- function(A, b, x0 = NULL, tol = 1e-8, maxiter = 1000, verbose = FALSE) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incompatibles.")
+
+  x <- if (is.null(x0)) rep(0, n) else as.numeric(x0)
+  if (length(x) != n) stop("Dimensión de x0 incompatible con A.")
+
+  for (k in 1:maxiter) {
+    x_old <- x
+
+    for (i in 1:n) {
+      aii <- A[i, i]
+      if (abs(aii) < .Machine$double.eps) {
+        stop(sprintf("A[%d, %d] = 0: Gauss–Seidel no se puede aplicar", i, i))
+      }
+      s1 <- if (i > 1) sum(A[i, 1:(i - 1)] * x[1:(i - 1)]) else 0
+      s2 <- if (i < n) sum(A[i, (i + 1):n] * x_old[(i + 1):n]) else 0
+      x[i] <- (b[i] - s1 - s2) / aii
+    }
+
+    dx <- sqrt(sum((x - x_old)^2))
+    res <- sqrt(sum((b - A %*% x)^2))
+
+    cat(sprintf("Iter %4d |dx|= %.3e |res|= %.3e x= %s\n", k, dx, res, paste(round(x, 6), collapse = " ")))
+
+    if (dx < tol && res < tol) {
+      return(list(x = as.vector(x), iter = k, convergencia = TRUE, delta = dx, residuo = res))
+    }
+  }
+
+  list(x = as.vector(x), iter = maxiter, convergencia = FALSE,
+       delta = sqrt(sum((x - x)^2)), residuo = sqrt(sum((b - A %*% x)^2)))
+}
+
+```
+Ejemplo (10 interaciones)
+```{r}
+A <- matrix(c(
+  4, 1, 1,
+  1, 3, 1,
+  1, 1, 5
+), nrow = 3, byrow = TRUE)
+
+b <- c(7, -8, 6)
+resultado <- gauss_seidel(A, b, maxiter = 30)
+```
+
+### Gauss-Jacobi
+#### Ejercicio
+```{r}
+jacobi <- function(A, b, x0 = NULL, tol = 1e-8, maxiter = 1000) {
+if (!is.matrix(A)) stop("A debe ser una matriz.")
+n <- nrow(A)
+if (ncol(A) != n) stop("A debe ser cuadrada.")
+if (length(b) != n) stop("Dimensiones de b incompatibles.")
+if (is.null(x0)) x0 <- rep(0, n)
+x <- x0; D <- diag(diag(A)); R <- A - D;
+for (k in 1:maxiter) {
+x_new <- (b - R %* % x) / diag(D)
+cat(sprintf("Iter %d: %s\n", k, paste(round(x_new, 6), collapse = " ")))
+if (sqrt(sum((x_new - x)^2)) < tol) {return(list(x = as.vector(x_new), iter = k, convergencia = TRUE))}
+x <- x_new
+}
+list(x = as.vector(x), iter = maxiter, convergencia = FALSE)
+}
+```
+##### Paso 1
+```{r}
+jacobi <- function(A, b, x0 = NULL, tol = 1e-8, maxiter = 15) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incompatibles.")
+  if (is.null(x0)) x0 <- rep(0, n)
+  
+  x <- x0
+  D <- diag(diag(A))
+  R <- A - D
+  
+  for (k in 1:maxiter) {
+    x_new <- (b - R %*% x) / diag(D)
+    cat(sprintf("Iter %2d: %s\n", k, paste(round(x_new, 6), collapse = " ")))
+    
+    if (sqrt(sum((x_new - x)^2)) < tol) {
+      return(list(x = as.vector(x_new), iter = k, convergencia = TRUE))
+    }
+    
+    x <- x_new
+  }
+  
+  list(x = as.vector(x), iter = maxiter, convergencia = FALSE)
+}
+```
+Ejemplo (15 interaciones)
+```{r}
+A <- matrix(c(
+  10, 2, -1,
+  -3, -6, 2,
+  1, 1, 5
+), nrow = 3, byrow = TRUE)
+
+b <- c(27, -61.5, -21.5)
+resultado <- jacobi(A, b, maxiter = 15)
+
+```
+# Raices de funciones
+## Método de la bicceción
+```{r}
+A <- 1
+B <- -6
+C <- 11
+D <- -6
+
+f <- function(x) {
+  A*x^3 + B*x^2 + C*x + D
+}
+
+a1 <- 0
+b1 <- 2.5
+
+c1 <- (a1 + b1)/2
+fa1 <- f(a1)
+fb1 <- f(b1)
+fc1 <- f(c1)
+s1a <- sign(fa1 * fc1)
+s1b <- sign(fb1 * fc1)
+e1 <- (b1 - a1)/2
+a2 <- if (fa1 * fc1 < 0) a1 else c1
+b2 <- if (fa1 * fc1 < 0) c1 else b1
+
+c2 <- (a2 + b2)/2
+fa2 <- f(a2)
+fb2 <- f(b2)
+fc2 <- f(c2)
+s2a <- sign(fa2 * fc2)
+s2b <- sign(fb2 * fc2)
+e2 <- (b2 - a2)/2
+a3 <- if (fa2 * fc2 < 0) a2 else c2
+b3 <- if (fa2 * fc2 < 0) c2 else b2
+
+c3 <- (a3 + b3)/2
+fa3 <- f(a3)
+fb3 <- f(b3)
+fc3 <- f(c3)
+s3a <- sign(fa3 * fc3)
+s3b <- sign(fb3 * fc3)
+e3 <- (b3 - a3)/2
+a4 <- if (fa3 * fc3 < 0) a3 else c3
+b4 <- if (fa3 * fc3 < 0) c3 else b3
+
+c4 <- (a4 + b4)/2
+fa4 <- f(a4)
+fb4 <- f(b4)
+fc4 <- f(c4)
+s4a <- sign(fa4 * fc4)
+s4b <- sign(fb4 * fc4)
+e4 <- (b4 - a4)/2
+a5 <- if (fa4 * fc4 < 0) a4 else c4
+b5 <- if (fa4 * fc4 < 0) c4 else b4
+
+c5 <- (a5 + b5)/2
+fa5 <- f(a5)
+fb5 <- f(b5)
+fc5 <- f(c5)
+s5a <- sign(fa5 * fc5)
+s5b <- sign(fb5 * fc5)
+e5 <- (b5 - a5)/2
+a6 <- if (fa5 * fc5 < 0) a5 else c5
+b6 <- if (fa5 * fc5 < 0) c5 else b5
+
+c6 <- (a6 + b6)/2
+fa6 <- f(a6)
+fb6 <- f(b6)
+fc6 <- f(c6)
+s6a <- sign(fa6 * fc6)
+s6b <- sign(fb6 * fc6)
+e6 <- (b6 - a6)/2
+
+raiz_aprox <- c6
+error_cota <- e6
+
+cat("Raíz aproximada (6 iteraciones):", raiz_aprox, "\n")
+cat("Cota máxima del error:", error_cota, "\n\n")
+
+iter <- 1:6
+Acol <- c(a1,a2,a3,a4,a5,a6)
+Bcol <- c(b1,b2,b3,b4,b5,b6)
+Ccol <- c(c1,c2,c3,c4,c5,c6)
+FA <- c(fa1,fa2,fa3,fa4,fa5,fa6)
+FB <- c(fb1,fb2,fb3,fb4,fb5,fb6)
+FC <- c(fc1,fc2,fc3,fc4,fc5,fc6)
+signFAFC <- c(s1a,s2a,s3a,s4a,s5a,s6a)
+signFBFC <- c(s1b,s2b,s3b,s4b,s5b,s6b)
+ERR <- c(e1,e2,e3,e4,e5,e6)
+
+TAB <- data.frame(
+  iter,
+  a = Acol,
+  b = Bcol,
+  c = Ccol,
+  fa = FA,
+  fb = FB,
+  fc = FC,
+  sign_fa_fc = signFAFC,
+  sign_fb_fc = signFBFC,
+  error = ERR
+)
+
+print(round(TAB, 6))
+
+```
+## Método de la secante
+```{r}
+f <- function(x) {
+  cos(x) - x
+}
+
+x0 <- 0
+x1 <- 1
+
+f0 <- f(x0)
+f1 <- f(x1)
+
+x2 <- x1 - f1*(x1 - x0)/(f1 - f0)
+f2 <- f(x2)
+e1 <- abs(x2 - x1)
+
+x3 <- x2 - f2*(x2 - x1)/(f2 - f1)
+f3 <- f(x3)
+e2 <- abs(x3 - x2)
+
+x4 <- x3 - f3*(x3 - x2)/(f3 - f2)
+f4 <- f(x4)
+e3 <- abs(x4 - x3)
+
+x5 <- x4 - f4*(x4 - x3)/(f4 - f3)
+f5 <- f(x5)
+e4 <- abs(x5 - x4)
+
+x6 <- x5 - f5*(x5 - x4)/(f5 - f4)
+f6 <- f(x6)
+e5 <- abs(x6 - x5)
+
+x7 <- x6 - f6*(x6 - x5)/(f6 - f5)
+f7 <- f(x7)
+e6 <- abs(x7 - x6)
+
+raiz_aprox <- x7
+error_cota <- e6
+
+cat("Raíz aproximada (6 iteraciones):", raiz_aprox, "\n")
+cat("Cota máxima del error:", error_cota, "\n\n")
+
+iter <- 1:6
+Xn_1 <- c(x0, x1, x2, x3, x4, x5)
+Xn   <- c(x1, x2, x3, x4, x5, x6)
+Xn1  <- c(x2, x3, x4, x5, x6, x7)
+Fn_1 <- c(f0, f1, f2, f3, f4, f5)
+Fn   <- c(f1, f2, f3, f4, f5, f6)
+Fn1  <- c(f2, f3, f4, f5, f6, f7)
+ERR  <- c(e1, e2, e3, e4, e5, e6)
+
+TAB <- data.frame(
+  iter,
+  x_prev = Xn_1,
+  x_curr = Xn,
+  x_next = Xn1,
+  f_prev = Fn_1,
+  f_curr = Fn,
+  f_next = Fn1,
+  error = ERR
+)
+
+print(round(TAB, 6))
+```
+##  Método de Newton-Raphson
+```{r}
+f <- function(x) {
+  exp(-x) - x
+}
+
+fp <- function(x) {
+  -exp(-x) - 1
+}
+
+x1 <- 0.5
+f1 <- f(x1)
+fp1 <- fp(x1)
+
+x2 <- x1 - f1/fp1
+f2 <- f(x2)
+fp2 <- fp(x2)
+e1 <- abs(x2 - x1)
+
+x3 <- x2 - f2/fp2
+f3 <- f(x3)
+fp3 <- fp(x3)
+e2 <- abs(x3 - x2)
+
+x4 <- x3 - f3/fp3
+f4 <- f(x4)
+fp4 <- fp(x4)
+e3 <- abs(x4 - x3)
+
+x5 <- x4 - f4/fp4
+f5 <- f(x5)
+fp5 <- fp(x5)
+e4 <- abs(x5 - x4)
+
+x6 <- x5 - f5/fp5
+f6 <- f(x6)
+fp6 <- fp(x6)
+e5 <- abs(x6 - x5)
+
+x7 <- x6 - f6/fp6
+f7 <- f(x7)
+fp7 <- fp(x7)
+e6 <- abs(x7 - x6)
+
+raiz_aprox <- x7
+error_cota <- e6
+
+cat("Raíz aproximada (6 iteraciones):", raiz_aprox, "\n")
+cat("Cota máxima del error:", error_cota, "\n\n")
+
+iter <- 1:6
+Xn   <- c(x1, x2, x3, x4, x5, x6)
+Xn1  <- c(x2, x3, x4, x5, x6, x7)
+Fn   <- c(f1, f2, f3, f4, f5, f6)
+Fn1  <- c(f2, f3, f4, f5, f6, f7)
+ERR  <- c(e1, e2, e3, e4, e5, e6)
+
+TAB <- data.frame(
+  iter,
+  x_n = Xn,
+  x_next = Xn1,
+  f_xn = Fn,
+  f_xnext = Fn1,
+  error = ERR
+)
+
+print(round(TAB, 6))
+
+```
+## Método del punto fijo
+```{r}
+g <- function(x) {
+  (2 - 2*x)^(1/3)
+}
+
+x1 <- 0.5
+x2 <- g(x1)
+e1 <- abs(x2 - x1)
+
+x3 <- g(x2)
+e2 <- abs(x3 - x2)
+
+x4 <- g(x3)
+e3 <- abs(x4 - x3)
+
+x5 <- g(x4)
+e4 <- abs(x5 - x4)
+
+x6 <- g(x5)
+e5 <- abs(x6 - x5)
+
+x7 <- g(x6)
+e6 <- abs(x7 - x6)
+
+raiz_aprox <- x7
+error_cota <- e6
+
+cat("Raíz aproximada (6 iteraciones):", raiz_aprox, "\n")
+cat("Cota máxima del error:", error_cota, "\n\n")
+
+iter <- 1:6
+Xn <- c(x1, x2, x3, x4, x5, x6)
+Xn1 <- c(x2, x3, x4, x5, x6, x7)
+ERR <- c(e1, e2, e3, e4, e5, e6)
+
+TAB <- data.frame(
+  iter,
+  x_n = Xn,
+  x_next = Xn1,
+  error = ERR
+)
+
+print(round(TAB, 6))
+```
+# Solucion numerica de ecuaciones diferenciales
+## Interpolación polinomial global (método de Lagrange)
+```{r}
+# Interpolación polinomial resolviendo el sistema lineal
+interp_poly <- function(x, y) {
+  n <- length(x)
+  
+  # Matriz de Vandermonde
+  A <- outer(x, 0:(n-1), `^`)
+  
+  # Coeficientes del polinomio
+  coef <- solve(A, y)
+  
+  # Función evaluadora del polinomio
+  poly_fun <- function(x_eval) {
+    sapply(x_eval, function(x0) sum(coef * x0^(0:(n-1))))
+  }
+  
+  return(list(coef = coef, f = poly_fun))
+}
+
+# Ejemplo
+x <- c(1, 2, 3, 4)
+y <- c(3, 6, 2, 5)
+
+model <- interp_poly(x, y)
+x_eval <- seq(1, 4, length.out = 200)
+y_eval <- model$f(x_eval)
+
+plot(x, y, pch = 19, col = "red")
+lines(x_eval, y_eval, col = "blue", lwd = 2)
+```
+
+## Enfoques de vandermonde y newton (formulas de error)
+
+```{r}
+# --- Interpolación polinomial usando matriz de Vandermonde ---
+vandermonde_interp <- function(x, y) {
+  n <- length(x)
+  
+  # Construcción de la matriz de Vandermonde (A[i,j] = x[i]^(j-1))
+  V <- outer(x, 0:(n-1), `^`)
+  
+  # Resolver sistema lineal V * coef = y
+  coef <- solve(V, y)
+  
+  # Función evaluadora del polinomio
+  poly_eval <- function(x_eval) {
+    sapply(x_eval, function(t) sum(coef * t^(0:(n-1))))
+  }
+  
+  return(list(coef = coef, eval = poly_eval))
+}
+
+# --- Fórmula del error (producto del término nodal) ---
+error_term <- function(x_eval, x_nodes, f_n_deriv_est) {
+  n <- length(x_nodes)
+  prod_term <- sapply(x_eval, function(t) prod(t - x_nodes))
+  return( f_n_deriv_est / factorial(n) * prod_term )
+}
+
+# Ejemplo:
+x <- c(1, 2, 3, 4)
+y <- c(3, 6, 2, 5)
+
+model <- vandermonde_interp(x, y)
+
+x_eval <- seq(1, 4, length.out = 200)
+
+y_interp <- model$eval(x_eval)
+
+# SUPONIENDO un estimado de la derivada n-esima
+f_n_est <- 10  # Ajustable según la función real
+
+err <- error_term(x_eval, x, f_n_est)
+
+plot(x, y, pch = 19, col = "red", main = "Interpolación (Vandermonde)")
+lines(x_eval, y_interp, col = "blue", lwd = 2)
+lines(x_eval, y_interp + err, col = "orange", lty = 2)
+
+# --- Diferencias divididas ---
+divided_differences <- function(x, y) {
+  n <- length(x)
+  table <- matrix(0, n, n)
+  table[,1] <- y
+  
+  for (j in 2:n) {
+    for (i in 1:(n-j+1)) {
+      table[i,j] <- (table[i+1,j-1] - table[i,j-1]) / (x[i+j-1] - x[i])
+    }
+  }
+  
+  return(table[1,])  # coeficientes de Newton
+}
+
+# --- Evaluación del polinomio de Newton ---
+newton_eval <- function(coef, x_nodes, x_eval) {
+  n <- length(coef)
+  sapply(x_eval, function(t) {
+    val <- coef[n]
+    for (k in (n-1):1) {
+      val <- val * (t - x_nodes[k]) + coef[k]
+    }
+    val
+  })
+}
+
+# --- Error teórico ---
+newton_error <- function(x_eval, x_nodes, f_n_deriv_est) {
+  n <- length(x_nodes)
+  sapply(x_eval, function(t) {
+    prod(t - x_nodes[1:n]) * f_n_deriv_est / factorial(n)
+  })
+}
+
+# Ejemplo:
+x <- c(1, 2, 3, 4)
+y <- c(3, 6, 2, 5)
+
+coef_newton <- divided_differences(x, y)
+
+x_eval <- seq(1, 4, length.out = 200)
+y_newton <- newton_eval(coef_newton, x, x_eval)
+
+f_n_est <- 10  # estimación de la derivada n-esima
+err_newton <- newton_error(x_eval, x, f_n_est)
+
+plot(x, y, col="red", pch=19,
+     main="Interpolación de Newton con errores")
+lines(x_eval, y_newton, col="blue", lwd=2)
+lines(x_eval, y_newton + err_newton, col="orange", lty=2)
+```
+
+## Interpolación lineal por trozos
+
+```{r}
+# --- Interpolación lineal por trozos ---
+interp_lineal_trozos <- function(x, y, x_eval) {
+  n <- length(x)
+  y_eval <- numeric(length(x_eval))
+  
+  for (k in seq_along(x_eval)) {
+    xs <- x_eval[k]
+    
+    # Encontrar intervalo [x_i, x_{i+1}]
+    if (xs <= x[1]) {
+      i <- 1
+    } else if (xs >= x[n]) {
+      i <- n - 1
+    } else {
+      i <- max(which(x <= xs))
+    }
+    
+    # Pendiente del segmento
+    m <- (y[i+1] - y[i]) / (x[i+1] - x[i])
+    
+    # Interpolación lineal
+    y_eval[k] <- y[i] + m * (xs - x[i])
+  }
+  
+  return(y_eval)
+}
+# Datos de ejemplo
+x <- c(1, 2, 4, 5, 7)
+y <- c(3, 6, 2, 5, 4)
+
+# Puntos para evaluar la interpolación
+x_eval <- seq(1, 7, length.out = 200)
+
+# Interpolación lineal por trozos
+y_interp <- interp_lineal_trozos(x, y, x_eval)
+
+# Gráfico
+plot(x, y, pch = 19, col = "red",
+     main = "Interpolación Lineal por Trozos",
+     xlab = "x", ylab = "y")
+lines(x_eval, y_interp, col = "blue", lwd = 2)
+```
+
+# Resolucion numerica de ecuaciones y sistemas de ecuaciones diferenciales ordinarias
+## Metodo de Euler (Analisis de error)
+
+```{r}
+# -----------------------------------------
+# Método de Euler para EDO y' = f(t, y)
+# -----------------------------------------
+euler <- function(f, t0, y0, h, N) {
+  t <- numeric(N + 1)
+  y <- numeric(N + 1)
+  
+  t[1] <- t0
+  y[1] <- y0
+  
+  for (n in 1:N) {
+    y[n + 1] <- y[n] + h * f(t[n], y[n])
+    t[n + 1] <- t[n] + h
+  }
+  
+  return(data.frame(t = t, y = y))
+}
+# Ejemplo:
+# Definición de la función f(t,y)
+f <- function(t, y) {
+  y - t^2 + 1
+}
+
+# Parámetros del método
+t0 <- 0
+y0 <- 0.5
+h  <- 0.1
+N  <- 20    # número de pasos
+
+# Llamada al método
+resultado <- euler(f, t0, y0, h, N)
+
+print(resultado)
+plot(resultado$t, resultado$y, type = "o", pch = 19, col = "blue",
+     main = "Método de Euler",
+     xlab = "t", ylab = "y(t)")
+```
+
+## Metodos de Runge-Kutta para ecuaciones y sistemas
+### Método de Runge–Kutta 4 (RK4) para una EDO
+
+```{r}
+# -----------------------------------------
+# Método de Runge-Kutta 4 para y' = f(t, y)
+# -----------------------------------------
+rk4 <- function(f, t0, y0, h, N) {
+  t <- numeric(N + 1)
+  y <- numeric(N + 1)
+  
+  t[1] <- t0
+  y[1] <- y0
+  
+  for (n in 1:N) {
+    k1 <- f(t[n], y[n])
+    k2 <- f(t[n] + h/2, y[n] + h*k1/2)
+    k3 <- f(t[n] + h/2, y[n] + h*k2/2)
+    k4 <- f(t[n] + h,   y[n] + h*k3)
+    
+    y[n+1] <- y[n] + h/6 * (k1 + 2*k2 + 2*k3 + k4)
+    t[n+1] <- t[n] + h
+  }
+  
+  return(data.frame(t = t, y = y))
+}
+#Ejemplo:
+f <- function(t, y) {
+  y - t^2 + 1
+}
+
+sol <- rk4(f, t0 = 0, y0 = 0.5, h = 0.1, N = 20)
+
+print(sol)
+
+plot(sol$t, sol$y, type="o", pch=19, col="blue",
+     main="Método de Runge–Kutta 4 (EDO)",
+     xlab="t", ylab="y(t)")
+
+```
+
+### Método de Runge–Kutta 4 para sistemas de EDO
+```{r}
+# ------------------------------------------------------
+# Método de Runge-Kutta 4 para sistemas: dy/dt = f(t, y)
+# y es un vector, f retorna un vector del mismo tamaño
+# ------------------------------------------------------
+rk4_system <- function(f, t0, y0, h, N) {
+  m <- length(y0)
+  t <- numeric(N + 1)
+  y <- matrix(0, nrow = N + 1, ncol = m)
+  
+  t[1] <- t0
+  y[1, ] <- y0
+  
+  for (n in 1:N) {
+    k1 <- f(t[n],         y[n, ])
+    k2 <- f(t[n] + h/2,   y[n, ] + h*k1/2)
+    k3 <- f(t[n] + h/2,   y[n, ] + h*k2/2)
+    k4 <- f(t[n] + h,     y[n, ] + h*k3)
+    
+    y[n+1, ] <- y[n, ] + h/6 * (k1 + 2*k2 + 2*k3 + k4)
+    t[n+1]   <- t[n] + h
+  }
+  
+  return(list(t = t, y = y))
+}
+#Ejemlo: Osilador armonico (osila como un seno/coseno)
+f_sys <- function(t, y) {
+  dy1 <- y[2]
+  dy2 <- -y[1]
+  return(c(dy1, dy2))
+}
+
+sol_sys <- rk4_system(f_sys, t0 = 0, y0 = c(1, 0), h = 0.05, N = 200)
+
+plot(sol_sys$t, sol_sys$y[,1], type="l", col="blue", lwd=2,
+     main="Sistema resuelto con RK4",
+     xlab="t", ylab="y1(t)")
+
+lines(sol_sys$t, sol_sys$y[,2], col="red", lwd=2)
+legend("topright", legend=c("y1", "y2"), col=c("blue","red"), lwd=2)
+
+```
+
+# Practicas de laboratorio
+## Sesion 1 (Operadores logicos)
+
+```{r}
+9<6
+19>3
+14<=0
+2>=5
+7!=15
+1==51
+##---- OPERADORES ARITMETICOS ----
+# SUMA, RESTA, MULTIPLICACION, DIVISION, POTENCIA, MODULO, DIVISION ENTERA
+19+10
+23-6
+7*58
+45/7
+7^2
+41%/%2
+41%%2
+##---- LOGARITMOS Y EXPONENCIALES ----
+log(1)
+log(12)
+log(12,2)
+exp(12)
+exp(1)
+##---- FUNCIONES TRIGONOMETRICAS ----
+sin(45)
+cos(45)
+tan(45)
+asin(0.96)
+acos(0.97)
+atan(0.45)
+##---- FUNCIONES VARIAS ----
+abs(-34)
+sqrt(8)
+floor(1.56)
+ceiling(1.56)
+max(4,7,2,12)
+min(4,7,2,12)
+sign(-45)
+##---- EJERCICIOS DE PRACTICA ----
+# calcular la expresion cos(pi/6+pi/2)+e^2
+# calcular la expresion cos(pi/6+pi/2)+e^2*log(5)+arc cos(1/raiz(2))
+# introducir las siguientes expresiones: 
+# a) 1/7
+# b) options(digits=3); 1/7
+# c) options(digits=6); 1/7
+# d) round(67.45)
+# e) round(75.324568,2)
+# f) options(digits=7);
+# g) signif(56.345458234234,2)
+# h) signif(56.345458234234)
+# i) exp(-30)
+# j) options(scipen= 999)
+# k) exp(-30)
+# l) options(scipen=0)
+e=2.71
+cos(pi/6+pi/2)+e^2
+cos(pi/6 + pi/2) + (exp(1))^2 * log(5) + acos(1 / sqrt(2))
+1/7
+options(digits=3); 1/7
+options(digits=6); 1/7
+round(67.45)
+round(75.324568,2)
+options(digits=7);
+signif(56.345458234234,2)
+signif(56.345458234234)
+exp(-30)
+options(scipen= 999)
+exp(-30)
+options(scipen=0)
+```
+## Sesion 2 (Defifición de constantes)
+```{r}
+##---- TRABAJO EN CLASE-----
+a <- 12
+b <- 8
+c <- 16
+
+# Discriminante
+raiz <- b^2 - (4*a*c)
+
+# Valor absoluto del discriminante
+disc <- abs(raiz)
+
+# Texto para mostrar
+txt <- "El valor del discriminante es: "
+
+# Imprimir discriminante
+cat(txt, raiz, "\n")    # Usar "\n" para salto de línea
+cat(txt, disc, "\n")    # Valor absoluto
+
+# Usando paste y paste0
+paste(txt, disc)
+paste0(txt, disc)
+
+##---- CONCATENAR Y PEGAR EXPRESIONES ----
+x0 <- 1
+txt <- "El valor de x0 es:"
+cat(txt, x0, "\n")
+paste(txt, x0)
+paste0(txt, x0)
+
+##---- ASIGNACION E IMPRESION ----
+x1 <- x0 - pi*x0 + 1
+cat("x1 =", x1, "\n")
+x1_2 <- x1^2
+x1_3 <- x1^3
+
+texto1 <- "El valor al cuadrado es:"
+texto2 <- "El valor al cubo es:"
+paste(texto1, x1_2, texto2, x1_3)
+
+##---- LISTADO DE OBJETOS DEFINIDOS ----
+ls()
+
+# Si x2 no está definido aún, hay que definirlo para evitar error
+x2 <- 2   # Ejemplo
+cat("x1 es ", x1, "\n", "x2 es ", x2, "\n")
+
+# Eliminar todos los objetos
+rm(list=ls())
+ls()  # Debe mostrar vacío
+
+##---- IMPRIMIR PEGAR AVANZADO ----
+x0 <- 1
+x1 <- x0 - pi*x0 + 1
+cat("x0 =", x0, "\n", "x1 =", x1, "\n") 
+
+##---- FUNCIONES TRIGONOMETRICAS ----
+a <- 5
+b <- 9
+c <- 7
+
+x <- 90 # grados
+y <- 60 # grados
+z <- 30 # grados
+
+# Valores de seno, coseno, tangente (nota: R usa radianes en funciones trig)
+sen_x <- sin(x * pi/180)  # convertir a radianes
+cos_y <- cos(y * pi/180)
+tan_z <- tan(z * pi/180)
+
+# Mostrar resultados
+cat("sen(x) =", sen_x, "\n", "cos(y) =", cos_y, "\n", "tan(z) =", tan_z, "\n")
+
+```
+## Sesion 3 (Semillas)
+```{r}
+x1 <- 1:20
+(x1)
+
+x2 <- seq(1,20,by=0.1)
+(x2)
+
+x3 <- seq(20,1,by=-0.1)
+(x3)
+
+x4 <- rep(1,times=10)
+(x4)
+
+#Fijamos la semilla para generar numeros aleatorios
+set.seed(123)
+x <- runif(20,-1,1)
+(x)
+xx <- 100*x;(xx)
+
+#Redondeamos a 3 sifras significativas
+x_red2 <- round(xx,2);(x_red2)
+x_red3 <- round(xx,3);(x_red3)
+
+#Generamos una nueva variable con 5000 datos, con una distribucion uniforme entre 10 y 1, 3 cifras significativas, posteriormente obtendremos una muestra de tamaño 500 con el comando sample(datos_origen,tamaño_de_la_muestra), y se almacenaran en la avariable muestra_1:
+nx <- runif(5000,-10,10);(nx)
+head(nx,10)
+tail(nx,10)
+
+nx_red <- round(nx,3)
+head(nx_red,10)
+tail(nx_red,10)
+
+muestra1 <- sample(nx_red,500);
+head(muestra1,10)
+tail(muestra1,10)
+
+muestra2 <- abs(muestra1);
+head(muestra2,15)
+tail(muestra2,15)
+```
+
+## Sesion 4 (Eliminacion gaussiana simple y con pivoteo parcial)
+
+```{r}
+#Generamos las MatriZ A y b
+A = matrix(c(1, 3, -2, 1,4, -1, 2, 0,-1, 4, 2, 6,1, 2, -1, 4), nrow = 4,byrow = TRUE)
+(A)
+b = matrix(c(1, 5, 3, 4),nrow = 4, byrow = TRUE)
+(b)
+Ab <- cbind(A,b); (Ab)
+# Paso 1: Eliminación Gaussiana
+
+l21 = A[2,1]/A[1,1]
+l31 = A[3,1]/A[1,1]
+l41 = A[4,1]/A[1,1]
+
+A[2,] = A[2,] - l21*A[1,]
+A[3,] = A[3,] - l31*A[1,]
+A[4,] = A[4,] - l41*A[1,]
+
+b[2] = b[2] - l21*b[1]
+b[3] = b[3] - l31*b[1]
+b[4] = b[4] - l41*b[1]
+(A)
+
+# Intercambio de filas
+temp = A[2,]; A[2,] = A[3,]; A[3,] = temp
+tmp_b = b[2]; b[2] = b[3]; b[3] = tmp_b
+
+l32 = A[3,2]/A[2,2]
+l42 = A[4,2]/A[2,2]
+
+A[3,] = A[3,] - l32*A[2,]
+A[4,] = A[4,] - l42*A[2,]
+
+b[3] = b[3] - l32*b[2]
+b[4] = b[4] - l42*b[2]
+(A)
+
+# Escalamiento si es necesario
+A[3,] = A[3,] / A[3,3]
+b[3] = b[3] / A[3,3]
+
+l43 = A[4,3]/A[3,3]
+A[4,] = A[4,] - l43*A[3,]
+b[4] = b[4] - l43*b[3]
+(A)
+
+# Paso 2: Sustitución hacia atrás
+
+x4 = b[4] / A[4,4]
+cat("x4 =", x4, "\n")
+
+x3 = (b[3] - A[3,4]*x4) / A[3,3]
+cat("x3 =", x3, "\n")
+
+x2 = (b[2] - A[2,4]*x4 - A[2,3]*x3) / A[2,2]
+cat("x2 =", x2, "\n")
+
+x1 = (b[1] - A[1,4]*x4 - A[1,3]*x3 - A[1,2]*x2) / A[1,1]
+cat("x1 =", x1, "\n")
+```
+
+Eliminacion Gaussiana con pivoteo Parcial
+
+```{r}
+# Matriz de coeficientes A
+A = matrix(c(
+  1, 3, -2, 1,
+  4, -1, 2, 0,
+  -1, 4, 2, 6,
+  1, 2, -1, 4
+), nrow = 4, byrow = TRUE)
+(A)
+
+# Vector de términos independientes
+b = c(1, 5, 3, 4)
+
+n = nrow(A)  # número de ecuaciones
+(b)
+# Eliminación Gaussiana con pivoteo parcial
+for (k in 1:(n - 1)) {
+  # Pivoteo parcial: encontrar índice de fila con máximo absoluto en columna k desde fila k hacia abajo
+  max_index = which.max(abs(A[k:n, k])) + k - 1
+  
+  # Intercambiar filas si es necesario
+  if (max_index != k) {
+    A[c(k, max_index), ] = A[c(max_index, k), ]
+    b[c(k, max_index)] = b[c(max_index, k)]
+  }
+  
+  # Eliminación hacia adelante
+  for (i in (k + 1):n) {
+    factor = A[i, k] / A[k, k]
+    A[i, k:n] = A[i, k:n] - factor * A[k, k:n]
+    b[i] = b[i] - factor * b[k]
+  }
+}
+(A)
+# Sustitución hacia atrás
+x4 = b[4] / A[4, 4]
+cat("x4 =", x4, "\n")
+
+x3 = (b[3] - A[3, 4]*x4) / A[3, 3]
+cat("x3 =", x3, "\n")
+
+x2 = (b[2] - A[2, 4]*x4 - A[2, 3]*x3) / A[2, 2]
+cat("x2 =", x2, "\n")
+
+x1 = (b[1] - A[1, 4]*x4 - A[1, 3]*x3 - A[1, 2]*x2) / A[1, 1]
+cat("x1 =", x1, "\n")
+```
+
+## Sesion 5 (inversa de una matriz)
+
+```{r}
+#inversa de una matriz
+A=matrix(c(1,3,-2,1,1,4,-1,2,0,1,-1,4,2,6,1,2),nrow = 4,byrow = TRUE)
+(A)
+Ao=A
+I=diag(4);(I)
+Ai=cbind(A,I);(Ai)
+A=Ai
+l21=A[2,1]/A[1,1];(l21)
+l31=A[3,1]/A[1,1];(l31)
+l41=A[4,1]/A[1,1];(l41)
+A[2,]=A[2,]-l21*A[1,];
+A[3,]=A[3,]-l31*A[1,];
+A[4,]=A[4,]-l41*A[1,];
+(A)
+At=A[2,]
+A[2,]=A[3,]
+A[3,]=At
+(A)
+l32=A[3,2]/A[2,2];(l32)
+l42=A[4,2]/A[2,2];(l42)
+A[3,]=A[3,]-l32*A[2,];
+A[4,]=A[4,]-l42*A[2,];
+(A)
+Ae=1/A[3,3]
+A[3,]=Ae*A[3,]
+(A)
+l43=A[4,3]/A[3,3];(l43)
+A[4,]=A[4,]-l43*A[3,];
+(A)
+Ae=1/A[4,4]
+A[4,]=Ae*A[4,]
+(A)
+l34=A[3,4]/A[4,4];(l34); A[3,]=A[3,]-l34*A[4,]
+l24=A[2,4]/A[4,4];(l24); A[2,]=A[2,]-l24*A[4,]
+l14=A[1,4]/A[4,4];(l14); A[1,]=A[1,]-l14*A[4,]
+(A)
+l23=A[2,3]/A[3,3];(l23); A[2,]=A[2,]-l23*A[3,]
+l13=A[1,3]/A[3,3];(l13); A[1,]=A[1,]-l13*A[3,]
+(A)
+l12=A[1,2]/A[2,2];(l12); A[1,]=A[1,]-l12*A[2,]
+(A)
+Ainversa=A[,5:8];(Ainversa)
+IdCalc=Ao%*%Ainversa; (IdCalc)
+```
+
+## Sesion 6 (Gauss-seidel)
+
+```{r}
+# ---- Matriz y vector ----
+A <- matrix(c(
+  4,-1, 0, 0, 0,
+ -1, 4,-1, 0, 0,
+  0,-1, 4,-1, 0,
+  0, 0,-1, 4,-1,
+  0, 0, 0,-1, 4
+), nrow = 5, byrow = TRUE)
+
+b <- c(1,2,3,4,5)
+
+# ---- Inicialización ----
+x <- rep(0,5)  # x^(0) = (0,0,0,0,0)
+cat("x^(0) =", paste(sprintf("%.8f", x), collapse=", "), "\n")
+
+# ---- Iteraciones Gauss–Seidel ----
+num_iter <- 4  # Número de iteraciones
+
+for (k in 1:num_iter) {
+  x_old <- x
+  cat(sprintf("\nIteración %d\n", k))
+  for (i in 1:5) {
+    s1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0  # suma con x nuevo
+    s2 <- if (i < 5) sum(A[i, (i+1):5] * x_old[(i+1):5]) else 0  # suma con x viejo
+    x[i] <- (b[i] - s1 - s2) / A[i,i]
+    
+    # Mostrar cálculo numérico
+    cat(sprintf("x%d^(%d) = (b[%d] - s1 - s2)/A[%d,%d] = (%.8f - %.8f - %.8f)/%.0f = %.8f\n",
+                i, k, i, i, i, b[i], s1, s2, A[i,i], x[i]))
+  }
+  
+  # Normas
+  r <- b - A %*% x
+  dx_inf <- max(abs(x - x_old))
+  cat(sprintf("x^(%d) = %s\n", k, paste(sprintf("%.8f", x), collapse=", ")))
+  cat(sprintf("||dx||_inf = %.8e | ||r||_inf = %.8e\n", dx_inf, max(abs(r))))
+}
+
+# ---- Solución exacta para comparar ----
+x_exacta <- solve(A, b)
+cat("\nSolución exacta (solve): ", paste(sprintf("%.8f", x_exacta), collapse=", "), "\n")
+```
+
+## Sesion 7 (Calculo de Raices)
+
+```{r}
+# Método de la secante en R con cálculo de error y gráfica
+secante <- function(f, x0, x1, tol = 1e-6, max_iter = 100) {
+  iter <- 0
+  fx0 <- f(x0)
+  fx1 <- f(x1)
+  
+  cat("Iteración\t x\t\t Error\n")
+  
+  repeat {
+    if (fx1 - fx0 == 0) {
+      cat("División por cero en la iteración", iter, "\n")
+      return(NA)
+    }
+    
+    # Nueva aproximación
+    x2 <- x1 - fx1 * (x1 - x0) / (fx1 - fx0)
+    
+    # Calcular error relativo (si no es la primera iteración)
+    error <- abs((x2 - x1) / x2)
+    
+    # Imprimir valores
+    cat(sprintf("%3d\t\t %.10f\t %.10f\n", iter, x2, error))
+    
+    # Verificar criterio de parada
+    if (error < tol || iter >= max_iter) {
+      break
+    }
+    
+    # Actualizar variables
+    x0 <- x1
+    fx0 <- fx1
+    x1 <- x2
+    fx1 <- f(x1)
+    
+    iter <- iter + 1
+  }
+  
+  if (iter == max_iter) {
+    cat("Se alcanzó el número máximo de iteraciones.\n")
+  } else {
+    cat("Raíz aproximada encontrada en x =", x2, "después de", iter, "iteraciones\n")
+  }
+  
+  return(x2)
+}
+
+# Definir la función: f(x) = 2x^3 - 3x^2 - 11x + 6
+f <- function(x) {
+  2*x^3 - 3*x^2 - 11*x + 6
+}
+
+# Ejecutar el método de la secante (puedes cambiar los valores iniciales)
+raiz <- secante(f, x0 = -3, x1 = 0)
+
+# Graficar la función y la raíz
+curve(f, from = -4, to = 4, col = "blue", lwd = 2,
+      ylab = "f(x)", xlab = "x", main = "Método de la Secante con Error por Iteración")
+abline(h = 0, col = "gray")  # Eje X
+points(raiz, f(raiz), col = "red", pch = 19, cex = 1.5)
+text(raiz, f(raiz), labels = paste0("Raíz ≈ ", round(raiz, 5)), pos = 3, col = "red")
+```
+
+## Sesion 8 (Comparacion entre metodos)
+
+```{r}
+# Definir la función
+f <- function(x) cos(x) - x
+
+# Crear un rango de valores para x
+x <- seq(-3, 3, by = 0.01)   # desde -3 hasta 3 con paso 0.01
+
+# Evaluar la función en esos valores
+y <- f(x)
+
+# Graficar
+plot(x, y, type = "l", col = "blue", lwd = 2, 
+     main = "Gráfica de f(x) = cos(x) - 1",
+     xlab = "x", ylab = "f(x)")
+
+# Agregar una línea horizontal en y=0 (para ver las raíces)
+abline(h = 0, col = "black", lty = 2)
+abline(b = 0, col = "black", lty = 2)
+# Método del Punto Fijo 
+
+punto_fijo <- function(g, x0, tol = 1e-6, max_iter = 100) {
+  iter <- 0
+  x <- x0
+  
+  repeat {
+    x_new <- g(x)
+    error <- abs(x_new - x)
+    iter <- iter + 1
+    
+    cat("Iteración:", iter, "\t x =", x_new, "\t Error =", error, "\n")
+    
+    if (error < tol || iter >= max_iter) break
+    x <- x_new
+  }
+  
+  cat("Aproximación final:", x_new, "\n")
+  return(x_new)
+}
+
+# Ejemplo:
+# Supongamos f(x) = cos(x) - x = 0  ⇒  g(x) = cos(x)
+g <- function(x) cos(x)
+punto_fijo(g, x0 = 0.5)
+
+# Método de Newton-Raphson
+
+newton_raphson <- function(f, df, x0, tol = 1e-6, max_iter = 100) {
+  x <- x0
+  
+  for (i in 1:max_iter) {
+    x_new <- x - f(x) / df(x)
+    error <- abs(x_new - x)
+    
+    cat("Iteración:", i, "\t x =", x_new, "\t Error =", error, "\n")
+    
+    if (error < tol) break
+    x <- x_new
+  }
+  
+  cat("Aproximación final:", x_new, "\n")
+  return(x_new)
+}
+
+# Ejemplo:
+# f(x) = cos(x) - x ; df(x) = -sen(x) - 1
+f <- function(x) cos(x) - x
+df <- function(x) -sin(x) - 1
+newton_raphson(f, df, x0 = 1)
+
+# Método de la Secante en R
+
+secante <- function(f, x0, x1, tol = 1e-6, max_iter = 100) {
+  for (i in 1:max_iter) {
+    fx0 <- f(x0)
+    fx1 <- f(x1)
+    
+    x2 <- x1 - fx1 * (x1 - x0) / (fx1 - fx0)
+    error <- abs(x2 - x1)
+    
+    cat("Iteración:", i, "\t x =", x2, "\t Error =", error, "\n")
+    
+    if (error < tol) break
+    
+    x0 <- x1
+    x1 <- x2
+  }
+  
+  cat("Aproximación final:", x2, "\n")
+  return(x2)
+}
+
+# Ejemplo:
+# f(x) = x^2 - 2
+f <- function(x) cos(x) - x
+secante(f, x0 = 1, x1 = 2)
+```
+
+## Sesion 9 (Interpolación de langrange)
+
+```{r}
+# Coordenadas de los puntos
+x <- c(1, 2, 4)
+y <- c(2, 3, 7)
+
+# Crear el gráfico base
+plot(x, y,
+     main = "Rectas entre los puntos P1, P2 y P3",
+     xlab = "Eje X",
+     ylab = "Eje Y",
+     pch = 19,
+     col = "black",
+     xlim = c(0, 5),
+     ylim = c(0, 8))
+
+# Etiquetas de los puntos con coordenadas
+text(x, y,
+     labels = c("P1(1,2)", "P2(2,3)", "P3(4,7)"),
+     pos = 3, col = "red", cex = 1.2)
+
+# --- Función para graficar una recta entre dos puntos ---
+graficar_recta <- function(x1, y1, x2, y2, color = "black", nombre = "") {
+  # Calcular pendiente y ordenada
+  m <- (y2 - y1) / (x2 - x1)
+  b <- y1 - m * x1
+  
+  # Dibujar la recta solo entre los puntos dados
+  curve(m * x + b,
+        from = x1, to = x2,
+        add = TRUE, col = color, lwd = 2, lty = 2)
+  
+  # Mostrar ecuación en el gráfico
+  texto <- sprintf("%s: y = %.3fx + %.3f", nombre, m, b)
+  text(mean(c(x1, x2)), mean(c(y1, y2)) - 0.5, texto, col = color, cex = 1)
+}
+
+# --- Dibujar las tres rectas ---
+graficar_recta(x[1], y[1], x[2], y[2], color = "darkgreen", nombre = "P1-P2")
+graficar_recta(x[2], y[2], x[3], y[3], color = "blue", nombre = "P2-P3")
+graficar_recta(x[1], y[1], x[3], y[3], color = "purple", nombre = "P1-P3")
+
+# Coordenadas de los puntos
+x <- c(1, 2, 4)
+y <- c(2, 3, 7)
+
+# --- Construir la matriz del sistema ---
+# a*x^2 + b*x + c = y
+A <- cbind(x^2, x, 1)
+Ab <- cbind(A, y)   # matriz aumentada
+cat("Matriz aumentada inicial:\n")
+print(round(Ab, 4))
+
+# --- Paso 1: eliminar la primera columna debajo del pivote ---
+Ab[2, ] <- Ab[2, ] - (Ab[2, 1]/Ab[1, 1]) * Ab[1, ]
+Ab[3, ] <- Ab[3, ] - (Ab[3, 1]/Ab[1, 1]) * Ab[1, ]
+cat("\nDespués de eliminar la primera columna:\n")
+print(round(Ab, 4))
+
+# --- Paso 2: eliminar la segunda columna debajo del pivote ---
+Ab[3, ] <- Ab[3, ] - (Ab[3, 2]/Ab[2, 2]) * Ab[2, ]
+cat("\nDespués de eliminar la segunda columna:\n")
+print(round(Ab, 4))
+
+# --- Paso 3: resolver el sistema por sustitución regresiva ---
+# Tercer pivote
+c <- Ab[3, 4] / Ab[3, 3]
+
+# Segundo pivote
+b <- (Ab[2, 4] - Ab[2, 3] * c) / Ab[2, 2]
+
+# Primer pivote
+a <- (Ab[1, 4] - Ab[1, 3] * c - Ab[1, 2] * b) / Ab[1, 1]
+
+coef <- c(a, b, c)
+names(coef) <- c("a", "b", "c")
+cat("\nCoeficientes del polinomio:\n")
+print(round(coef, 4))
+
+# --- Mostrar la ecuación del polinomio ---
+cat("\nPolinomio interpolante:\n")
+cat(sprintf("y = %.3f*x^2 + %.3f*x + %.3f\n", a, b, c))
+
+# --- Graficar la interpolación ---
+plot(x, y, pch=19, col="blue",
+     main="Interpolación cuadrática (Gauss simple)",
+     xlab="X", ylab="Y", xlim=c(0,5), ylim=c(0,8))
+
+# Etiquetas de los puntos
+text(x, y, labels=c("P1","P2","P3"), pos=3, col="red", cex=1.2)
+
+# Generar la curva interpolada
+xg <- seq(1, 4, length.out=100)
+yg <- a*xg^2 + b*xg + c
+lines(xg, yg, col="purple", lwd=2)
+
+```
+# Revision de programas
+
+# Mis notas
+![Gauss Seinel](GaussSeinel.jpeg){width=450}
+![Ejercicio de conversion de base 10 a base 2](Conversionbase10abase2.jpeg){width=450}
+![Ejercicio de conversion de base 10 a base 2](Conversionbase10abase2.jpeg){width=450}
+![Ejercicio de conversion de base 10 a base 2](Conversionbase10abase2.jpeg){width=450}
+
