@@ -1,0 +1,101 @@
+---
+title: "Método de la Secante"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Método de la Secante 
+```{r}
+
+secante <- function(f, x0, x1, tol = 1e-5, max_iter = 10) {
+  iter <- numeric()
+  x_prev <- numeric()
+  x_curr <- numeric()
+  f_curr <- numeric()
+  x_next <- numeric()
+  error <- numeric()
+  
+  for (k in 1:max_iter) {
+    f0 <- f(x0)
+    f1 <- f(x1)
+    x2 <- x1 - f1*(x1 - x0)/(f1 - f0)
+    e <- abs(x2 - x1)
+    
+    iter <- c(iter, k)
+    x_prev <- c(x_prev, x0)
+    x_curr <- c(x_curr, x1)
+    f_curr <- c(f_curr, f1)
+    x_next <- c(x_next, x2)
+    error <- c(error, e)
+    
+    x0 <- x1
+    x1 <- x2
+    
+    if (e < tol) break
+  }
+  
+  resultados <- data.frame(
+    Iter = iter,
+    x_prev = x_prev,
+    x_curr = x_curr,
+    f_xcurr = f_curr,
+    x_next = x_next,
+    error = error
+  )
+  
+  return(resultados)
+}
+
+# Función para graficar las secantes
+graficar_secante <- function(f, tabla, titulo = "Método de la Secante") {
+  plot(NULL, xlim = c(min(tabla$x_prev, tabla$x_curr) - 1, max(tabla$x_prev, tabla$x_curr) + 1),
+       ylim = c(min(tabla$f_xcurr) - 1, max(tabla$f_xcurr) + 1),
+       xlab = "x", ylab = "f(x)", main = titulo)
+  curve(f(x), from = min(tabla$x_prev, tabla$x_curr) - 1, to = max(tabla$x_prev, tabla$x_curr) + 1, add = TRUE, col = "blue")
+  
+  for (i in 1:nrow(tabla)) {
+    segments(tabla$x_prev[i], f(tabla$x_prev[i]), tabla$x_curr[i], f(tabla$x_curr[i]), col = "red")
+    points(tabla$x_next[i], 0, col = "green", pch = 19)
+  }
+}
+
+# Lista de funciones y valores iniciales para los 13 ejercicios
+funciones <- list(
+  function(x) x^2 - 2*x - 3,
+  function(x) x^4 - 10*x^2 + 9,
+  function(x) 2*x^2 - 5*x + 3,
+  function(x) -3*x^2 + 4*x + 2,
+  function(x) x^3 + 4*x^2 - x - 1,
+  function(x) x^4 - 5*x^3 + 6*x^2 + 4*x - 8,
+  function(x) x^4 - 5,
+  function(x) -2*x^4 + 3*x^3 + 7*x^2 - 5*x + 1,
+  function(x) 4*exp(-0.8*x) - 0.5 - 7,
+  function(x) -3*exp(-1.2*x) + 0.4 + 2,
+  function(x) sin(x) - x^3/3,
+  function(x) (3*x + 3.1)*cos(2*x + pi/6),
+  function(x) (-2*x + 1.1)*sin(5*x - pi/3)
+)
+
+valores_iniciales <- list(
+  c(0,3), c(0,2), c(-1,2), c(-1,3), c(-3,1.5),
+  c(0,3), c(1,2), c(2,4), c(0,1.5), c(0,1.1),
+  c(0,1), c(0.3,0.8), c(0.05,0.35)
+)
+
+# Ejecutar el método y graficar para los 13 ejercicios
+resultados_list <- list()
+
+for (i in 1:13) {
+  cat("\n\nEjercicio", i, "\n")
+  res <- secante(funciones[[i]], valores_iniciales[[i]][1], valores_iniciales[[i]][2])
+  print(res)
+  resultados_list[[i]] <- res
+  graficar_secante(funciones[[i]], res, paste("Ejercicio", i))
+}
+
+
+```

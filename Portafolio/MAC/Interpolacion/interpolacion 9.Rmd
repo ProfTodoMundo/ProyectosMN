@@ -1,0 +1,51 @@
+---
+title: "interpolacion ejercicio 9"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ejercicio 9
+```{r}
+x9 <- c(1, 2, 3, 4)
+y9 <- c(2, 5, 10, 17)
+```
+## Diferencias
+```{r}
+dy1 <- diff(y9)
+dy2 <- diff(dy1)
+dy3 <- diff(dy2)
+
+print("Diferencias de primer orden:")
+print(dy1)
+print("Diferencias de segundo orden:")
+print(dy2)
+print("Diferencias de tercer orden:")
+print(dy3)
+```
+
+## Polinomio P(x) = x^2 + 1 (verificado)
+```{r}
+P9 <- function(x) x^2 + 1
+```
+## Evaluación
+```{r}
+x_eval9 <- 2.5
+y_eval9 <- P9(x_eval9)
+print(paste("P(2.5) =", y_eval9))
+```
+## Gráfica
+```{r}
+plot(x9, y9, pch = 19, col = "blue", main = "Ejercicio 9: y = x^2 + 1",
+     xlab = "x", ylab = "f(x)")
+curve(P9(x), add = TRUE, col = "red", lwd = 2)
+points(x_eval9, y_eval9, col = "darkgreen", pch = 17)
+legend("topleft", legend = c("Datos", "Polinomio", "P(2.5)"),
+       col = c("blue", "red", "darkgreen"), pch = c(19, NA, 17), lty = c(NA, 1, NA))
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+

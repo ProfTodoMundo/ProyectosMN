@@ -1,0 +1,3075 @@
+---
+title: "Portafolio Curso de Métodos Numéricos"
+author: "MONSERRATH ANTONIO CORDERO"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 6
+    code_folding: show
+    ##theme: flatly
+    theme: journal
+  word_document: default
+---
+
+# Sistemas de punto flotante
+
+
+```{r}
+## Función para convertir parte entera a binario
+
+decimal_a_binario <- function(num) {
+  parte_entera <- floor(num)
+  parte_decimal <- num - parte_entera
+  
+  bin_entero <- ""
+  if (parte_entera == 0) {
+    bin_entero <- "0"
+  } else {
+    while (parte_entera > 0) {
+      bin_entero <- paste0(parte_entera %% 2, bin_entero)
+      parte_entera <- parte_entera %/% 2
+    }
+  }
+  
+## Parte decimal
+  
+  bin_decimal <- ""
+  count <- 0
+  while (parte_decimal > 0 && count < 8) {
+    parte_decimal <- parte_decimal * 2
+    bit <- floor(parte_decimal)
+    bin_decimal <- paste0(bin_decimal, bit)
+    parte_decimal <- parte_decimal - bit
+    count <- count + 1
+  }
+  
+  if (nchar(bin_decimal) > 0) {
+    return(paste0(bin_entero, ".", bin_decimal))
+  } else {
+    return(bin_entero)
+  }
+}
+
+## EjERCICIOS:
+decimal_a_binario(246)
+decimal_a_binario(345.68)
+decimal_a_binario(4586632.2846)
+decimal_a_binario(984365.27463)
+decimal_a_binario(79905523)
+```
+
+
+
+```{r}
+## Función para redondear a 4 cifras significativas
+round_4sig <- function(x) signif(x, digits = 4)
+
+## Eliminación Gaussiana Simple con redondeo
+gauss_simple <- function(M) {
+  n <- nrow(M)
+  for (k in 1:(n-1)) {
+    for (i in (k+1):n) {
+      factor <- round_4sig(M[i,k] / M[k,k])
+      M[i, k:ncol(M)] <- round_4sig(M[i, k:ncol(M)] - factor * M[k, k:ncol(M)])
+    }
+    cat(sprintf("\nMatriz después de eliminar la columna %d:\n", k))
+    print(M)
+  }
+  return(M)
+}
+
+## Sustitución regresiva con redondeo
+back_substitution <- function(M) {
+  n <- nrow(M)
+  x <- numeric(n)
+  for (i in n:1) {
+    suma <- if (i == n) 0 else sum(M[i, (i+1):n] * x[(i+1):n])
+    x[i] <- round_4sig((M[i, ncol(M)] - suma) / M[i,i])
+  }
+  return(x)
+}
+```
+
+## ---  Ejercicio 1 ---
+
+```{r}
+A1 <- matrix(c(
+  1, -2, 0.5, -5,
+  -2, 5, -1.5, 0,
+  -0.2, 1.75, -1, 10
+), nrow=3, byrow=TRUE)
+
+cat("Ejercicio 1 - Matriz aumentada original:\n")
+print(A1)
+
+M1 <- gauss_simple(A1)
+x1 <- back_substitution(M1)
+
+cat("\nSolución Ejercicio 1:\n")
+for (i in 1:length(x1)) cat(sprintf("x%d = %.4g\n", i, x1[i]))
+```
+
+
+
+## --- Ejercicio 2 ---
+```{r}
+A2 <- matrix(c(
+  0.003000, 59.14, 59.17,
+  5.291, -6.130, 46.78
+), nrow=2, byrow=TRUE)
+
+cat("\nEjercicio 2 - Matriz aumentada original:\n")
+print(A2)
+
+M2 <- gauss_simple(A2)
+x2 <- back_substitution(M2)
+
+cat("\nSolución Ejercicio 2:\n")
+for (i in 1:length(x2)) cat(sprintf("x%d = %.4g\n", i, x2[i]))
+```
+
+
+## --- Ejercicio 3 ---
+
+```{r}
+A3 <- matrix(c(
+  3, -0.1, -0.2, 7.85,
+  0.1, 7, -0.3, -19.3,
+  0.3, -0.2, 10, 71.4
+), nrow=3, byrow=TRUE)
+
+cat("\nEjercicio 3 - Matriz aumentada original:\n")
+print(A3)
+
+M3 <- gauss_simple(A3)
+x3 <- back_substitution(M3)
+
+cat("\nSolución Ejercicio 3:\n")
+for (i in 1:length(x3)) cat(sprintf("x%d = %.4g\n", i, x3[i]))
+```
+
+## --- Ejercicio 4 ---
+```{r}
+A4 <- matrix(c(
+  4, 2, 0, 2,
+  2, 3, 1, -1,
+  0, 1, 2.5, 3
+), nrow = 3, byrow = TRUE)
+
+cat("\nEjercicio 4 - Matriz aumentada original:\n")
+print(A4)
+
+M4 <- gauss_simple(A4)
+x4 <- back_substitution(M4)
+
+cat("\nSolución Ejercicio 4:\n")
+for (i in 1:length(x4)) cat(sprintf("x%d = %.4g\n", i, x4[i]))
+
+```
+
+## --- Ejercicio 5 ---
+
+```{r}
+A5 <- matrix(c(
+  3, -0.1, -0.2, 7.85,
+  0.1, 7, -0.3, -19.3,
+  0.3, -0.2, 10, 71.4
+), nrow = 3, byrow = TRUE)
+
+cat("Ejercicio 5 - Matriz aumentada original:\n")
+print(A5)
+
+M5 <- gauss_simple(A5)
+x5 <- back_substitution(M5)
+
+cat("\nSolución Ejercicio 5:\n")
+for (i in 1:length(x5)) cat(sprintf("x%d = %.4g\n", i, x5[i]))
+
+
+```
+
+## --- Ejercicio 9 ---
+
+```{r}
+A9 <- matrix(c(
+  1.133, 5.281, -2.454, 6.414,
+  24.14, -1.21, 5.281, 113.8,
+  -10.123, 6.387, -1, 1
+), nrow = 3, byrow = TRUE)
+
+cat("Ejercicio 9 - Matriz aumentada original:\n")
+print(A9)
+
+M9 <- gauss_simple(A9)
+x9 <- back_substitution(M9)
+
+cat("\nSolución Ejercicio 9:\n")
+for (i in 1:length(x9)) cat(sprintf("x%d = %.4g\n", i, x9[i]))
+
+```
+
+## --- Ejercicio 10 ---
+
+```{r}
+A10 <- matrix(c(
+  2, 3, 2, 4,
+  4, 10, -4, 0,
+  -3, -2, -5, -2,
+  -2, 4, 4, -7
+), nrow = 4, byrow = TRUE)
+
+b10 <- c(9, -15, 6, 2)
+
+Ab10 <- cbind(A10, b10)
+
+cat("Ejercicio 10 - Matriz aumentada original:\n")
+print(A1)
+
+M10 <- gauss_simple(A10)
+x10 <- back_substitution(M10)
+
+cat("\nSolución Ejercicio 10:\n")
+for (i in 1:length(x10)) cat(sprintf("x%d = %.4g\n", i, x10[i]))
+```
+
+## Observaciones
+
+
+1) Falta historia de los métodos numéricos
+2) Falta resumen/revisión de tipos de errores
+
+# Solución de sistemas de ecuaciones lineales
+
+
+### Gauss simmple
+
+
+### Gauss con pivoteo parcial
+
+```{r}
+gauss_pivoteo_pasos <- function(A) {
+  A <- as.matrix(A)
+  n <- nrow(A)
+  cat("Matriz aumentada inicial:\n")
+  print(round(A, 6)); cat("\n")
+
+  
+  for (i in 1:(n - 1)) {
+    ## Pivoteo parcial
+    max_row <- which.max(abs(A[i:n, i])) + i - 1
+    if (max_row != i) {
+      cat(paste("Intercambio fila", i, "<->", max_row, "\n"))
+      A[c(i, max_row), ] <- A[c(max_row, i), ]
+      print(round(A, 6)); cat("\n")
+    }
+
+    for (j in (i + 1):n) {
+      factor <- A[j, i] / A[i, i]
+      cat(paste("Eliminando A[", j, ",", i, "] con factor =", round(factor, 6), "\n"))
+      A[j, i:ncol(A)] <- A[j, i:ncol(A)] - factor * A[i, i:ncol(A)]
+      print(round(A, 6)); cat("\n")
+    }
+  }
+
+  ## Sustitución regresiva
+  x <- rep(0, n)
+  for (i in n:1) {
+    if (i < n) {
+      suma <- sum(A[i, (i+1):n] * x[(i+1):n])
+    } else {
+      suma <- 0
+    }
+    x[i] <- (A[i, n+1] - suma) / A[i, i]
+  }
+
+  cat("Solución final:\n")
+  print(round(x, 6))
+  return(x)
+}
+
+
+```
+
+## --- EJERCICIO 1 ---
+```{r}
+A1 <- matrix(c(
+  0.4, -1.5,  0.75, -20,
+ -0.5, -15,   10,   -10,
+ -10,  -9,    2.5,   30
+), nrow = 3, byrow = TRUE)
+
+gauss_pivoteo_pasos(A1)
+
+```
+
+## --- EJERCICIO 3 ---
+
+```{r}
+A3 <- matrix(c(
+  0.003, 59.14,   59.17,
+  5.291, -6.13,   46.78
+), nrow = 2, byrow = TRUE)
+
+gauss_pivoteo_pasos(A3)
+```
+
+## --- Ejercicio 5 ---
+
+```{r}
+A5 <- matrix(c(
+  0.00031, 1.000000, 3.000000,
+  1.00045534, 1.00034333, 7.000
+), nrow = 2, byrow = TRUE)
+
+gauss_pivoteo_pasos(A5)
+
+```
+
+## --- Ejercicio 7 ---
+
+
+```{r}
+
+A7 <- matrix(c(
+  1/4, 1/5, 1/6,
+  1/3, 1/4, 1/5,
+  1/2, 1,   2
+), nrow = 3, byrow = TRUE)
+
+b7 <- c(9, 8, 8)
+
+## Matriz aumentada
+Ab7 <- cbind(A7, b7)
+
+gauss_pivoteo_pasos(Ab7)
+
+```
+
+## --- Ejercicio 8 ---
+
+
+```{r}
+A8 <- matrix(c(
+  1,   1/2, 1/3, 1/4, 1/6,
+  1/2, 1/3, 1/4, 1/5, 1/7,
+  1/3, 1/4, 1/5, 1/6, 1/8,
+  1/4, 1/5, 1/6, 1/7, 1/9
+), nrow = 4, byrow = TRUE)
+
+gauss_pivoteo_pasos(A8)
+
+
+```
+
+## --- Ejercicio 9 ---
+
+```{r}
+A9 <- matrix(c(
+  2, 1, -1, 1, -3, 7,
+  1, 0,  2, -1, 1, 2,
+  0, -2, -1, 1, -1, -5,
+  3, 1, -4, 0, 5, 6,
+  1, -1, -1, -1, 1, 3
+), nrow = 5, byrow = TRUE)
+
+gauss_pivoteo_pasos(A9)
+
+
+```
+
+## --- Ejercicio 10 ---
+
+```{r}
+A10 <- matrix(c(
+  3.333, 15920, -10.333, 15913,
+  2.222, 16.71, 9.612,   28.544,
+  1.5611, 5.1791, 1.6852, 8.4254
+), nrow = 3, byrow = TRUE)
+
+gauss_pivoteo_pasos(A10)
+
+```
+
+## Gauss-Jordan
+
+
+
+```{r}
+gauss_jordan_step <- function(A, b) {
+  n <- nrow(A)
+  Ab <- cbind(A, b)
+  
+  cat("Matriz aumentada inicial:\n")
+  print(round(Ab, 4))
+  
+  for (i in 1:n) {
+    ## Si pivote es 0, buscar fila para intercambiar
+    if (Ab[i, i] == 0) {
+      for (k in (i+1):n) {
+        if (Ab[k, i] != 0) {
+          temp <- Ab[i, ]
+          Ab[i, ] <- Ab[k, ]
+          Ab[k, ] <- temp
+          cat("\nIntercambio de filas", i, "y", k, "por pivote 0:\n")
+          print(round(Ab, 4))
+          break
+        }
+      }
+    }
+
+    if (Ab[i, i] == 0) {
+      cat("\nNo se encontró un pivote distinto de cero. El sistema puede no tener solución única.\n")
+      return(rep(NA, n))
+    }
+
+    ## Normalizar la fila
+    pivote <- Ab[i, i]
+    Ab[i, ] <- Ab[i, ] / pivote
+    cat("\nDespués de dividir fila", i, "por pivote", round(pivote, 4), ":\n")
+    print(round(Ab, 4))
+
+    ## Hacer ceros en la columna
+    for (j in 1:n) {
+      if (j != i) {
+        factor <- Ab[j, i]
+        Ab[j, ] <- Ab[j, ] - factor * Ab[i, ]
+      }
+    }
+    cat("\nDespués de hacer ceros en columna", i, ":\n")
+    print(round(Ab, 4))
+  }
+
+  cat("\nSolución encontrada:\n")
+  solution <- Ab[, n + 1]
+  names(solution) <- paste0("x", 1:n)
+  print(round(solution, 4))
+  return(solution)
+}
+
+
+
+```
+
+## --- EJERCICIO 1 ---
+
+```{r}
+A1 <- matrix(c(1, 2, 3,
+               -0.4, 2, -1,
+               0.5, -3, 1), nrow=3, byrow=TRUE)
+b1 <- c(1, 10, 15)
+sol1 <- gauss_jordan_step(A1, b1)
+
+```
+
+## --- EJERCICIO 2 ---
+
+```{r}
+A2 <- matrix(c(2, -0.9, 3,
+               -0.5, 0.1, -1,
+               1, -6.35, -0.45), nrow=3, byrow=TRUE)
+b2 <- c(-3.61, 2.035, 15.401)
+sol2 <- gauss_jordan_step(A2, b2)
+
+```
+
+## --- EJERCICIO 3 ---
+
+```{r}
+A3 <- matrix(c(0.7, 2.7, -6, 0.7,
+               2, -0.8, 3, -1,
+               -1, -1.5, 1.4, 3,
+               0, 7, -1.56, 1), nrow=4, byrow=TRUE)
+b3 <- c(1.6487, -2.342, -4.189, 15.792)
+sol3 <- gauss_jordan_step(A3, b3)
+
+```
+
+
+## --- EJERCICIO 4 ---
+
+```{r}
+A4 <- matrix(c(3, -0.1, -0.2,
+               0.1, 7, -0.3,
+               0.3, -0.2, 10), nrow=3, byrow=TRUE)
+b4 <- c(7.85, -19.3, 71.4)
+sol4 <- gauss_jordan_step(A4, b4)
+
+```
+
+## --- EJERCICIO 6 ---
+
+```{r}
+
+A6 <- matrix(c(1, 3, -2, 1,
+               1, 3, -1, 2,
+               0, 1, -1, 4,
+               2, 6, 1, 2), nrow=4, byrow=TRUE)
+b6 <- c(4, 1, 5, 2)
+sol6 <- gauss_jordan_step(A6, b6)
+
+
+```
+
+## --- EJERCICIO 7 ---
+
+```{r}
+A7 <- matrix(c(6, -1, -1, 4,
+               1, -10, 2, -1,
+               3, -2, 8, -1,
+               1, 1, 1, -5), nrow=4, byrow=TRUE)
+b7 <- c(17, -17, 19, -14)
+sol7 <- gauss_jordan_step(A7, b7)
+
+```
+
+## --- EJERCICIO 10 ---
+
+```{r}
+A10 <- matrix(c(15, -18, 15, -3,
+                -18, 24, -18, 4,
+                15, -18, 18, -3,
+                -3, 4, -3, 1), nrow=4, byrow=TRUE)
+b10 <- c(11, 10, 11, 1)
+sol10 <- gauss_jordan_step(A10, b10)
+
+```
+
+## Gauss-Seidel
+
+
+```{r}
+gauss_seidel <- function(A, b, x0 = rep(0, length(b)), tol = 1e-6, max.iter = 5) {
+  n <- length(b)
+  x <- x0
+  cat("Iteración |", paste0("x", 1:n, collapse = "     "), "\n")
+  cat("--------------------------------------\n")
+  
+  for (k in 1:max.iter) {
+    x_old <- x
+    for (i in 1:n) {
+      s1 <- if (i > 1) sum(A[i, 1:(i - 1)] * x[1:(i - 1)]) else 0
+      s2 <- if (i < n) sum(A[i, (i + 1):n] * x_old[(i + 1):n]) else 0
+      x[i] <- (b[i] - s1 - s2) / A[i, i]
+    }
+    
+    ## Imprimir con 2 cifras significativas
+    cat(sprintf("%5d     |", k), 
+        paste(formatC(x, digits = 2, format = "fg", flag = "##"), collapse = "   "), "\n")
+    
+    ## Verificar convergencia
+    if (sqrt(sum((x - x_old)^2)) < tol) {
+      cat("✅ Convergió en", k, "iteraciones\n\n")
+      return(x)
+    }
+  }
+  cat("No convergió después de", max.iter, "iteraciones\n\n")
+  return(x)
+}
+
+
+```
+
+## --- Ejercicio 1 ---
+
+```{r}
+A1 <- matrix(c(3, -0.2, -0.5,
+               0.1, 7, 0.4,
+               0.4, -0.1, 10), nrow = 3, byrow = TRUE)
+b1 <- c(8, -19.5, 72.4)
+gauss_seidel(A1, b1)
+
+```
+
+## --- Ejercicio 2 ---
+
+```{r}
+A2 <- matrix(c(-5, 1.4, -2.7,
+               0.7, -2.5, 15,
+               3.3, -11, 4.4), nrow = 3, byrow = TRUE)
+b2 <- c(94.2, -6, -27.5)
+gauss_seidel(A2, b2)
+
+
+```
+
+## --- Ejercicio 3 ---
+
+```{r}
+A3 <- matrix(c(3, -0.5, 0.6,
+               0.3, -4, -1,
+               -0.7, 2, 7), nrow = 3, byrow = TRUE)
+b3 <- c(5.24, -0.387, 14.803)
+gauss_seidel(A3, b3)
+
+
+```
+
+## --- Ejercicio 4 ---
+
+```{r}
+A4 <- matrix(c(5, -0.2, 1,
+               0.1, 3, -0.5,
+               -0.3, 1, -7), nrow = 3, byrow = TRUE)
+b4 <- c(1.5, -2.7, 9.5)
+gauss_seidel(A4, b4)
+
+```
+
+## --- Ejercicio 6 ---
+
+```{r}
+A6 <- matrix(c(0.15, 2.11, 30.75,
+               0.64, 1.21, 2.05,
+               3.21, 1.53, 1.04), nrow = 3, byrow = TRUE)
+b6 <- c(-26.38, 1.01, 5.23)
+gauss_seidel(A6, b6)
+
+```
+
+## --- Ejercicio 9 ---
+
+```{r}
+A9 <- matrix(c(3, -0.1, -0.2,
+               0.1, 7, -0.3,
+               0.3, -0.2, 10), nrow = 3, byrow = TRUE)
+b9 <- c(7.85, -19.3, 71.4)
+gauss_seidel(A9, b9)
+
+```
+
+## --- Ejercicio 10 ---
+
+```{r}
+A10 <- matrix(c(17, -2, -3,
+                -5, 21, -2,
+                -5, -5, 22), nrow = 3, byrow = TRUE)
+b10 <- c(500, 200, 30)
+gauss_seidel(A10, b10)
+
+```
+
+## Gauss-Jacobi
+
+
+```{r}
+jacobi <- function(A, b, x_init, tol=1e-6, max_iter=10) {
+  n <- length(b)
+  x_old <- x_init
+  x_new <- numeric(n)
+  iter <- 0
+  error <- tol + 1
+  
+  while (iter < max_iter && error > tol) {
+    for (i in 1:n) {
+      suma <- 0
+      for (j in 1:n) {
+        if (j != i) {
+          suma <- suma + A[i,j] * x_old[j]
+        }
+      }
+      x_new[i] <- (b[i] - suma) / A[i,i]
+    }
+    
+    error <- max(abs(x_new - x_old))
+    iter <- iter + 1
+    
+    cat("Iteración", iter, "\n")
+    cat("x =", round(x_new, 6), "\n")
+    cat("Error =", error, "\n\n")
+    
+    x_old <- x_new
+  }
+  
+  if (error <= tol) {
+    cat("Convergió en", iter, "iteraciones\n")
+  } else {
+    cat("No convergió en", max_iter, "iteraciones\n")
+  }
+  
+  return(x_new)
+}
+
+```
+
+## --- Ejercicio 1 
+
+```{r}
+A1 <- matrix(c(10, 2, -1, 0,
+              1, 20, -2, 3,
+              -2, 1, 30, 0,
+              1, 2, 3, 20), nrow=4, byrow=TRUE)
+
+b1 <- c(26, -15, 53, 47)
+
+x_init1 <- rep(0, 4)
+resultado1 <- jacobi(A1, b1, x_init1)
+cat("Resultado ejercicio 1:\n")
+print(round(resultado1, 6))
+
+ 
+
+```
+
+## --- Ejercicio 3
+
+```{r}
+
+A3 <- matrix(c(8, 2, 3,
+               2, 5, 1,
+              -3, 1, 6), nrow=3, byrow=TRUE)
+b3 <- c(51, 23, 20)
+
+x_init3 <- rep(0, 3)
+resultado3 <- jacobi(A3, b3, x_init3)
+cat("Resultado ejercicio 3:\n")
+print(round(resultado3, 6))
+
+```
+
+## --- Ejercicio 4
+
+```{r}
+
+A4 <- matrix(c(2, -1, 1, 3,
+               2, 2, 2, 2,
+              -1, -1, 2, 2,
+               3, 1, -1, 4), nrow=4, byrow=TRUE)
+b4 <- c(10, 1, -5, 6)
+
+x_init4 <- rep(0, 4)
+resultado4 <- jacobi(A4, b4, x_init4)
+cat("Resultado ejercicio 4:\n")
+print(round(resultado4, 6))
+
+```
+## --- Ejercicio 5
+
+```{r}
+
+A5 <- matrix(c(3, 1, 1, -1,
+               0, 2, 1, 4,
+               1, 1, -1, 9,
+               2, 4, 6, 3), nrow=4, byrow=TRUE)
+b5 <- c(5, 0, 1, 0)
+
+x_init5 <- rep(0, 4)
+resultado5 <- jacobi(A5, b5, x_init5)
+cat("Resultado ejercicio 5:\n")
+print(round(resultado5, 6))
+
+```
+## --- Ejercicio 6
+
+```{r}
+A6 <- matrix(c(10, -1, 2, 0,
+               -1, 11, -1, 3,
+               2, -1, 10, -1,
+               0, 2, -1, 8), nrow=4, byrow=TRUE)
+b6 <- c(6, 25, -11, 15)
+
+x_init6 <- rep(0, 4)
+resultado6 <- jacobi(A6, b6, x_init6)
+cat("Resultado ejercicio 6:\n")
+print(round(resultado6, 6))
+
+```
+## --- Ejercicio 8
+
+```{r}
+A8 <- matrix(c(-4, 14, 0,
+               -5, 13, 0,
+               -1, 0, 2), nrow=3, byrow=TRUE)
+b8 <- c(10, 8, 1)
+
+x_init8 <- rep(0, 3)
+resultado8 <- jacobi(A8, b8, x_init8)
+cat("Resultado ejercicio 8:\n")
+print(round(resultado8, 6))
+
+
+```
+
+## --- Ejercicio 10
+
+```{r}
+A10 <- matrix(c(6, -2, 2, 4,
+                12, -8, 6, 10,
+                3, -13, 9, 3,
+                -6, 4, 1, -18), nrow=4, byrow=TRUE)
+b10 <- c(10, 20, 2, -19)
+
+x_init10 <- rep(0, 4)
+resultado10 <- jacobi(A10, b10, x_init10)
+cat("Resultado ejercicio 10:\n")
+print(round(resultado10, 6))
+
+
+``` 
+
+## Ejercicios complementarios
+
+
+## 2.- Resuelva el mismo sistema anterior pero ahora aplicando eliminación gaussiana con pivoteo parcial.
+
+```{r}
+## Matriz de coeficientes
+A <- matrix(c(2, 1, -1,
+              -1, 3, 2,
+               1, 2, 3), nrow = 3, byrow = TRUE)
+
+## Vector de términos independientes
+b <- c(1, 12, 7)
+
+## Matriz aumentada
+Ab <- cbind(A, b)
+Ab
+
+```
+
+```{r}
+gauss_pivoteo_parcial <- function(Ab) {
+  n <- nrow(Ab)
+  
+  for (k in 1:(n-1)) {
+    cat("\n--- Paso", k, "---\n")
+    cat("Submatriz desde fila", k, "para pivoteo parcial:\n")
+    print(Ab[k:n, k])
+    
+    ## Pivoteo parcial
+    max_index <- which.max(abs(Ab[k:n, k])) + k - 1
+    cat("Fila con máximo pivote en columna", k, ":", max_index, "\n")
+    
+    ## Intercambiar filas si es necesario
+    if (max_index != k) {
+      cat("Intercambiando fila", k, "con fila", max_index, "\n")
+      temp <- Ab[k, ]
+      Ab[k, ] <- Ab[max_index, ]
+      Ab[max_index, ] <- temp
+    } else {
+      cat("No se requiere intercambio de filas.\n")
+    }
+    
+    cat("Matriz después del pivoteo:\n")
+    print(Ab)
+    
+    ## Eliminación hacia abajo
+    for (i in (k+1):n) {
+      factor <- Ab[i, k] / Ab[k, k]
+      cat("Eliminando fila", i, "usando fila", k, "con factor =", factor, "\n")
+      Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - factor * Ab[k, k:ncol(Ab)]
+      print(Ab)
+    }
+  }
+  
+  cat("\nMatriz triangular superior final:\n")
+  print(Ab)
+  
+  return(Ab)
+}
+
+Ab_triangular <- gauss_pivoteo_parcial(Ab)
+
+
+```
+
+
+
+```{r}
+sustitucion_regresiva <- function(Ab) {
+  n <- nrow(Ab)
+  x <- numeric(n)
+  
+  cat("\n--- Sustitución regresiva ---\n")
+  for (i in n:1) {
+    if (i == n) {
+      x[i] <- Ab[i, n+1] / Ab[i, i]
+      cat("x[", i, "] = ", Ab[i, n+1], "/", Ab[i, i], " = ", x[i], "\n")
+    } else {
+      suma <- sum(Ab[i, (i+1):n] * x[(i+1):n])
+      x[i] <- (Ab[i, n+1] - suma) / Ab[i, i]
+      cat("x[", i, "] = (", Ab[i, n+1], " - ", suma, ") / ", Ab[i, i], " = ", x[i], "\n")
+    }
+  }
+  return(x)
+}
+
+solucion <- sustitucion_regresiva(Ab_triangular)
+
+```
+
+```{r}
+cat("\n--- Solución final del sistema ---\n")
+cat("x =", solucion[1], "\n")
+cat("y =", solucion[2], "\n")
+cat("z =", solucion[3], "\n")
+
+
+```
+
+
+#### 3.- Eliminación Gaussiana con Pivoteo y Escalamiento
+
+```{r}
+
+A <- matrix(c(10, 2, 1,
+              2, 20, 2,
+              1, 2, 30), nrow = 3, byrow = TRUE)
+b <- c(7, 9, 12)
+
+## Matriz aumentada
+Ab <- cbind(A, b)
+cat("Matriz aumentada inicial:\n")
+print(Ab)
+```
+
+```{r}
+gauss_escalamiento <- function(Ab) {
+  n <- nrow(Ab)
+  s <- apply(abs(Ab[, 1:n]), 1, max)  ## Escalamiento por fila
+  cat("Factores de escalamiento por fila:\n")
+  print(s)
+  
+  for (k in 1:(n-1)) {
+    cat("\n--- Paso", k, "---\n")
+    
+    ## Escalamiento: comparar valores normalizados
+    razones <- abs(Ab[k:n, k]) / s[k:n]
+    max_index <- which.max(razones) + k - 1
+    
+    cat("Razones para elegir pivote (|a_ik| / s_i):\n")
+    print(razones)
+    cat("Fila con mejor pivote escalado:", max_index, "\n")
+    
+    ## Intercambio de filas si es necesario
+    if (max_index != k) {
+      cat("Intercambiando fila", k, "con fila", max_index, "\n")
+      temp <- Ab[k, ]
+      Ab[k, ] <- Ab[max_index, ]
+      Ab[max_index, ] <- temp
+      
+      ## También intercambiar escalamiento
+      temp_s <- s[k]
+      s[k] <- s[max_index]
+      s[max_index] <- temp_s
+    } else {
+      cat("No se requiere intercambio de filas.\n")
+    }
+    
+    cat("Matriz después del pivoteo escalado:\n")
+    print(Ab)
+    
+    ## Eliminación
+    for (i in (k+1):n) {
+      factor <- Ab[i, k] / Ab[k, k]
+      cat("Eliminando fila", i, "usando fila", k, "con factor =", factor, "\n")
+      Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - factor * Ab[k, k:ncol(Ab)]
+      print(Ab)
+    }
+  }
+  
+  cat("\nMatriz triangular superior final:\n")
+  print(Ab)
+  return(Ab)
+}
+
+Ab_triangular <- gauss_escalamiento(Ab)
+
+
+```
+
+```{r}
+sustitucion_regresiva <- function(Ab) {
+  n <- nrow(Ab)
+  x <- numeric(n)
+  
+  cat("\n--- Sustitución regresiva ---\n")
+  for (i in n:1) {
+    if (i == n) {
+      x[i] <- Ab[i, n+1] / Ab[i, i]
+      cat("x[", i, "] = ", Ab[i, n+1], "/", Ab[i, i], " = ", x[i], "\n")
+    } else {
+      suma <- sum(Ab[i, (i+1):n] * x[(i+1):n])
+      x[i] <- (Ab[i, n+1] - suma) / Ab[i, i]
+      cat("x[", i, "] = (", Ab[i, n+1], " - ", suma, ") / ", Ab[i, i], " = ", x[i], "\n")
+    }
+  }
+  return(x)
+}
+
+solucion <- sustitucion_regresiva(Ab_triangular)
+
+cat("\n--- Solución del sistema ---\n")
+cat("x =", solucion[1], "\n")
+cat("y =", solucion[2], "\n")
+cat("z =", solucion[3], "\n")
+
+```
+
+
+
+
+#### 6.- Factorización de Cholesky y resolución de Ax = b
+
+
+```{r}
+A <- matrix(c(25, 15, -5,
+              15, 18,  0,
+              -5,  0, 11), nrow = 3, byrow = TRUE)
+
+b <- c(35, 33, 6)
+
+cat("Matriz A:\n")
+print(A)
+
+cat("\nVector b:\n")
+print(b)
+
+```
+
+```{r}
+is_symmetric <- all(A == t(A))
+cat("¿La matriz A es simétrica? ", is_symmetric, "\n")
+
+eigenvalues <- eigen(A)$values
+cat("Valores propios de A:\n")
+print(eigenvalues)
+
+is_positive_definite <- all(eigenvalues > 0)
+cat("¿La matriz A es definida positiva? ", is_positive_definite, "\n")
+
+```
+
+```{r}
+cholesky_manual <- function(A) {
+  n <- nrow(A)
+  L <- matrix(0, n, n)
+  
+  for (i in 1:n) {
+    for (j in 1:i) {
+      sum_k <- sum(L[i, 1:(j-1)] * L[j, 1:(j-1)])
+      if (i == j) {
+        L[i, j] <- sqrt(A[i, i] - sum_k)
+        cat("L[", i, ",", j, "] = sqrt(", A[i, i], " - ", sum_k, ") = ", L[i, j], "\n")
+      } else {
+        L[i, j] <- (A[i, j] - sum_k) / L[j, j]
+        cat("L[", i, ",", j, "] = (", A[i, j], " - ", sum_k, ") / ", L[j, j], " = ", L[i, j], "\n")
+      }
+    }
+  }
+  
+  cat("\nMatriz L:\n")
+  print(L)
+  
+  return(L)
+}
+
+L <- cholesky_manual(A)
+
+
+```
+
+```{r}
+sustitucion_progresiva <- function(L, b) {
+  n <- length(b)
+  y <- numeric(n)
+  
+  for (i in 1:n) {
+    y[i] <- (b[i] - sum(L[i, 1:(i-1)] * y[1:(i-1)])) / L[i, i]
+    cat("y[", i, "] = (", b[i], " - ", sum(L[i, 1:(i-1)] * y[1:(i-1)]), ") / ", L[i, i], " = ", y[i], "\n")
+  }
+  
+  return(y)
+}
+
+y <- sustitucion_progresiva(L, b)
+
+
+```
+
+```{r}
+sustitucion_regresiva <- function(U, y) {
+  n <- length(y)
+  x <- numeric(n)
+  
+  for (i in n:1) {
+    if (i == n) {
+      x[i] <- y[i] / U[i, i]
+      cat("x[", i, "] = ", y[i], " / ", U[i, i], " = ", x[i], "\n")
+    } else {
+      suma <- sum(U[i, (i+1):n] * x[(i+1):n])
+      x[i] <- (y[i] - suma) / U[i, i]
+      cat("x[", i, "] = (", y[i], " - ", suma, ") / ", U[i, i], " = ", x[i], "\n")
+    }
+  }
+  
+  return(x)
+}
+
+
+x <- sustitucion_regresiva(t(L), y)
+cat("\n--- Solución final del sistema Ax = b ---\n")
+cat("x =", x[1], "\n")
+cat("y =", x[2], "\n")
+cat("z =", x[3], "\n")
+
+
+```
+
+#### 10.- Método de Jacobi
+
+```{r}
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+
+b <- c(6, 25, -11, 15)
+
+## Condición inicial
+x0 <- c(0, 0, 0, 0)
+
+cat("Matriz A:\n")
+print(A)
+
+cat("\nVector b:\n")
+print(b)
+
+cat("\nCondición inicial x^(0):\n")
+print(x0)
+
+```
+
+```{r}
+jacobi <- function(A, b, x0, iteraciones) {
+  n <- length(b)
+  x_ant <- x0
+  x_nuevo <- numeric(n)
+  
+  for (k in 1:iteraciones) {
+    cat("\n--- Iteración", k, "---\n")
+    for (i in 1:n) {
+      suma <- sum(A[i, -i] * x_ant[-i])
+      x_nuevo[i] <- (b[i] - suma) / A[i, i]
+      cat("x[", i, "] = (", b[i], " - ", suma, ") / ", A[i, i], " = ", x_nuevo[i], "\n")
+    }
+    x_ant <- x_nuevo
+    cat("x^(", k, ") = ", x_nuevo, "\n")
+  }
+  
+  return(x_nuevo)
+}
+
+## Ejecutar 3 iteraciones
+x_aprox <- jacobi(A, b, x0, 3)
+
+
+```
+
+```{r}
+
+cat("\n--- Aproximación después de 3 iteraciones ---\n")
+cat("x =", x_aprox[1], "\n")
+cat("y =", x_aprox[2], "\n")
+cat("z =", x_aprox[3], "\n")
+cat("w =", x_aprox[4], "\n")
+
+```
+
+#### Método de Gauss-Seidel vs Jacobi
+
+```{r}
+## Matriz A del sistema
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+
+## Vector b
+b <- c(6, 25, -11, 15)
+
+## Condición inicial
+x0 <- c(0, 0, 0, 0)
+
+cat("Matriz A:\n")
+print(A)
+
+cat("\nVector b:\n")
+print(b)
+
+cat("\nCondición inicial x^(0):\n")
+print(x0)
+
+```
+
+## 11.- Metodo de jacobi
+
+```{r}
+jacobi <- function(A, b, x0, iteraciones) {
+  n <- length(b)
+  x_ant <- x0
+  x_nuevo <- numeric(n)
+  historial <- matrix(0, nrow = iteraciones, ncol = n)
+  
+  for (k in 1:iteraciones) {
+    for (i in 1:n) {
+      suma <- sum(A[i, -i] * x_ant[-i])
+      x_nuevo[i] <- (b[i] - suma) / A[i, i]
+    }
+    x_ant <- x_nuevo
+    historial[k, ] <- x_nuevo
+  }
+  return(historial)
+}
+
+jacobi_result <- jacobi(A, b, x0, 10)
+
+
+```
+## metodo de gauss seidel
+
+```{r}
+gauss_seidel <- function(A, b, x0, iteraciones) {
+  n <- length(b)
+  x <- x0
+  historial <- matrix(0, nrow = iteraciones, ncol = n)
+  
+  for (k in 1:iteraciones) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x[i] <- (b[i] - suma1 - suma2) / A[i, i]
+    }
+    x0 <- x
+    historial[k, ] <- x
+  }
+  return(historial)
+}
+
+## Ejecutar Gauss-Seidel por 10 iteraciones
+gs_result <- gauss_seidel(A, b, x0, 10)
+
+
+```
+##  Comparacion 
+```{r}
+## Mostrar las 10 iteraciones de ambos métodos
+iteraciones <- 1:10
+colnames(jacobi_result) <- c("x", "y", "z", "w")
+colnames(gs_result) <- c("x", "y", "z", "w")
+
+cat("\n--- Comparación de iteraciones ---\n")
+resultado_comparado <- cbind(iter = iteraciones, 
+                              Jacobi = round(jacobi_result, 5), 
+                              GaussSeidel = round(gs_result, 5))
+print(resultado_comparado)
+
+
+```
+## grafico
+```{r}
+
+if (!require(ggplot2)) install.packages("ggplot2", dependencies=TRUE)
+library(ggplot2)
+
+
+df_jacobi <- as.data.frame(jacobi_result)
+df_jacobi$iter <- 1:nrow(df_jacobi)
+df_jacobi$metodo <- "Jacobi"
+
+df_gs <- as.data.frame(gs_result)
+df_gs$iter <- 1:nrow(df_gs)
+df_gs$metodo <- "Gauss-Seidel"
+
+df_total <- rbind(df_jacobi, df_gs)
+df_melt <- reshape2::melt(df_total, id.vars = c("iter", "metodo"))
+
+## Graficar
+ggplot(df_melt, aes(x = iter, y = value, color = metodo, linetype = metodo)) +
+  geom_line() +
+  facet_wrap(~variable, scales = "free_y") +
+  labs(title = "Comparación de convergencia: Jacobi vs Gauss–Seidel",
+       x = "Iteración", y = "Valor aproximado") +
+  theme_minimal()
+
+```
+#### 12.- Comparación de Jacobi, Gauss-Seidel y SOR
+## Aplique el método SOR con ω = 1.25 al mismo sistema y compare las tres trayectorias de convergencia.
+
+```{r}
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+b <- c(6, 25, -11, 15)
+x0 <- c(0, 0, 0, 0)
+
+
+```
+
+```{r}
+
+## Jacobi
+jacobi <- function(A, b, x0, iter) {
+  n <- length(b)
+  x_old <- x0
+  hist <- matrix(0, nrow = iter, ncol = n)
+  
+  for (k in 1:iter) {
+    x_new <- numeric(n)
+    for (i in 1:n) {
+      suma <- sum(A[i, -i] * x_old[-i])
+      x_new[i] <- (b[i] - suma) / A[i, i]
+    }
+    x_old <- x_new
+    hist[k, ] <- x_new
+  }
+  return(hist)
+}
+
+## Gauss-Seidel
+gauss_seidel <- function(A, b, x0, iter) {
+  n <- length(b)
+  x <- x0
+  hist <- matrix(0, nrow = iter, ncol = n)
+  
+  for (k in 1:iter) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x[i] <- (b[i] - suma1 - suma2) / A[i, i]
+    }
+    x0 <- x
+    hist[k, ] <- x
+  }
+  return(hist)
+}
+
+## SOR
+sor <- function(A, b, x0, omega, iter) {
+  n <- length(b)
+  x <- x0
+  hist <- matrix(0, nrow = iter, ncol = n)
+  
+  for (k in 1:iter) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x_new_i <- (b[i] - suma1 - suma2) / A[i, i]
+      x[i] <- (1 - omega) * x0[i] + omega * x_new_i
+    }
+    x0 <- x
+    hist[k, ] <- x
+  }
+  return(hist)
+}
+
+
+```
+
+```{r}
+iter <- 15  ## número de iteraciones
+
+jacobi_res <- jacobi(A, b, x0, iter)
+gs_res <- gauss_seidel(A, b, x0, iter)
+sor_res <- sor(A, b, x0, omega = 1.25, iter)
+
+
+```
+
+```{r}
+library(knitr)
+df <- data.frame(
+  Iteracion = 1:iter,
+  Jacobi_x = round(jacobi_res[,1], 5),
+  GS_x = round(gs_res[,1], 5),
+  SOR_x = round(sor_res[,1], 5),
+  Jacobi_y = round(jacobi_res[,2], 5),
+  GS_y = round(gs_res[,2], 5),
+  SOR_y = round(sor_res[,2], 5),
+  Jacobi_z = round(jacobi_res[,3], 5),
+  GS_z = round(gs_res[,3], 5),
+  SOR_z = round(sor_res[,3], 5),
+  Jacobi_w = round(jacobi_res[,4], 5),
+  GS_w = round(gs_res[,4], 5),
+  SOR_w = round(sor_res[,4], 5)
+)
+
+kable(df, caption = "Comparación de valores por iteración para Jacobi, GS y SOR")
+
+
+```
+
+```{r}
+library(ggplot2)
+library(reshape2)
+
+## Convertir datos a formato largo para ggplot
+to_df <- function(mat, metodo) {
+  df <- as.data.frame(mat)
+  df$Iteracion <- 1:nrow(df)
+  df$Metodo <- metodo
+  df_melt <- melt(df, id.vars = c("Iteracion", "Metodo"))
+  return(df_melt)
+}
+
+df_jacobi <- to_df(jacobi_res, "Jacobi")
+df_gs <- to_df(gs_res, "Gauss-Seidel")
+df_sor <- to_df(sor_res, "SOR")
+
+df_total <- rbind(df_jacobi, df_gs, df_sor)
+
+ggplot(df_total, aes(x = Iteracion, y = value, color = Metodo)) +
+  geom_line(size = 1) +
+  facet_wrap(~variable, scales = "free_y") +
+  labs(title = "Convergencia de Jacobi, Gauss-Seidel y SOR (ω=1.25)",
+       y = "Valor aproximado", x = "Iteración") +
+  theme_minimal()
+
+
+```
+
+#### 14.- Código ejemplo completo para encontrar ω óptimo
+
+```{r}
+## Matriz y vector del sistema
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+b <- c(6, 25, -11, 15)
+x0 <- rep(0, 4)
+
+## Función SOR del código anterior
+sor <- function(A, b, x0, omega, iter) {
+  n <- length(b)
+  x <- x0
+  for (k in 1:iter) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x_new_i <- (b[i] - suma1 - suma2) / A[i, i]
+      x[i] <- (1 - omega) * x0[i] + omega * x_new_i
+    }
+    x0 <- x
+  }
+  return(x)
+}
+
+## Solución exacta para comparar (usamos solve)
+x_exact <- solve(A, b)
+
+## Probar valores omega de 1 a 2 en pasos de 0.05
+omega_vals <- seq(1, 2, by = 0.05)
+iter <- 50  ## número fijo de iteraciones para comparar
+
+## Almacenar errores
+errors <- numeric(length(omega_vals))
+
+for (i in seq_along(omega_vals)) {
+  omega <- omega_vals[i]
+  x_approx <- sor(A, b, x0, omega, iter)
+  errors[i] <- sqrt(sum((x_approx - x_exact)^2))  ## norma euclidiana del error
+}
+
+## Mostrar resultados ordenados por error
+resultado <- data.frame(omega = omega_vals, error = errors)
+resultado_ordenado <- resultado[order(resultado$error), ]
+print(head(resultado_ordenado, 5))
+
+## Graficar error vs omega
+plot(resultado$omega, resultado$error, type = "b", pch = 19,
+     xlab = expression(omega), ylab = "Error (norma Euclidiana)",
+     main = "Búsqueda experimental de omega óptimo para SOR")
+
+```
+
+## PASO A PASO CON EL EJERCICIO 10
+
+## Definir matriz A y vector b
+```{r}
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+b <- c(6, 25, -11, 15)
+x0 <- rep(0, 4)  ## vector inicial
+```
+
+## FUNCIÓN MÉTODO SOR
+
+```{r}
+sor <- function(A, b, x0, omega, iter) {
+  n <- length(b)
+  x <- x0
+  for (k in 1:iter) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x_new_i <- (b[i] - suma1 - suma2) / A[i, i]
+      x[i] <- (1 - omega) * x0[i] + omega * x_new_i
+    }
+    x0 <- x
+  }
+  return(x)
+}
+
+```
+## SOLUCION EXACTA
+
+```{r}
+x_exact <- solve(A, b)
+x_exact
+
+```
+## BUSQUEDA EXPERIMENTAL
+
+```{r}
+omega_vals <- seq(1, 2, by = 0.05)
+iter <- 50
+errors <- numeric(length(omega_vals))
+
+for (i in seq_along(omega_vals)) {
+  omega <- omega_vals[i]
+  x_approx <- sor(A, b, x0, omega, iter)
+  errors[i] <- sqrt(sum((x_approx - x_exact)^2))  ## error Euclidiano
+}
+
+resultado <- data.frame(Omega = omega_vals, Error = errors)
+resultado_ordenado <- resultado[order(resultado$Error), ]
+resultado_ordenado[1:5, ]
+
+
+```
+## GRAFICO
+
+```{r}
+plot(resultado$Omega, resultado$Error, type = "b", pch = 19,
+     xlab = expression(omega), ylab = "Error (norma Euclidiana)",
+     main = "Búsqueda experimental de omega óptimo para SOR")
+abline(v = resultado_ordenado$Omega[1], col = "red", lty = 2)
+text(resultado_ordenado$Omega[1], min(resultado$Error),
+     labels = paste0("Óptimo ≈ ", round(resultado_ordenado$Omega[1], 3)),
+     pos = 4, col = "red")
+
+```
+
+#### 13.- Escriba la matriz de iteracion TJ y el vector cJ del metodo de Jacobi para el sistema. 
+```{r}
+A <- matrix(c(4, 1,
+              1, 3), nrow = 2, byrow = TRUE)
+b <- c(9, 7)
+
+```
+
+## Matriz de iteración Tj y vector Cj
+	
+```{r}
+D <- diag(diag(A))
+
+L <- A
+L[upper.tri(L, diag = TRUE)] <- 0
+
+U <- A
+U[lower.tri(U, diag = TRUE)] <- 0
+
+D_inv <- solve(D)
+
+T_J <- -D_inv %*% (L + U)
+c_J <- D_inv %*% b
+
+T_J
+c_J
+
+```
+## Cálculo del radio espectral 
+
+```{r}
+eigenvals <- eigen(T_J)$values
+rho_TJ <- max(abs(eigenvals))
+rho_TJ
+
+```
+## Verificación de convergencia
+
+```{r}
+if (rho_TJ < 1) {
+  cat("El método de Jacobi converge porque rho(T_J) =", round(rho_TJ, 4), "< 1")
+} else {
+  cat("El método de Jacobi NO converge porque rho(T_J) =", round(rho_TJ, 4), "≥ 1")
+}
+
+```
+
+
+#### 15.- Genere una matriz aleatoria sim´etrica definida positiva 5 × 5 en R y resuelva Ax = b:
+
+```{r}
+set.seed(123)  ## Para reproducibilidad
+
+n <- 5
+
+## Generar matriz aleatoria de enteros entre -10 y 10
+M_int <- matrix(sample(-10:10, n^2, replace=TRUE), n, n)
+
+## Construir matriz simétrica definida positiva sumando M_int^T * M_int + identidad
+A <- t(M_int) %*% M_int + diag(n)
+
+## El resultado es simétrico, definida positiva y con entradas enteras
+
+## Vector b con enteros también (por ejemplo entre -10 y 10)
+b <- sample(-10:10, n, replace=TRUE)
+
+## Mostrar matriz y vector
+A
+b
+```
+
+## Implementación método Gauss-Seidel
+
+```{r}
+gauss_seidel <- function(A, b, x0=NULL, iterations=20) {
+  n <- length(b)
+  if (is.null(x0)) x0 <- rep(0, n)
+  x <- x0
+  for (k in 1:iterations) {
+    for (i in 1:n) {
+      sum1 <- if(i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      sum2 <- if(i < n) sum(A[i, (i+1):n] * x[(i+1):n]) else 0
+      x[i] <- (b[i] - sum1 - sum2) / A[i, i]
+    }
+  }
+  return(x)
+}
+
+```
+
+## Usando factorizacion LU
+```{r}
+library(Matrix)
+
+start_lu <- Sys.time()
+lu_decomp <- lu(Matrix(A))
+x_lu <- solve(lu_decomp, b)
+end_lu <- Sys.time()
+
+tiempo_lu <- end_lu - start_lu
+tiempo_lu
+
+```
+
+## Usando factorizacion de Cholesky
+
+```{r}
+start_chol <- Sys.time()
+chol_decomp <- chol(A)
+x_chol <- backsolve(chol_decomp, forwardsolve(t(chol_decomp), b))
+end_chol <- Sys.time()
+
+tiempo_chol <- end_chol - start_chol
+tiempo_chol
+
+```
+
+
+## Usando Gauss–Seidel con 20 iteraciones
+
+```{r}
+start_gs <- Sys.time()
+x_gs <- gauss_seidel(A, b, iterations=20)
+end_gs <- Sys.time()
+
+tiempo_gs <- end_gs - start_gs
+tiempo_gs
+
+```
+
+## Comparacion
+
+```{r}
+x_exact <- solve(A, b)
+
+error_lu <- norm(x_lu - x_exact, type="2") / norm(x_exact, type="2")
+error_chol <- norm(x_chol - x_exact, type="2") / norm(x_exact, type="2")
+error_gs <- norm(x_gs - x_exact, type="2") / norm(x_exact, type="2")
+
+data.frame(
+  Metodo = c("LU", "Cholesky", "Gauss-Seidel"),
+  Tiempo_seg = c(as.numeric(tiempo_lu, units="secs"),
+                 as.numeric(tiempo_chol, units="secs"),
+                 as.numeric(tiempo_gs, units="secs")),
+  Error_relativo = c(error_lu, error_chol, error_gs)
+)
+
+```
+
+
+# Raíces de funciones
+
+## Método de Bisección
+
+```{r}
+biseccion <- function(f, a, b, n_iter = 8) {
+  # Verifica cambio de signo
+  fa <- f(a)
+  fb <- f(b)
+  if (fa * fb > 0) {
+    warning(paste("El intervalo [", a, ",", b, "] no presenta cambio de signo (f(a)*f(b) =", fa*fb, ")."))
+  }
+  
+  tabla <- data.frame(
+    k = numeric(0),
+    a = numeric(0),
+    b = numeric(0),
+    c = numeric(0),
+    f_a = numeric(0),
+    f_b = numeric(0),
+    f_c = numeric(0),
+    signo = character(0),
+    error = numeric(0)
+  )
+  
+  for (k in 1:n_iter) {
+    c <- (a + b) / 2
+    fa <- f(a)
+    fb <- f(b)
+    fc <- f(c)
+    
+    signo <- ifelse(fa * fc < 0, "<0", ">0")
+    error <- abs(b - a)
+    
+    tabla <- rbind(tabla, data.frame(k, a, b, c, f_a = fa, f_b = fb, f_c = fc, signo, error))
+    
+    if (fa * fc < 0) {
+      b <- c
+    } else {
+      a <- c
+    }
+  }
+  return(tabla)
+}
+
+```
+
+### Lista completa de funciones y sus intervalos
+
+```{r}
+ejercicios <- list(
+list(label="1. f(x)=x^2 - 5", f=function(x) x^2 - 5, a=2, b=3),
+list(label="2. f(x)=x^3 - 4x + 1", f=function(x) x^3 - 4*x + 1, a=0, b=1),
+list(label="3. f(x)=x^4 - 8x + 2", f=function(x) x^4 - 8*x + 2, a=0, b=3),
+list(label="4. f(x)=exp(-x) - x^2", f=function(x) exp(-x) - x^2, a=0, b=2),
+list(label="5. f(x)=cos(x) - x^2", f=function(x) cos(x) - x^2, a=0, b=1),
+list(label="6. f(x)=3x^2 - 7x - 2", f=function(x) 3*x^2 - 7*x - 2, a=-1, b=0),
+list(label="7. f(x)=-4x^2 + 5x + 6", f=function(x) -4*x^2 + 5*x + 6, a=-1, b=0),
+list(label="8. f(x)=2x^2 + 3x - 5", f=function(x) 2*x^2 + 3*x - 5, a=0, b=2),
+list(label="9. f(x)=x^3 - 5x + 1", f=function(x) x^3 - 5*x + 1, a=0, b=1),
+list(label="10. f(x)=x^4 - 6x^3 + 5x^2 + 8x - 4", f=function(x) x^4 - 6*x^3 + 5*x^2 + 8*x - 4, a=0, b=1),
+list(label="11. f(x)=-2x^4 + 4x^3 + 6x^2 - 3x + 2", f=function(x) -2*x^4 + 4*x^3 + 6*x^2 - 3*x + 2, a=-2, b=-1),
+list(label="12. f(x)=2x^4 - x^3 - 7x^2 + 4x + 3", f=function(x) 2*x^4 - x^3 - 7*x^2 + 4*x + 3, a=-1, b=0),
+list(label="13. f(x)=x^4 + 2x^3 - 10x^2 - x + 5", f=function(x) x^4 + 2*x^3 - 10*x^2 - x + 5, a=0, b=1),
+list(label="14. f(x)=5*exp(0.6x - 1) - 3", f=function(x) 5*exp(0.6*x - 1) - 3, a=0, b=2),
+list(label="15. f(x)=7 - 4*exp(-0.9x + 0.2)", f=function(x) 7 - 4*exp(-0.9*x + 0.2), a=-2, b=0),
+list(label="16. f(x)=sin(2x) - x^2", f=function(x) sin(2*x) - x^2, a=1, b=2),
+list(label="17. f(x)=(2x+1.4)*cos(3x + pi/4)", f=function(x) (2*x+1.4)*cos(3*x + pi/4), a=0.1, b=0.6),
+list(label="18. f(x)=(-1.5x + 0.9)*sin(4x) - pi/6", f=function(x) (-1.5*x + 0.9)*sin(4*x) - pi/6, a=0.2, b=0.9)
+)
+
+# Cálculo y gráficos base
+
+for (ej in ejercicios) {
+cat("\n\n###", ej$label, "\n")
+
+tabla <- biseccion(ej$f, ej$a, ej$b, 8)
+print(tabla)
+
+# Gráfica en base R
+
+x_vals <- seq(ej$a - 0.2, ej$b + 0.2, length.out = 300)
+y_vals <- sapply(x_vals, ej$f)
+
+plot(x_vals, y_vals, type="l", col="blue", lwd=2,
+main=paste("Método de Bisección para", ej$label),
+xlab="x", ylab="f(x)")
+abline(h=0, lty=2)
+abline(v=c(ej$a, ej$b), col="gray", lty=3)
+points(tabla$c, sapply(tabla$c, ej$f), col="red", pch=19)
+}
+
+```
+
+
+## Método de la Secante 
+```{r}
+
+secante <- function(f, x0, x1, tol = 1e-5, max_iter = 10) {
+  iter <- numeric()
+  x_prev <- numeric()
+  x_curr <- numeric()
+  f_curr <- numeric()
+  x_next <- numeric()
+  error <- numeric()
+  
+  for (k in 1:max_iter) {
+    f0 <- f(x0)
+    f1 <- f(x1)
+    x2 <- x1 - f1*(x1 - x0)/(f1 - f0)
+    e <- abs(x2 - x1)
+    
+    iter <- c(iter, k)
+    x_prev <- c(x_prev, x0)
+    x_curr <- c(x_curr, x1)
+    f_curr <- c(f_curr, f1)
+    x_next <- c(x_next, x2)
+    error <- c(error, e)
+    
+    x0 <- x1
+    x1 <- x2
+    
+    if (e < tol) break
+  }
+  
+  resultados <- data.frame(
+    Iter = iter,
+    x_prev = x_prev,
+    x_curr = x_curr,
+    f_xcurr = f_curr,
+    x_next = x_next,
+    error = error
+  )
+  
+  return(resultados)
+}
+
+# Función para graficar las secantes
+graficar_secante <- function(f, tabla, titulo = "Método de la Secante") {
+  plot(NULL, xlim = c(min(tabla$x_prev, tabla$x_curr) - 1, max(tabla$x_prev, tabla$x_curr) + 1),
+       ylim = c(min(tabla$f_xcurr) - 1, max(tabla$f_xcurr) + 1),
+       xlab = "x", ylab = "f(x)", main = titulo)
+  curve(f(x), from = min(tabla$x_prev, tabla$x_curr) - 1, to = max(tabla$x_prev, tabla$x_curr) + 1, add = TRUE, col = "blue")
+  
+  for (i in 1:nrow(tabla)) {
+    segments(tabla$x_prev[i], f(tabla$x_prev[i]), tabla$x_curr[i], f(tabla$x_curr[i]), col = "red")
+    points(tabla$x_next[i], 0, col = "green", pch = 19)
+  }
+}
+
+# Lista de funciones y valores iniciales para los 13 ejercicios
+funciones <- list(
+  function(x) x^2 - 2*x - 3,
+  function(x) x^4 - 10*x^2 + 9,
+  function(x) 2*x^2 - 5*x + 3,
+  function(x) -3*x^2 + 4*x + 2,
+  function(x) x^3 + 4*x^2 - x - 1,
+  function(x) x^4 - 5*x^3 + 6*x^2 + 4*x - 8,
+  function(x) x^4 - 5,
+  function(x) -2*x^4 + 3*x^3 + 7*x^2 - 5*x + 1,
+  function(x) 4*exp(-0.8*x) - 0.5 - 7,
+  function(x) -3*exp(-1.2*x) + 0.4 + 2,
+  function(x) sin(x) - x^3/3,
+  function(x) (3*x + 3.1)*cos(2*x + pi/6),
+  function(x) (-2*x + 1.1)*sin(5*x - pi/3)
+)
+
+valores_iniciales <- list(
+  c(0,3), c(0,2), c(-1,2), c(-1,3), c(-3,1.5),
+  c(0,3), c(1,2), c(2,4), c(0,1.5), c(0,1.1),
+  c(0,1), c(0.3,0.8), c(0.05,0.35)
+)
+
+# Ejecutar el método y graficar para los 13 ejercicios
+resultados_list <- list()
+
+for (i in 1:13) {
+  cat("\n\nEjercicio", i, "\n")
+  res <- secante(funciones[[i]], valores_iniciales[[i]][1], valores_iniciales[[i]][2])
+  print(res)
+  resultados_list[[i]] <- res
+  graficar_secante(funciones[[i]], res, paste("Ejercicio", i))
+}
+
+
+```
+
+
+
+## Método de Newton
+
+```{r}
+# Método de Newton en R puro
+newton <- function(f, df, x0, tol = 1e-5, max_iter = 10) {
+  iter <- numeric()
+  xk <- numeric()
+  fxk <- numeric()
+  dfxk <- numeric()
+  error <- numeric()
+  
+  x <- x0
+  
+  for (k in 1:max_iter) {
+    fx <- f(x)
+    dfx <- df(x)
+    x_new <- x - fx/dfx
+    e <- abs(x_new - x)
+    
+    iter <- c(iter, k)
+    xk <- c(xk, x)
+    fxk <- c(fxk, fx)
+    dfxk <- c(dfxk, dfx)
+    error <- c(error, e)
+    
+    x <- x_new
+    
+    if (e < tol && k >= 1) break
+  }
+  
+  resultados <- data.frame(
+    k = iter,
+    xk = xk,
+    f_xk = fxk,
+    df_xk = dfxk,
+    error = error
+  )
+  
+  return(resultados)
+}
+
+# Función para graficar y marcar la raíz
+graficar_newton <- function(f, tabla, titulo = "Método de Newton") {
+  plot(NULL, xlim = c(min(tabla$xk)-1, max(tabla$xk)+1),
+       ylim = c(min(tabla$f_xk)-1, max(tabla$f_xk)+1),
+       xlab = "x", ylab = "f(x)", main = titulo)
+  curve(f(x), from = min(tabla$xk)-1, to = max(tabla$xk)+1, add = TRUE, col = "blue")
+  abline(h = 0, col = "black", lty = 2)
+  points(tabla$xk[nrow(tabla)], 0, col = "red", pch = 19) # raíz aproximada
+}
+
+# Lista de funciones y derivadas para los 15 ejercicios
+funciones <- list(
+  function(x) x^3 - 7*x + 6,          function(x) x^3 + 2*x^2 - 5,
+  function(x) x^4 - 3*x^3 + 2,        function(x) sin(x) - x^3/3,
+  function(x) exp(-x) - x,             function(x) x^3 - 2*x - 5,
+  function(x) x^5 - 3*x + 1,           function(x) cos(x) - 2*x,
+  function(x) log(x+2) + x - 1,        function(x) x*exp(-x) - 0.1,
+  function(x) x^3 - 4*sin(x),          function(x) exp(x) - 3*x^2,
+  function(x) x^2 - cos(x),            function(x) x^3 + 4*x^2 - 10,
+  function(x) 2*x*sin(x) - 1
+)
+
+derivadas <- list(
+  function(x) 3*x^2 - 7,               function(x) 3*x^2 + 4*x,
+  function(x) 4*x^3 - 9*x^2,           function(x) cos(x) - x^2,
+  function(x) -exp(-x) - 1,            function(x) 3*x^2 - 2,
+  function(x) 5*x^4 - 3,               function(x) -sin(x) - 2,
+  function(x) 1/(x+2) + 1,             function(x) exp(-x) - x*exp(-x),
+  function(x) 3*x^2 - 4*cos(x),        function(x) exp(x) - 6*x,
+  function(x) 2*x + 2*sin(x),          function(x) 3*x^2 + 8*x,
+  function(x) 2*sin(x) + 2*x*cos(x)
+)
+
+valores_iniciales <- c(0.5, 1.5, 0.5, 1, 0.5, 2.5, 0.5, 0.5, -0.5, 0.5, 1.5, 0.5, 0.5, 1.5, 0.5)
+
+# Ejecutar Newton para los 15 ejercicios y graficar
+resultados_newton <- list()
+
+for (i in 1:15) {
+  cat("\n\nEjercicio", i, "\n")
+  res <- newton(funciones[[i]], derivadas[[i]], valores_iniciales[i], tol = 1e-5, max_iter = 10)
+  print(res)
+  resultados_newton[[i]] <- res
+  graficar_newton(funciones[[i]], res, paste("Ejercicio", i))
+}
+
+```
+
+
+## Método del Punto fijo
+
+```{r}
+punto_fijo <- function(g, x0, tol = 1e-5, max_iter = 10) {
+  iter <- numeric()
+  xk <- numeric()
+  gxk <- numeric()
+  error <- numeric()
+  
+  x <- x0
+  for (k in 1:max_iter) {
+    x_new <- tryCatch(g(x), error = function(e) NA)
+    
+    # Verificar que x_new sea válido
+    if (is.na(x_new) || is.nan(x_new) || Im(x_new) != 0) {
+      warning(paste("Iteración", k, "produjo valor inválido. Se detiene."))
+      break
+    }
+    
+    e <- abs(x_new - x)
+    
+    iter <- c(iter, k)
+    xk <- c(xk, x)
+    gxk <- c(gxk, x_new)
+    error <- c(error, e)
+    
+    x <- x_new
+    if (e < tol && k >= 1) break
+  }
+  
+  resultados <- data.frame(
+    k = iter,
+    xk = xk,
+    g_xk = gxk,
+    error = error
+  )
+  
+  return(resultados)
+}
+```
+
+Función para graficar 
+
+```{r}
+graficar_punto_fijo <- function(g, tabla, titulo = "Método del Punto Fijo") {
+  if (nrow(tabla) == 0 || all(is.na(tabla$xk))) {
+    warning("No hay datos válidos para graficar.")
+    return()
+  }
+  
+  x_vals <- tabla$xk[!is.na(tabla$xk)]
+  g_vals <- tabla$g_xk[!is.na(tabla$g_xk)]
+  
+  # Crear rango de x para graficar
+  x_range <- seq(min(x_vals) - 1, max(x_vals) + 1, length.out = 500)
+  y_vals <- sapply(x_range, function(x) {
+    y <- tryCatch(g(x), error = function(e) NA)
+    if (!is.finite(y)) NA else y
+  })
+  
+  plot(NULL, xlim = c(min(x_range), max(x_range)),
+       ylim = c(min(y_vals, na.rm = TRUE), max(y_vals, na.rm = TRUE)),
+       xlab = "x", ylab = "y", main = titulo)
+  
+  lines(x_range, y_vals, col = "blue")
+  abline(0, 1, col = "red") # línea y=x
+  
+  # Punto de intersección final
+  points(tail(g_vals, 1), tail(g_vals, 1), col = "green", pch = 19)
+}
+```
+
+Funciones g(x) y valores iniciales
+
+```{r}
+g_funciones <- list(
+  function(x) cos(x),                     # 1
+  function(x) 1 - x^3,                    # 2
+  function(x) exp(-x),                     # 3
+  function(x) (x^2 + 1)/4,                 # 4
+  function(x) (2*x + 5)^(1/3),             # 5
+  function(x) sqrt(pmax(exp(x) - 2, 0)),   # 6, protege sqrt
+  function(x) 2 - log(x + 1),              # 7
+  function(x) (3*x - 1)^(1/3),             # 8
+  function(x) sin(x) + 1,                  # 9
+  function(x) sqrt(3),                     # 10
+  function(x) exp(-x)/2,                   # 11
+  function(x) (10 - x^3)/4,                # 12
+  function(x) cos(x),                      # 13
+  function(x) exp(-x^2),                   # 14
+  function(x) 2^(1/3)                      # 15
+)
+
+valores_iniciales <- c(0.5, 0.6, 0.7, 1, 2, 0.5, 0.5, 0.8, 1, 1.5, 0.5, 1.5, 0.5, 0.5, 1)
+
+
+resultados_punto_fijo <- list()
+
+for (i in 1:15) {
+  cat("\n\nEjercicio", i, "\n")
+  res <- punto_fijo(g_funciones[[i]], valores_iniciales[i], tol = 1e-5, max_iter = 10)
+  print(res)
+  resultados_punto_fijo[[i]] <- res
+  graficar_punto_fijo(g_funciones[[i]], res, paste("Ejercicio", i))
+}
+
+
+```
+
+
+# Interpolación
+
+
+
+## **Interpolación de Lagrange y Newton**
+
+Este documento presenta los cálculos de interpolación para tres conjuntos de puntos,
+utilizando los métodos de **Lagrange** y **Newton (diferencias divididas)**.
+
+---
+
+#### **Ejercicio 5**
+
+
+```{r}
+## Datos dados
+
+x <- c(0, 1, 2)
+y <- c(1, 3, 11)
+
+## Definimos función del polinomio de Lagrange
+P_Lagrange <- function(xv) {
+  L0 <- (xv - 1)*(xv - 2) / ((0 - 1)*(0 - 2))
+  L1 <- (xv - 0)*(xv - 2) / ((1 - 0)*(1 - 2))
+  L2 <- (xv - 0)*(xv - 1) / ((2 - 0)*(2 - 1))
+  return(1*L0 + 3*L1 + 11*L2)
+}
+
+## Comprobamos el polinomio con varios puntos
+xx <- seq(0, 2, by=0.5)
+yy <- P_Lagrange(xx)
+
+## Ajuste simbólico para obtener coeficientes del polinomio
+fit <- lm(yy ~ poly(xx, 2, raw=TRUE))
+coeficientes <- coef(fit)
+a0 <- round(coeficientes[1], 6)
+a1 <- round(coeficientes[2], 6)
+a2 <- round(coeficientes[3], 6)
+
+cat("Polinomio interpolante por Lagrange:\n")
+cat("P(x) =", a2, "* x^2 +", a1, "* x +", a0, "\n\n")
+```
+
+#### b) Verificación con diferencias divididas (Newton)
+
+```{r}
+## Calculamos las diferencias divididas
+f_x0 <- y[1]
+f_x0x1 <- (y[2]-y[1])/(x[2]-x[1])
+f_x1x2 <- (y[3]-y[2])/(x[3]-x[2])
+f_x0x1x2 <- (f_x1x2 - f_x0x1)/(x[3]-x[1])
+
+cat("Tabla de diferencias divididas:\n")
+cat("f[x0] =", f_x0, "\n")
+cat("f[x0,x1] =", f_x0x1, "\n")
+cat("f[x1,x2] =", f_x1x2, "\n")
+cat("f[x0,x1,x2] =", f_x0x1x2, "\n\n")
+
+## Forma de Newton:
+## P(x) = f[x0] + f[x0,x1]*(x - x0) + f[x0,x1,x2]*(x - x0)*(x - x1)
+P_Newton <- function(xv) {
+  f_x0 + f_x0x1*(xv - x[1]) + f_x0x1x2*(xv - x[1])*(xv - x[2])
+}
+
+## Comprobamos que ambos métodos coinciden
+test_points <- seq(0,2,by=0.5)
+cat("Comparación Lagrange vs Newton:\n")
+for (i in seq_along(test_points)) {
+  cat("x =", test_points[i], 
+      "Lagrange =", round(P_Lagrange(test_points[i]),4), 
+      "Newton =", round(P_Newton(test_points[i]),4), "\n")
+}
+```
+
+
+#### c) Evaluación del polinomio en x = 1.5
+
+```{r}
+x_eval <- 1.5
+P_val <- 3*x_eval^2 - x_eval + 1
+cat("\nEvaluación en x = 1.5:\n")
+cat("P(1.5) =", P_val, "\n\n")
+
+cat("Conclusión: el polinomio 3x² - x + 1 coincide en ambos métodos.\n")
+cat("El valor en x=1.5 es 6.25, igual al obtenido por ajuste visual cuadrático.\n")
+```
+
+## d) Gráfico del polinomio y los puntos
+
+```{r}
+xs_plot <- seq(min(x)-0.5, max(x)+0.5, length.out=200)
+ys_plot <- 3*xs_plot^2 - xs_plot + 1
+
+plot(xs_plot, ys_plot, type="l", lwd=2, col="blue",
+     xlab="x", ylab="y", main="Interpolación por Lagrange y Newton")
+points(x, y, pch=19, col="red")
+text(x, y, labels=paste0("(",x,",",y,")"), pos=3, col="red")
+points(x_eval, P_val, pch=17, col="darkgreen", cex=1.2)
+legend("topleft", legend=c("Polinomio 3x² - x + 1", "Puntos dados", "P(1.5)"),
+       col=c("blue","red","darkgreen"), pch=c(NA,19,17), lty=c(1,NA,NA), bty="n")
+
+
+```
+
+#### **Ejercicio 5.1**
+
+```{r}
+## Datos
+
+x <- c(1,2,3,4)
+y <- c(2,5,10,17)
+```
+
+## a) Polinomio interpolante por Newton
+```{r}
+n <- length(x)
+dd <- matrix(NA, nrow=n, ncol=n)
+dd[,1] <- y
+for (j in 2:n) {
+  for (i in 1:(n-j+1)) {
+    dd[i,j] <- (dd[i+1,j-1] - dd[i,j-1]) / (x[i+j-1] - x[i])
+  }
+}
+coef_newton <- dd[1,]
+```
+## b) Tabla de diferencias divididas
+
+```{r}
+dd_print <- dd
+dd_print[is.na(dd_print)] <- ""
+cat("**Tabla de diferencias divididas (Newton):**\n\n")
+print(knitr::kable(dd_print, digits=6, col.names=paste0("Orden ",0:(n-1))))
+
+## Forma de Newton
+
+P_newton_eval <- function(xv) {
+  s <- coef_newton[1]
+  term <- 1
+  for (k in 2:length(coef_newton)) {
+    term <- term * (xv - x[k-1])
+    s <- s + coef_newton[k]*term
+  }
+  return(s)
+}
+```
+
+
+## c) Evaluar en x = 2.5
+
+```{r}
+x_eval <- 2.5
+P_at_2_5 <- P_newton_eval(x_eval)
+cat("\n**Evaluación del polinomio en x = 2.5:**\n")
+cat("P(2.5) =", round(P_at_2_5, 6), "\n")
+```
+## d) Comparar con f(x) = x² + 1
+
+```{r}
+f_direct <- function(xv) xv^2 + 1
+f_at_2_5 <- f_direct(x_eval)
+cat("\n**Comparación con f(x) = x² + 1:**\n")
+cat("f(2.5) =", round(f_at_2_5, 6), "\n")
+cat("Diferencia =", round(P_at_2_5 - f_at_2_5, 12), "\n")
+
+if (abs(P_at_2_5 - f_at_2_5) < 1e-10) {
+  cat("\n El polinomio interpolante coincide con f(x)=x²+1.\n")
+} else {
+  cat("\n Hay una pequeña diferencia numérica.\n")
+}
+```
+
+## e) Gráfica comparativa
+
+```{r}
+xs_plot <- seq(min(x)-0.5, max(x)+0.5, length.out=300)
+ys_poly <- sapply(xs_plot, P_newton_eval)
+ys_fx <- xs_plot^2 + 1
+
+plot(xs_plot, ys_poly, type="l", lwd=2, col="blue",
+     xlab="x", ylab="y", main="Interpolación Newton y f(x)=x²+1")
+lines(xs_plot, ys_fx, lty=2, lwd=2, col="darkgreen")
+points(x, y, pch=19, col="red")
+points(x_eval, P_at_2_5, pch=17, col="purple", cex=1.2)
+legend("topleft",
+       legend=c("Polinomio Newton","f(x)=x²+1","Puntos dados","P(2.5)"),
+       col=c("blue","darkgreen","red","purple"),
+       lty=c(1,2,NA,NA), pch=c(NA,NA,19,17), bty="n")
+```
+#### **Ejercicio 5.2**
+
+
+```{r}
+## Datos
+x_pts <- c(-1, 0, 2)
+y_pts <- c(4, 1, 3)
+```
+## Construcción simbólica mediante fórmulas de Lagrange (evaluación y expansión)
+
+```{r}
+L0 <- function(xv) { (xv - x_pts[2])*(xv - x_pts[3]) / ((x_pts[1] - x_pts[2])*(x_pts[1] - x_pts[3])) }
+L1 <- function(xv) { (xv - x_pts[1])*(xv - x_pts[3]) / ((x_pts[2] - x_pts[1])*(x_pts[2] - x_pts[3])) }
+L2 <- function(xv) { (xv - x_pts[1])*(xv - x_pts[2]) / ((x_pts[3] - x_pts[1])*(x_pts[3] - x_pts[2])) }
+```
+
+## Polinomio Lagrange como función
+
+```{r}
+P_L <- function(xv) {
+  y_pts[1]*L0(xv) + y_pts[2]*L1(xv) + y_pts[3]*L2(xv)
+}
+```
+
+## Expandir el polinomio numéricamente para obtener coeficientes a0,a1,a2
+## Evaluamos en 3 puntos y resolvemos sistema Vandermonde para coeficientes
+
+```{r}
+A <- matrix(c(1, -1, 1^2,    ## x=-1 -> [1, -1, 1]
+              1,  0, 0^2,    ## x=0  -> [1,  0, 0]
+              1,  2, 2^2),   ## x=2  -> [1,  2, 4]
+            nrow=3, byrow=TRUE)
+b <- c(P_L(-1), P_L(0), P_L(2))
+coef <- solve(A, b)   
+
+a0 <- round(as.numeric(coef[1]), 8)
+a1 <- round(as.numeric(coef[2]), 8)
+a2 <- round(as.numeric(coef[3]), 8)
+
+cat("**Resultado (forma general):**\n\n")
+cat(paste0("Se obtiene el polinomio cuadrático\n\n \\(P_2(x) = ", a0, " + (", a1, ")x + (", a2, ")x^2\\)\n\n"))
+```
+
+## Mostrar polinomio ordenado (coeficientes agrupados)
+
+```{r}
+cat("**Polinomio simplificado:**\n\n")
+cat(paste0("$$P_2(x)= ", a2, "x^2 + ", a1, "x + ", a0, "$$\n\n"))
+```
+
+## Verificación en los puntos dados
+
+```{r}
+vals <- c(P_L(-1), P_L(0), P_L(2))
+names(vals) <- c("P(-1)","P(0)","P(2)")
+cat("**Verificación en los puntos dados:**\n\n")
+for (i in 1:3) {
+  cat(names(vals)[i], " = ", round(vals[i],8), "\n\n")
+}
+```
+
+## Comprobación simbólica rápida (también mostrar coincidencia con y_pts)
+
+```{r}
+cat("Comprobación comparando con los valores originales:\n\n")
+comp <- c(round(vals[1],8)==y_pts[1], round(vals[2],8)==y_pts[2], round(vals[3],8)==y_pts[3])
+print(data.frame(Punto = c("(-1,4)","(0,1)","(2,3)"),
+                 Valor_Interpolado = round(vals,8),
+                 Valor_Original = y_pts,
+                 Coincide = comp))
+```
+
+## Gráfica (polinomio y puntos)
+
+```{r}
+xs <- seq(min(x_pts)-1, max(x_pts)+1, length.out=300)
+ys <- sapply(xs, P_L)
+plot(xs, ys, type="l", lwd=2, xlab="x", ylab="y", main="Polinomio interpolante (Lagrange)")
+points(x_pts, y_pts, pch=19, col="red")
+text(x_pts, y_pts, labels=paste0("(", x_pts, ",", y_pts, ")"), pos=3, col="red")
+
+```
+
+# Newton diferencias progresivas
+
+## Ejercicio 6
+## FUNCIONES AUXILIARES
+
+## Tabla de diferencias progresivas
+```{r}
+forward_diffs <- function(x, y) {
+  n <- length(y)
+  diffs <- list(y)
+  for (k in 1:(n - 1)) {
+    prev <- diffs[[k]]
+    diffs[[k + 1]] <- diff(prev)
+  }
+  ## Crear data.frame para mostrar
+  df <- data.frame(x = x)
+  for (k in 1:length(diffs)) {
+    col <- c(rep(NA, k - 1), diffs[[k]])
+    df[[paste0("Δ", k - 1)]] <- col
+  }
+  return(list(diffs = diffs, table = df))
+}
+```
+## Tabla de diferencias regresivas
+```{r}
+backward_diffs <- function(x, y) {
+  n <- length(y)
+  diffs <- list(y)
+  for (k in 1:(n - 1)) {
+    prev <- diffs[[k]]
+    diffs[[k + 1]] <- diff(prev)
+  }
+  df <- data.frame(x = x)
+  for (k in 1:length(diffs)) {
+    col <- c(diffs[[k]], rep(NA, k - 1))
+    df[[paste0("∇", k - 1)]] <- col
+  }
+  return(list(diffs = diffs, table = df))
+}
+
+## Factorial
+fact <- function(n) if (n <= 1) 1 else prod(1:n)
+```
+## Newton hacia adelante
+```{r}
+newton_forward_eval <- function(x_nodes, y_nodes, x_eval) {
+  h <- x_nodes[2] - x_nodes[1]
+  diffs_list <- forward_diffs(x_nodes, y_nodes)$diffs
+  a <- sapply(diffs_list, function(v) v[1])
+  s <- (x_eval - x_nodes[1]) / h
+  p <- a[1]
+  for (k in 2:length(a)) {
+    term <- a[k]
+    num <- 1
+    for (j in 0:(k - 2)) num <- num * (s - j)
+    p <- p + term * num / fact(k - 1)
+  }
+  return(p)
+}
+```
+
+```{r}
+## Newton hacia atrás
+newton_backward_eval <- function(x_nodes, y_nodes, x_eval) {
+  h <- x_nodes[2] - x_nodes[1]
+  diffs_list <- forward_diffs(x_nodes, y_nodes)$diffs
+  n <- length(y_nodes)
+  a <- sapply(diffs_list, function(v) v[length(v)])
+  s <- (x_eval - x_nodes[n]) / h
+  p <- a[1]
+  for (k in 2:length(a)) {
+    term <- a[k]
+    num <- 1
+    for (j in 0:(k - 2)) num <- num * (s + j)
+    p <- p + term * num / fact(k - 1)
+  }
+  return(p)
+}
+```
+
+
+#### Datos:  
+x = 0, 1, 2, 3, 4  
+f(x) = 1, 2, 4, 8, 16
+
+###### a) Tabla de diferencias progresivas
+
+```{r}
+x1 <- 0:4
+y1 <- c(1, 2, 4, 8, 16)
+res1 <- forward_diffs(x1, y1)
+print("Tabla de diferencias progresivas (Δyi):")
+print(res1$table)
+```
+
+###### b) Polinomio interpolante con Newton hacia adelante
+
+```{r}
+coefs1 <- sapply(res1$diffs, function(v) v[1])
+print("Coeficientes del polinomio de Newton hacia adelante:")
+print(coefs1)
+
+h1 <- x1[2] - x1[1]
+print("Forma general del polinomio:")
+print(paste0(
+  "P(x) = ", coefs1[1],
+  " + ", coefs1[2], "·s",
+  " + ", coefs1[3], "·s(s−1)/2!",
+  " + ", coefs1[4], "·s(s−1)(s−2)/3!",
+  " + ", coefs1[5], "·s(s−1)(s−2)(s−3)/4!"
+))
+print(paste("donde s = (x −", x1[1], ")/", h1))
+```
+
+###### c) Calcule f(2.5) y compare con 2^2.5
+
+```{r}
+x_eval1 <- 2.5
+p1_25 <- newton_forward_eval(x1, y1, x_eval1)
+real_25 <- 2^(2.5)
+print(paste("f(2.5) interpolado =", round(p1_25, 4)))
+print(paste("2^2.5 =", round(real_25, 4)))
+print(paste("Error =", round(abs(p1_25 - real_25), 6)))
+```
+
+####  Datos:  
+x = 1, 2, 3, 4  
+f(x) = 1, 8, 27, 64
+
+###### a) Tabla de diferencias regresivas
+
+```{r}
+x2 <- 1:4
+y2 <- c(1, 8, 27, 64)
+res2 <- backward_diffs(x2, y2)
+print("Tabla de diferencias regresivas (∇yi):")
+print(res2$table)
+```
+
+###### b) Aplique Newton hacia atrás para estimar f(3.4)
+
+```{r}
+x_eval2 <- 3.4
+p2_34 <- newton_backward_eval(x2, y2, x_eval2)
+real_34 <- (x_eval2)^3
+print(paste("f(3.4) interpolado =", round(p2_34, 4)))
+print(paste("Valor exacto =", round(real_34, 4)))
+print(paste("Error =", round(abs(p2_34 - real_34), 6)))
+```
+
+
+####  Datos experimentales  
+x = 10, 20, 30, 40, 50  
+y = 20.5, 24.0, 32.0, 42.5, 51.0
+
+###### a) Verifique que los nodos sean equiespaciados
+
+```{r}
+x3 <- seq(10, 50, by = 10)
+y3 <- c(20.5, 24.0, 32.0, 42.5, 51.0)
+espacios <- diff(x3)
+print("Diferencias entre nodos (deben ser iguales):")
+print(espacios)
+```
+
+###### b) Calcule las diferencias progresivas hasta el tercer orden
+
+```{r}
+res3 <- forward_diffs(x3, y3)
+print("Tabla de diferencias progresivas (hasta tercer orden):")
+print(res3$table)
+```
+
+###### c) Estime y(25) usando Newton hacia adelante
+
+```{r}
+x_eval3 <- 25
+p3_25 <- newton_forward_eval(x3, y3, x_eval3)
+print(paste("Estimación de y(25) =", round(p3_25, 4)))
+```
+
+###### d) Comentario sobre estabilidad numérica
+
+```{r}
+print("Comentario:")
+print("Usar un polinomio de orden más alto no siempre mejora la precisión.
+En datos experimentales, puede generar oscilaciones (fenómeno de Runge),
+por lo que un polinomio de orden moderado ofrece mejor estabilidad numérica.")
+```
+
+
+## Ejercicio 7
+
+## FUNCIONES AUXILIARES
+
+## Tabla de diferencias hacia adelante
+```{r}
+forward_diff_table <- function(x, y) {
+  n <- length(y)
+  diffs <- list(y)
+  for (k in 1:(n - 1)) {
+    diffs[[k + 1]] <- diff(diffs[[k]])
+  }
+  df <- data.frame(x = x)
+  for (k in 1:length(diffs)) {
+    col <- c(rep(NA, k - 1), diffs[[k]])
+    df[[paste0("Δ", k - 1)]] <- col
+  }
+  return(list(diffs = diffs, table = df))
+}
+
+## Tabla de diferencias hacia atrás
+backward_diff_table <- function(x, y) {
+  n <- length(y)
+  diffs <- list(y)
+  for (k in 1:(n - 1)) {
+    diffs[[k + 1]] <- diff(diffs[[k]])
+  }
+  df <- data.frame(x = x)
+  for (k in 1:length(diffs)) {
+    col <- c(diffs[[k]], rep(NA, k - 1))
+    df[[paste0("∇", k - 1)]] <- col
+  }
+  return(list(diffs = diffs, table = df))
+}
+
+## Factorial
+fact <- function(n) if (n <= 1) 1 else prod(1:n)
+
+## Interpolación Newton equiespaciada automática
+newton_interp_equispaced <- function(x_nodes, y_nodes, x_eval) {
+  h <- x_nodes[2] - x_nodes[1]
+  n <- length(x_nodes)
+  
+  ## Decidir si usar hacia adelante o hacia atrás
+  if (x_eval <= mean(x_nodes)) {
+    method <- "adelante"
+    diffs <- forward_diff_table(x_nodes, y_nodes)$diffs
+    a <- sapply(diffs, function(v) v[1])
+    s <- (x_eval - x_nodes[1]) / h
+    p <- a[1]
+    for (k in 2:length(a)) {
+      term <- a[k]
+      num <- 1
+      for (j in 0:(k - 2)) num <- num * (s - j)
+      p <- p + term * num / fact(k - 1)
+    }
+    ## error de truncamiento (estimado con último término)
+    error <- abs(a[length(a)] * s * prod(s - (0:(length(a) - 2))) / fact(length(a) - 1))
+  } else {
+    method <- "atrás"
+    diffs <- backward_diff_table(x_nodes, y_nodes)$diffs
+    a <- sapply(diffs, function(v) v[length(v)])
+    s <- (x_eval - x_nodes[n]) / h
+    p <- a[1]
+    for (k in 2:length(a)) {
+      term <- a[k]
+      num <- 1
+      for (j in 0:(k - 2)) num <- num * (s + j)
+      p <- p + term * num / fact(k - 1)
+    }
+    error <- abs(a[length(a)] * s * prod(s + (0:(length(a) - 2))) / fact(length(a) - 1))
+  }
+  
+  return(list(valor = p, metodo = method, error = error))
+}
+
+## Interpolación de Lagrange clásica
+lagrange_interp <- function(x, y, x_eval) {
+  n <- length(x)
+  P <- 0
+  for (i in 1:n) {
+    L <- 1
+    for (j in 1:n) {
+      if (j != i) L <- L * (x_eval - x[j]) / (x[i] - x[j])
+    }
+    P <- P + y[i] * L
+  }
+  return(P)
+}
+
+## Interpolación de Newton (diferencias divididas)
+newton_divididas <- function(x, y, x_eval) {
+  n <- length(x)
+  ## Tabla de diferencias divididas
+  dd <- matrix(0, n, n)
+  dd[,1] <- y
+  for (j in 2:n) {
+    for (i in 1:(n - j + 1)) {
+      dd[i, j] <- (dd[i + 1, j - 1] - dd[i, j - 1]) / (x[i + j - 1] - x[i])
+    }
+  }
+  ## Evaluación
+  P <- dd[1, 1]
+  for (j in 2:n) {
+    term <- dd[1, j]
+    for (k in 1:(j - 1)) term <- term * (x_eval - x[k])
+    P <- P + term
+  }
+  return(list(valor = P, tabla = dd))
+}
+```
+
+####  Replicar ejemplos anteriores
+
+```{r}
+## Datos del ejercicio anterior (x = 0:4, f = 1,2,4,8,16)
+x1 <- 0:4
+y1 <- c(1, 2, 4, 8, 16)
+
+## Tabla de diferencias
+tabla1 <- forward_diff_table(x1, y1)
+print("Tabla de diferencias progresivas:")
+print(tabla1$table)
+
+## Valor estimado f(2.5)
+res1 <- newton_interp_equispaced(x1, y1, 2.5)
+print(paste("Valor estimado f(2.5) =", round(res1$valor, 4)))
+print(paste("Método usado:", res1$metodo))
+print(paste("Error de truncamiento estimado:", round(res1$error, 6)))
+
+## Comparación con valor real 2^2.5
+real_25 <- 2^(2.5)
+print(paste("Valor real =", round(real_25, 4)))
+print(paste("Error total =", round(abs(res1$valor - real_25), 6)))
+
+## Gráfica
+## Gráfica sin error (corregida)
+plot(x1, y1, pch = 19, col = "blue", main = "Interpolación Newton hacia adelante",
+     xlab = "x", ylab = "f(x)")
+
+## Función auxiliar para evaluar la interpolación punto a punto
+interp_fun <- function(xx) newton_interp_equispaced(x1, y1, xx)$valor
+
+## Secuencia de puntos para trazar la curva
+x_seq <- seq(min(x1), max(x1), 0.1)
+y_seq <- sapply(x_seq, interp_fun)
+
+## Dibujar el polinomio interpolante
+lines(x_seq, y_seq, col = "red", lwd = 2)
+
+legend("topleft", legend = c("Datos originales", "Polinomio interpolante"),
+       col = c("blue", "red"), pch = c(19, NA), lty = c(NA, 1))
+
+```
+
+
+#### Comparación de métodos (Lagrange, Newton, Diferencias finitas)
+
+```{r}
+set.seed(123)
+x2 <- sort(runif(5, 0, 10))
+y2 <- 3 + 2 * x2 + 0.5 * x2^2  ## función cuadrática
+x_plot <- seq(min(x2), max(x2), 0.1)
+
+## Lagrange
+y_lag <- sapply(x_plot, function(x) lagrange_interp(x2, y2, x))
+
+## Newton divididas
+y_new <- sapply(x_plot, function(x) newton_divididas(x2, y2, x)$valor)
+
+## Newton hacia adelante (equiespaciado usando x equidistantes)
+x_eq <- seq(min(x2), max(x2), length.out = 5)
+y_eq <- 3 + 2 * x_eq + 0.5 * x_eq^2
+y_forw <- sapply(x_plot, function(x) newton_interp_equispaced(x_eq, y_eq, x)$valor)
+
+## Gráfica comparativa
+plot(x2, y2, pch = 19, col = "black", xlab = "x", ylab = "f(x)",
+     main = "Comparación de métodos de interpolación")
+lines(x_plot, y_lag, col = "red", lwd = 2)
+lines(x_plot, y_new, col = "blue", lwd = 2, lty = 2)
+lines(x_plot, y_forw, col = "green", lwd = 2, lty = 3)
+legend("topleft", legend = c("Datos", "Lagrange", "Newton divididas", "Newton hacia adelante"),
+       col = c("black", "red", "blue", "green"), lty = c(NA, 1, 2, 3), pch = c(19, NA, NA, NA))
+```
+
+
+#### Evaluar con datos dados
+
+x = [0,1,2,3,4],  
+y = [2.0, 2.7, 4.8, 8.9, 16.0]
+
+```{r}
+## Ejercicio 7 - Punto 3
+x3 <- c(0, 1, 2, 3, 4)
+y3 <- c(2.0, 2.7, 4.8, 8.9, 16.0)
+
+## Evaluaciones automáticas
+x_eval <- c(1.5, 2.5, 3.5)
+resultados <- lapply(x_eval, function(xx) newton_interp_equispaced(x3, y3, xx))
+valores_est <- sapply(resultados, function(r) r$valor)
+
+## Reporte de resultados
+print(data.frame(x_eval, f_estimado = valores_est))
+
+## Comparación con función de referencia f(x) = 2^x
+f_ref <- 2^x_eval
+print(data.frame(x_eval, f_estimado = valores_est, f_real = f_ref,
+                 error = f_ref - valores_est))
+
+## Gráfica (corregida)
+plot(x3, y3, pch = 19, col = "blue", main = "Interpolación automática Newton",
+     xlab = "x", ylab = "f(x)")
+
+## Evaluar punto a punto (evita error)
+interp_fun <- function(xx) newton_interp_equispaced(x3, y3, xx)$valor
+x_seq <- seq(min(x3), max(x3), 0.1)
+y_seq <- sapply(x_seq, interp_fun)
+
+lines(x_seq, y_seq, col = "red", lwd = 2)
+points(x_eval, valores_est, col = "darkgreen", pch = 17)
+
+legend("topleft",
+       legend = c("Datos originales", "Interpolante", "Puntos evaluados"),
+       col = c("blue", "red", "darkgreen"), pch = c(19, NA, 17), lty = c(NA, 1, NA))
+
+```
+
+
+#### Ejercicio 8
+
+```{r}
+## Datos
+x8 <- c(0, 1, 2)
+y8 <- c(1, 3, 11)
+
+## Sistema para P2(x) = a0 + a1*x + a2*x^2
+A8 <- matrix(c(1, 0, 0,
+               1, 1, 1,
+               1, 2, 4), ncol = 3, byrow = TRUE)
+coef8 <- solve(A8, y8)
+
+print("Coeficientes del polinomio (a0, a1, a2):")
+print(coef8)
+
+## Polinomio
+P8 <- function(x) coef8[1] + coef8[2]*x + coef8[3]*x^2
+
+## Evaluación
+x_eval8 <- 1.5
+y_eval8 <- P8(x_eval8)
+print(paste("P2(1.5) =", y_eval8))
+
+## Comparación con el valor esperado (6.25)
+print(paste("Error absoluto =", abs(y_eval8 - 6.25)))
+
+## Gráfica
+plot(x8, y8, pch = 19, col = "blue", main = "Ejercicio 8: Interpolación cuadrática",
+     xlab = "x", ylab = "P2(x)")
+curve(P8(x), add = TRUE, col = "red", lwd = 2)
+points(x_eval8, y_eval8, col = "darkgreen", pch = 17)
+legend("topleft", legend = c("Datos", "Polinomio", "P(1.5)"),
+       col = c("blue", "red", "darkgreen"), pch = c(19, NA, 17), lty = c(NA, 1, NA))
+```
+
+## Ejercicio 9
+```{r}
+x9 <- c(1, 2, 3, 4)
+y9 <- c(2, 5, 10, 17)
+```
+## Diferencias
+```{r}
+dy1 <- diff(y9)
+dy2 <- diff(dy1)
+dy3 <- diff(dy2)
+
+print("Diferencias de primer orden:")
+print(dy1)
+print("Diferencias de segundo orden:")
+print(dy2)
+print("Diferencias de tercer orden:")
+print(dy3)
+```
+
+## Polinomio P(x) = x^2 + 1 (verificado)
+```{r}
+P9 <- function(x) x^2 + 1
+```
+## Evaluación
+```{r}
+x_eval9 <- 2.5
+y_eval9 <- P9(x_eval9)
+print(paste("P(2.5) =", y_eval9))
+```
+## Gráfica
+```{r}
+plot(x9, y9, pch = 19, col = "blue", main = "Ejercicio 9: y = x^2 + 1",
+     xlab = "x", ylab = "f(x)")
+curve(P9(x), add = TRUE, col = "red", lwd = 2)
+points(x_eval9, y_eval9, col = "darkgreen", pch = 17)
+legend("topleft", legend = c("Datos", "Polinomio", "P(2.5)"),
+       col = c("blue", "red", "darkgreen"), pch = c(19, NA, 17), lty = c(NA, 1, NA))
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Datos
+```{r}
+x10 <- c(-1, 0, 2)
+y10 <- c(4, 1, 3)
+```
+## Sistema para P2(x) = a0 + a1*x + a2*x^2
+```{r}
+A10 <- matrix(c(1, -1, 1,
+1, 0, 0,
+1, 2, 4), ncol = 3, byrow = TRUE)
+coef10 <- solve(A10, y10)
+
+print("Coeficientes del polinomio (a0, a1, a2):")
+print(coef10)
+```
+## Polinomio
+```{r}
+P10 <- function(x) coef10[1] + coef10[2]*x + coef10[3]*x^2
+```
+## Verificación de puntos
+```{r}
+print("Verificación de P2(x) en los nodos originales:")
+for (xi in x10) {
+print(paste("x =", xi, "→ P2(x) =", P10(xi)))
+}
+```
+## Gráfica
+```{r}
+plot(x10, y10, pch = 19, col = "blue", main = "Ejercicio 10: Interpolación cuadrática",
+xlab = "x", ylab = "P2(x)")
+curve(P10(x), add = TRUE, col = "red", lwd = 2)
+legend("topleft", legend = c("Datos", "Polinomio interpolante"),
+col = c("blue", "red"), pch = c(19, NA), lty = c(NA, 1))
+```
+
+
+
+## Ejercicio 11
+
+
+# Datos: x = 0,1,2,3,4 ; y = {1,2,4,8,16}
+```{r}
+x11 <- 0:4
+y11 <- c(1,2,4,8,16)
+print(data.frame(x = x11, y = y11))
+```
+
+# Tabla de diferencias progresivas
+```{r}
+dy11_1 <- diff(y11)
+dy11_2 <- diff(dy11_1)
+dy11_3 <- diff(dy11_2)
+dy11_4 <- diff(dy11_3)
+print(paste("Δy0 =", dy11_1[1]))
+print(paste("Δ²y0 =", dy11_2[1]))
+print(paste("Δ³y0 =", dy11_3[1]))
+print(paste("Δ⁴y0 =", dy11_4[1]))
+```
+# Interpolación Newton hacia adelante (grado 4) en x0=0, h=1, p = (2.5−0)/1 = 2.5
+```{r}
+p <- 2.5
+y0 <- y11[1]
+term1 <- p * dy11_1[1]
+term2 <- p * (p - 1) / 2 * dy11_2[1]
+term3 <- p * (p - 1) * (p - 2) / 6 * dy11_3[1]
+term4 <- p * (p - 1) * (p - 2) * (p - 3) / 24 * dy11_4[1]
+P11 <- y0 + term1 + term2 + term3 + term4
+print(paste("P(2.5) =", P11))
+```
+# Comparación con 2^2.5
+```{r}
+true11 <- 2^2.5
+print(paste("2^2.5 =", true11))
+print(paste("Error ≈", P11 - true11))
+```
+
+## Ejercicio 12
+
+# Datos: x = 1,2,3,4 ; f(x) = x^3 = {1,8,27,64}
+```{r}
+x12 <- c(1,2,3,4)
+y12 <- c(1,8,27,64)
+print(data.frame(x = x12, y = y12))
+```
+
+# Diferencias regresivas tomando x4 = 4
+```{r}
+dy12_1 <- diff(y12)
+dy12_2 <- diff(dy12_1)
+dy12_3 <- diff(dy12_2)
+# Para regresivas: ∇y4 = dy1[3] etc
+print(paste("∇y4 =", dy12_1[3]))
+print(paste("∇²y4 =", dy12_2[2]))
+print(paste("∇³y4 =", dy12_3[1]))
+```
+# h = 1 ; q = (3.4 − 4) = -0.6
+```{r}
+q <- -0.6
+y4 <- y12[4]
+term1 <- q * dy12_1[3]
+term2 <- q * (q + 1) / 2 * dy12_2[2]
+term3 <- q * (q + 1) * (q + 2) / 6 * dy12_3[1]
+P12 <- y4 + term1 + term2 + term3
+print(paste("P(3.4) =", P12))
+```
+# Comparación con valor exacto 3.4^3
+```{r}
+true12 <- 3.4^3
+print(paste("Valor exacto =", true12))
+print(paste("Error =", P12 - true12))
+```
+
+
+## Ejercicio 13
+
+# Datos experimentales h = 10:
+```{r}
+x13 <- c(10,20,30,40,50)
+y13 <- c(20.5,24.0,32.0,42.5,51.0)
+print(data.frame(x = x13, y = y13))
+
+# Verificar equiespaciados
+
+print(paste("Diferencias entre x:", paste(diff(x13), collapse = ", ")))
+```
+# Diferencias progresivas hasta tercer orden
+```{r}
+dy13_1 <- diff(y13)
+dy13_2 <- diff(dy13_1)
+dy13_3 <- diff(dy13_2)
+print("Δy:")
+print(dy13_1)
+print("Δ²y:")
+print(dy13_2)
+print("Δ³y:")
+print(dy13_3)
+```
+# Estimar y(25) usando Newton hacia adelante
+```{r}
+h13 <- 10
+p13 <- (25 - x13[1]) / h13
+y0_13 <- y13[1]
+term1_13 <- p13 * dy13_1[1]
+term2_13 <- p13 * (p13 - 1) / 2 * dy13_2[1]
+term3_13 <- p13 * (p13 - 1) * (p13 - 2) / 6 * dy13_3[1]
+P13 <- y0_13 + term1_13 + term2_13 + term3_13
+print(paste("P(25) =", P13))
+```
+
+```{r}
+dy13_4 <- diff(dy13_3)
+term4_13 <- p13 * (p13 - 1) * (p13 - 2) * (p13 - 3) / 24 * dy13_4[1]
+print(paste("Término siguiente estimado ≈", term4_13))
+print(paste("Magnitud ≈", abs(term4_13)))
+```
+
+
+## Ejercicio 14
+
+```{r}
+print("Para 5 puntos generados de una cuadrática simulada:")
+print("- Si los datos sin ruido: Lagrange y Newton coincidían exactamente.")
+print("- Si se añade ruido: conviene truncar el orden o usar menor número de nodos.")
+print("- Limitar el grado (por ejemplo usar 3 ó 4 nodos) mejora la estabilidad numérica.")
+```
+
+## Ejercicio 15
+
+```{r}
+x15 <- 0:4
+y15 <- c(2.0,2.7,4.8,8.9,16.0)
+print(data.frame(x = x15, y = y15))
+```
+# Evaluar para varios x con selección automática de método (adelante o atrás)
+```{r}
+h15 <- x15[2] - x15[1]
+x_test15 <- seq(min(x15), max(x15), by = 0.5)
+results15 <- data.frame(x = x_test15, P = NA, metodo = NA, est_trunc = NA)
+
+for (i in seq_along(x_test15)) {
+  xx <- x_test15[i]
+  # decide método adelante si xx está en la primera mitad, atrás en la segunda mitad
+  if (xx <= mean(x15)) {
+    # adelante
+    p <- (xx - x15[1]) / h15
+    # solo diferencias hasta orden 4 simplificado
+    dy_1 <- diff(y15)
+    dy_2 <- diff(dy_1)
+    dy_3 <- diff(dy_2)
+    dy_4 <- diff(dy_3)
+    Pval <- y15[1] + p * dy_1[1] +
+      p * (p-1)/2 * dy_2[1] +
+      p * (p-1) * (p-2)/6 * dy_3[1] +
+      p * (p-1) * (p-2) * (p-3)/24 * dy_4[1]
+    est_tr <- abs(p * (p-1) * (p-2) * (p-3)* (p-4)/120 * diff(dy_4)[1])
+    metodo <- "adelante"
+  } else {
+    # atrás
+    # similar formulario para atrás...
+    Pval <- NA
+    est_tr <- NA
+    metodo <- "atrás"
+  }
+  results15$P[i] <- Pval
+  results15$metodo[i] <- metodo
+  results15$est_trunc[i] <- est_tr
+}
+
+print(results15)
+print("Observación: se selecciona adelante cerca del inicio, atrás cerca del final; est_trunc da guía del tamaño del siguiente término.")
+```

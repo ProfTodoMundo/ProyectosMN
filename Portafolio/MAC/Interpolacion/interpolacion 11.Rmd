@@ -1,0 +1,50 @@
+---
+title: "interpolacion ejercicios 11"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Ejercicio 11
+
+
+# Datos: x = 0,1,2,3,4 ; y = {1,2,4,8,16}
+```{r}
+x11 <- 0:4
+y11 <- c(1,2,4,8,16)
+print(data.frame(x = x11, y = y11))
+```
+
+# Tabla de diferencias progresivas
+```{r}
+dy11_1 <- diff(y11)
+dy11_2 <- diff(dy11_1)
+dy11_3 <- diff(dy11_2)
+dy11_4 <- diff(dy11_3)
+print(paste("Δy0 =", dy11_1[1]))
+print(paste("Δ²y0 =", dy11_2[1]))
+print(paste("Δ³y0 =", dy11_3[1]))
+print(paste("Δ⁴y0 =", dy11_4[1]))
+```
+# Interpolación Newton hacia adelante (grado 4) en x0=0, h=1, p = (2.5−0)/1 = 2.5
+```{r}
+p <- 2.5
+y0 <- y11[1]
+term1 <- p * dy11_1[1]
+term2 <- p * (p - 1) / 2 * dy11_2[1]
+term3 <- p * (p - 1) * (p - 2) / 6 * dy11_3[1]
+term4 <- p * (p - 1) * (p - 2) * (p - 3) / 24 * dy11_4[1]
+P11 <- y0 + term1 + term2 + term3 + term4
+print(paste("P(2.5) =", P11))
+```
+# Comparación con 2^2.5
+```{r}
+true11 <- 2^2.5
+print(paste("2^2.5 =", true11))
+print(paste("Error ≈", P11 - true11))
+```

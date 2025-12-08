@@ -1,0 +1,96 @@
+---
+title: "Clase de metodos"
+author: "Monserrath Antonio Cordero"
+date: "2025-10-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+a<- -10
+b<- 10
+paso<- 0.01
+x<- seq(a,b,paso)
+head(x,10)
+```
+graficamos funcion cubica
+$ f(x)=-x^3-6x^2+11x-6 $
+```{r}
+A<- -1
+B<- -6
+C<- 11
+D<- 6
+f_x<- A*x^3+B*x^2+C*x+D
+head(f_x, 10)
+```
+
+```{r}
+plot(x,f_x,col= "purple",
+     type = "l",
+     main =  "Grafica de una funcion cubica",
+     xlab = "x",
+     ylab = "f(x)")
+abline(v = 0, type="-", col="black")
+abline(h = 0, type="-", col="black")
+
+```
+Busqueda de la raiz despues de revisar la grafica, en el intervalo $[-7,-6]$
+```{r}
+a<- -9
+b<- -5
+```
+Empezamos con el metodo de biseccion
+```{r}
+c<- (a+b)/2;
+print(c)
+```
+
+```{r}
+f_cubica<- function(x){
+  A*x^3+B*x^2+C*x+D
+}
+```
+probemos la funcion
+```{r}
+fa<- f_cubica(a); print(fa)
+fb<- f_cubica(b); print(fb)
+fc<- f_cubica(c); print(fc)
+```
+
+```{r}
+signo_fafc <- sign(fa*fc); print(signo_fafc)
+signo_fbfc <- sign(fb*fc); print(signo_fbfc)
+```
+
+como $fa*fc<0$ hacemos la asignacion $b\leftarrow c$ y calculamos el nuevo valor de $c$
+```{r}
+b <- c
+c <- (a+b)/2; print(c)
+```
+Evaluamos nuevamente la cubica en $a,b$ y $c$
+```{r}
+fa<- f_cubica(a); print(fa)
+fb<- f_cubica(b); print(fb)
+fc<- f_cubica(c); print(fc)
+signo_fafc <- sign(fa*fc); print(signo_fafc)
+signo_fbfc <- sign(fb*fc); print(signo_fbfc)
+
+```
+como el signo fue negativo, para $fb*fc<0$, entonces
+hacemos la asignacion $a\leftarrow c$
+```{r}
+a <- c; print(a)
+c <- (a+b)/2; print(c)
+```
+
+```{r}
+fa<- f_cubica(a); print(fa)
+fb<- f_cubica(b); print(fb)
+fc<- f_cubica(c); print(fc)
+signo_fafc <- sign(fa*fc); print(signo_fafc)
+signo_fbfc <- sign(fb*fc); print(signo_fbfc)
+```

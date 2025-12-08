@@ -1,0 +1,99 @@
+---
+title: "Método de Newton"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Método de Newton
+
+```{r}
+# Método de Newton en R puro
+newton <- function(f, df, x0, tol = 1e-5, max_iter = 10) {
+  iter <- numeric()
+  xk <- numeric()
+  fxk <- numeric()
+  dfxk <- numeric()
+  error <- numeric()
+  
+  x <- x0
+  
+  for (k in 1:max_iter) {
+    fx <- f(x)
+    dfx <- df(x)
+    x_new <- x - fx/dfx
+    e <- abs(x_new - x)
+    
+    iter <- c(iter, k)
+    xk <- c(xk, x)
+    fxk <- c(fxk, fx)
+    dfxk <- c(dfxk, dfx)
+    error <- c(error, e)
+    
+    x <- x_new
+    
+    if (e < tol && k >= 1) break
+  }
+  
+  resultados <- data.frame(
+    k = iter,
+    xk = xk,
+    f_xk = fxk,
+    df_xk = dfxk,
+    error = error
+  )
+  
+  return(resultados)
+}
+
+# Función para graficar y marcar la raíz
+graficar_newton <- function(f, tabla, titulo = "Método de Newton") {
+  plot(NULL, xlim = c(min(tabla$xk)-1, max(tabla$xk)+1),
+       ylim = c(min(tabla$f_xk)-1, max(tabla$f_xk)+1),
+       xlab = "x", ylab = "f(x)", main = titulo)
+  curve(f(x), from = min(tabla$xk)-1, to = max(tabla$xk)+1, add = TRUE, col = "blue")
+  abline(h = 0, col = "black", lty = 2)
+  points(tabla$xk[nrow(tabla)], 0, col = "red", pch = 19) # raíz aproximada
+}
+
+# Lista de funciones y derivadas para los 15 ejercicios
+funciones <- list(
+  function(x) x^3 - 7*x + 6,          function(x) x^3 + 2*x^2 - 5,
+  function(x) x^4 - 3*x^3 + 2,        function(x) sin(x) - x^3/3,
+  function(x) exp(-x) - x,             function(x) x^3 - 2*x - 5,
+  function(x) x^5 - 3*x + 1,           function(x) cos(x) - 2*x,
+  function(x) log(x+2) + x - 1,        function(x) x*exp(-x) - 0.1,
+  function(x) x^3 - 4*sin(x),          function(x) exp(x) - 3*x^2,
+  function(x) x^2 - cos(x),            function(x) x^3 + 4*x^2 - 10,
+  function(x) 2*x*sin(x) - 1
+)
+
+derivadas <- list(
+  function(x) 3*x^2 - 7,               function(x) 3*x^2 + 4*x,
+  function(x) 4*x^3 - 9*x^2,           function(x) cos(x) - x^2,
+  function(x) -exp(-x) - 1,            function(x) 3*x^2 - 2,
+  function(x) 5*x^4 - 3,               function(x) -sin(x) - 2,
+  function(x) 1/(x+2) + 1,             function(x) exp(-x) - x*exp(-x),
+  function(x) 3*x^2 - 4*cos(x),        function(x) exp(x) - 6*x,
+  function(x) 2*x + 2*sin(x),          function(x) 3*x^2 + 8*x,
+  function(x) 2*sin(x) + 2*x*cos(x)
+)
+
+valores_iniciales <- c(0.5, 1.5, 0.5, 1, 0.5, 2.5, 0.5, 0.5, -0.5, 0.5, 1.5, 0.5, 0.5, 1.5, 0.5)
+
+# Ejecutar Newton para los 15 ejercicios y graficar
+resultados_newton <- list()
+
+for (i in 1:15) {
+  cat("\n\nEjercicio", i, "\n")
+  res <- newton(funciones[[i]], derivadas[[i]], valores_iniciales[i], tol = 1e-5, max_iter = 10)
+  print(res)
+  resultados_newton[[i]] <- res
+  graficar_newton(funciones[[i]], res, paste("Ejercicio", i))
+}
+
+```

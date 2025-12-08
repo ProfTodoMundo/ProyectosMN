@@ -1,0 +1,86 @@
+---
+title: "9.6 Métodos Iterativos"
+author: "Monserrath Antonio Cordero"
+date: "2025-10-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# Método de Jacobi
+jacobi <- function(A, b, x0 = NULL, tol = 1e-8, maxiter = 1000) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incompatibles.")
+  if (is.null(x0)) x0 <- rep(0, n)
+  x <- x0
+  D <- diag(diag(A))
+  R <- A - D
+  for (k in 1:maxiter) {
+    x_new <- (b - R %*% x) / diag(D)
+    cat(sprintf("Iter %d: %s\n", k, paste(round(x_new, 6), collapse = " ")))
+    if (sqrt(sum((x_new - x)^2)) < tol) {
+      return(list(x = as.vector(x_new), iter = k, convergencia = TRUE))
+    }
+    x <- x_new
+  }
+  list(x = as.vector(x), iter = maxiter, convergencia = FALSE)
+}
+
+# Ejemplo Jacobi
+A <- matrix(c(
+  4, -1, 0,
+ -1,  4, -1,
+  0, -1, 3
+), 3, 3, byrow = TRUE)
+
+b <- c(15, 10, 10)
+res_jacobi <- jacobi(A, b, x0 = c(0, 0, 0), tol = 1e-8)
+print(res_jacobi$x)
+
+
+# Método de Gauss-Seidel
+gauss_seidel <- function(A, b, x0 = NULL, tol = 1e-8, maxiter = 1000, verbose = FALSE) {
+  if (!is.matrix(A)) stop("A debe ser una matriz.")
+  n <- nrow(A)
+  if (ncol(A) != n) stop("A debe ser cuadrada.")
+  if (length(b) != n) stop("Dimensiones de b incompatibles.")
+  x <- if (is.null(x0)) rep(0, n) else as.numeric(x0)
+  if (length(x) != n) stop("Dimensión de x0 incompatible con A.")
+  for (k in 1:maxiter) {
+    x_old <- x
+    for (i in 1:n) {
+      aii <- A[i, i]
+      if (abs(aii) < .Machine$double.eps) {
+        stop(sprintf("A[%d,%d] = 0: Gauss-Seidel no se puede aplicar", i, i))
+      }
+      s1 <- if (i > 1) sum(A[i, 1:(i - 1)] * x[1:(i - 1)]) else 0
+      s2 <- if (i < n) sum(A[i, (i + 1):n] * x_old[(i + 1):n]) else 0
+      x[i] <- (b[i] - s1 - s2) / aii
+    }
+    dx <- sqrt(sum((x - x_old)^2))
+    res <- sqrt(sum((b - A %*% x)^2))
+    if (verbose) {
+      cat(sprintf("Iter %4d |dx|=%.3e |res|=%.3e x=%s\n",
+                  k, dx, res, paste(round(x, 6), collapse = " ")))
+    }
+    if (dx < tol && res < tol) {
+      return(list(x = as.vector(x), iter = k, convergencia = TRUE, delta = dx, residuo = res))
+    }
+  }
+  list(x = as.vector(x), iter = maxiter, convergencia = FALSE,
+       delta = dx, residuo = res)
+}
+
+# Ejemplo Gauss-Seidel
+res_gs <- gauss_seidel(A, b, x0 = c(0, 0, 0), tol = 1e-8, verbose = TRUE)
+print(res_gs$x)
+
+
+```
+

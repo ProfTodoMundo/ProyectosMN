@@ -1,0 +1,99 @@
+---
+title: "Método de bisección"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Ejercicios del 1 al 18 – Método de Bisección
+
+```{r}
+biseccion <- function(f, a, b, n_iter = 8) {
+  # Verifica cambio de signo
+  fa <- f(a)
+  fb <- f(b)
+  if (fa * fb > 0) {
+    warning(paste("El intervalo [", a, ",", b, "] no presenta cambio de signo (f(a)*f(b) =", fa*fb, ")."))
+  }
+  
+  tabla <- data.frame(
+    k = numeric(0),
+    a = numeric(0),
+    b = numeric(0),
+    c = numeric(0),
+    f_a = numeric(0),
+    f_b = numeric(0),
+    f_c = numeric(0),
+    signo = character(0),
+    error = numeric(0)
+  )
+  
+  for (k in 1:n_iter) {
+    c <- (a + b) / 2
+    fa <- f(a)
+    fb <- f(b)
+    fc <- f(c)
+    
+    signo <- ifelse(fa * fc < 0, "<0", ">0")
+    error <- abs(b - a)
+    
+    tabla <- rbind(tabla, data.frame(k, a, b, c, f_a = fa, f_b = fb, f_c = fc, signo, error))
+    
+    if (fa * fc < 0) {
+      b <- c
+    } else {
+      a <- c
+    }
+  }
+  return(tabla)
+}
+
+```
+# Lista completa de funciones y sus intervalos
+```{r}
+ejercicios <- list(
+list(label="1. f(x)=x^2 - 5", f=function(x) x^2 - 5, a=2, b=3),
+list(label="2. f(x)=x^3 - 4x + 1", f=function(x) x^3 - 4*x + 1, a=0, b=1),
+list(label="3. f(x)=x^4 - 8x + 2", f=function(x) x^4 - 8*x + 2, a=0, b=3),
+list(label="4. f(x)=exp(-x) - x^2", f=function(x) exp(-x) - x^2, a=0, b=2),
+list(label="5. f(x)=cos(x) - x^2", f=function(x) cos(x) - x^2, a=0, b=1),
+list(label="6. f(x)=3x^2 - 7x - 2", f=function(x) 3*x^2 - 7*x - 2, a=-1, b=0),
+list(label="7. f(x)=-4x^2 + 5x + 6", f=function(x) -4*x^2 + 5*x + 6, a=-1, b=0),
+list(label="8. f(x)=2x^2 + 3x - 5", f=function(x) 2*x^2 + 3*x - 5, a=0, b=2),
+list(label="9. f(x)=x^3 - 5x + 1", f=function(x) x^3 - 5*x + 1, a=0, b=1),
+list(label="10. f(x)=x^4 - 6x^3 + 5x^2 + 8x - 4", f=function(x) x^4 - 6*x^3 + 5*x^2 + 8*x - 4, a=0, b=1),
+list(label="11. f(x)=-2x^4 + 4x^3 + 6x^2 - 3x + 2", f=function(x) -2*x^4 + 4*x^3 + 6*x^2 - 3*x + 2, a=-2, b=-1),
+list(label="12. f(x)=2x^4 - x^3 - 7x^2 + 4x + 3", f=function(x) 2*x^4 - x^3 - 7*x^2 + 4*x + 3, a=-1, b=0),
+list(label="13. f(x)=x^4 + 2x^3 - 10x^2 - x + 5", f=function(x) x^4 + 2*x^3 - 10*x^2 - x + 5, a=0, b=1),
+list(label="14. f(x)=5*exp(0.6x - 1) - 3", f=function(x) 5*exp(0.6*x - 1) - 3, a=0, b=2),
+list(label="15. f(x)=7 - 4*exp(-0.9x + 0.2)", f=function(x) 7 - 4*exp(-0.9*x + 0.2), a=-2, b=0),
+list(label="16. f(x)=sin(2x) - x^2", f=function(x) sin(2*x) - x^2, a=1, b=2),
+list(label="17. f(x)=(2x+1.4)*cos(3x + pi/4)", f=function(x) (2*x+1.4)*cos(3*x + pi/4), a=0.1, b=0.6),
+list(label="18. f(x)=(-1.5x + 0.9)*sin(4x) - pi/6", f=function(x) (-1.5*x + 0.9)*sin(4*x) - pi/6, a=0.2, b=0.9)
+)
+
+# Cálculo y gráficos base
+
+for (ej in ejercicios) {
+cat("\n\n###", ej$label, "\n")
+
+tabla <- biseccion(ej$f, ej$a, ej$b, 8)
+print(tabla)
+
+# Gráfica en base R
+
+x_vals <- seq(ej$a - 0.2, ej$b + 0.2, length.out = 300)
+y_vals <- sapply(x_vals, ej$f)
+
+plot(x_vals, y_vals, type="l", col="blue", lwd=2,
+main=paste("Método de Bisección para", ej$label),
+xlab="x", ylab="f(x)")
+abline(h=0, lty=2)
+abline(v=c(ej$a, ej$b), col="gray", lty=3)
+points(tabla$c, sapply(tabla$c, ej$f), col="red", pch=19)
+}
+
+```

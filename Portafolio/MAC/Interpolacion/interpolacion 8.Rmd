@@ -1,0 +1,52 @@
+---
+title: "interpolacion ejercicio 8"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+title: "Interpolación - Ejercicios 8, 9 y 10"
+author: "Monse Cordero"
+output: html_document
+---
+
+#### Ejercicio 8
+
+```{r}
+## Datos
+x8 <- c(0, 1, 2)
+y8 <- c(1, 3, 11)
+
+## Sistema para P2(x) = a0 + a1*x + a2*x^2
+A8 <- matrix(c(1, 0, 0,
+               1, 1, 1,
+               1, 2, 4), ncol = 3, byrow = TRUE)
+coef8 <- solve(A8, y8)
+
+print("Coeficientes del polinomio (a0, a1, a2):")
+print(coef8)
+
+## Polinomio
+P8 <- function(x) coef8[1] + coef8[2]*x + coef8[3]*x^2
+
+## Evaluación
+x_eval8 <- 1.5
+y_eval8 <- P8(x_eval8)
+print(paste("P2(1.5) =", y_eval8))
+
+## Comparación con el valor esperado (6.25)
+print(paste("Error absoluto =", abs(y_eval8 - 6.25)))
+
+## Gráfica
+plot(x8, y8, pch = 19, col = "blue", main = "Ejercicio 8: Interpolación cuadrática",
+     xlab = "x", ylab = "P2(x)")
+curve(P8(x), add = TRUE, col = "red", lwd = 2)
+points(x_eval8, y_eval8, col = "darkgreen", pch = 17)
+legend("topleft", legend = c("Datos", "Polinomio", "P(1.5)"),
+       col = c("blue", "red", "darkgreen"), pch = c(19, NA, 17), lty = c(NA, 1, NA))
+```

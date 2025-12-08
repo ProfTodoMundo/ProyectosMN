@@ -1,0 +1,19 @@
+---
+title: "interpolacion ejercicio 14"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ejercicio 14
+
+```{r}
+print("Para 5 puntos generados de una cuadrática simulada:")
+print("- Si los datos sin ruido: Lagrange y Newton coincidían exactamente.")
+print("- Si se añade ruido: conviene truncar el orden o usar menor número de nodos.")
+print("- Limitar el grado (por ejemplo usar 3 ó 4 nodos) mejora la estabilidad numérica.")
+```

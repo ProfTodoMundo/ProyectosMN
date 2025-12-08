@@ -1,0 +1,95 @@
+---
+title: "Sesiones del curso MN"
+output: html_document
+date: "2025-09-03"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+x1 <- c (1.2,1-5.1-9,1-10)
+(x1)
+
+```
+```{r}
+x2<- 1:20
+(x2)
+```
+```{r}
+x3<- seq(1,20,by=0.1)
+(x3)
+```
+```{r}
+x4<- seq(20.1,by=-0.1)
+(x4)
+```
+```{r}
+x5 <- rep(1, times=10)
+(x5)
+```
+```{r}
+n1 <- length(x1);(x1)
+n2 <- length(x2);(x2)
+n3 <- length(x3);(x3)
+n4 <- length(x4);(x4)
+n5 <- length(x5);(x5)
+```
+```{r}
+x <- runif(100,-3,3)
+(x)
+```
+EJEMPLO DE REDONBDEO Y TRUNCAMIENTO
+
+```{r}
+x <- runif(20,-1,1);(x)
+xx <- 100*x;(xx)
+```
+
+FIJAMOS LA SEMILLA PARA GENERAR NUMEROS ALEATORIOS
+
+```{r}
+set.seed(123)
+x <- runif(20,-1,1);(x)
+xx <- 100*x;(xx)
+```
+
+RENDONDEAMOS A 3 CIFRAS SIGNIFICATIVAS
+
+```{r}
+x_red2 <- round(xx,2);(x_red2)
+x_red3 <- round(xx,3);(x_red3)
+```
+GENERAMOS UNA NUEVA VARIABLE CON 5000 DATOS, CON UNA DISTRIBUCION UNIFORME ENTRE -10 Y 10, CON 3 CIFRAS SIGNIFICATIVAS, POSTERIORMENTE OBTENDREMOS UNA MUESTRA DE TAMAÑO 500 CON EL COMANDO SAMPLE(datos_origen, tamaño_de_la_muestra), Y SE ALMACENARAN EN LA VARIABLE muestra_1:
+
+```{r}
+nx <- runif(5000,-10,10);(nx)
+head(nx,10)
+tail(nx,10)
+nx_red<- round(nx,3)
+head(nx_red,15)
+tail(nx_red,15)
+muestra1 <- sample(nx_red,500);
+head(muestra1,10)
+tail(muestra1,10)
+```
+
+CONVERTIMOS TODO A NUMEROS POSITIVOS
+
+```{r}
+muestra2 <- abs(muestra1)
+head(muestra2,15)
+tail(muestra2,15)
+```
+MUESTRA CON DOS DIGITOS
+
+
+```{r}
+muestra3 <- abs(muestra1)
+head(muestra3,15)
+tail(muestra3,15)
+floor(muestra3)
+```
+

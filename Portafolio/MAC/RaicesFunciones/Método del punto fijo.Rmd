@@ -1,0 +1,116 @@
+---
+title: "Método del punto fijo"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Método del Punto fijo
+
+```{r}
+punto_fijo <- function(g, x0, tol = 1e-5, max_iter = 10) {
+  iter <- numeric()
+  xk <- numeric()
+  gxk <- numeric()
+  error <- numeric()
+  
+  x <- x0
+  for (k in 1:max_iter) {
+    x_new <- tryCatch(g(x), error = function(e) NA)
+    
+    # Verificar que x_new sea válido
+    if (is.na(x_new) || is.nan(x_new) || Im(x_new) != 0) {
+      warning(paste("Iteración", k, "produjo valor inválido. Se detiene."))
+      break
+    }
+    
+    e <- abs(x_new - x)
+    
+    iter <- c(iter, k)
+    xk <- c(xk, x)
+    gxk <- c(gxk, x_new)
+    error <- c(error, e)
+    
+    x <- x_new
+    if (e < tol && k >= 1) break
+  }
+  
+  resultados <- data.frame(
+    k = iter,
+    xk = xk,
+    g_xk = gxk,
+    error = error
+  )
+  
+  return(resultados)
+}
+```
+# Función para graficar 
+```{r}
+graficar_punto_fijo <- function(g, tabla, titulo = "Método del Punto Fijo") {
+  if (nrow(tabla) == 0 || all(is.na(tabla$xk))) {
+    warning("No hay datos válidos para graficar.")
+    return()
+  }
+  
+  x_vals <- tabla$xk[!is.na(tabla$xk)]
+  g_vals <- tabla$g_xk[!is.na(tabla$g_xk)]
+  
+  # Crear rango de x para graficar
+  x_range <- seq(min(x_vals) - 1, max(x_vals) + 1, length.out = 500)
+  y_vals <- sapply(x_range, function(x) {
+    y <- tryCatch(g(x), error = function(e) NA)
+    if (!is.finite(y)) NA else y
+  })
+  
+  plot(NULL, xlim = c(min(x_range), max(x_range)),
+       ylim = c(min(y_vals, na.rm = TRUE), max(y_vals, na.rm = TRUE)),
+       xlab = "x", ylab = "y", main = titulo)
+  
+  lines(x_range, y_vals, col = "blue")
+  abline(0, 1, col = "red") # línea y=x
+  
+  # Punto de intersección final
+  points(tail(g_vals, 1), tail(g_vals, 1), col = "green", pch = 19)
+}
+```
+
+# Funciones g(x) y valores iniciales
+```{r}
+g_funciones <- list(
+  function(x) cos(x),                     # 1
+  function(x) 1 - x^3,                    # 2
+  function(x) exp(-x),                     # 3
+  function(x) (x^2 + 1)/4,                 # 4
+  function(x) (2*x + 5)^(1/3),             # 5
+  function(x) sqrt(pmax(exp(x) - 2, 0)),   # 6, protege sqrt
+  function(x) 2 - log(x + 1),              # 7
+  function(x) (3*x - 1)^(1/3),             # 8
+  function(x) sin(x) + 1,                  # 9
+  function(x) sqrt(3),                     # 10
+  function(x) exp(-x)/2,                   # 11
+  function(x) (10 - x^3)/4,                # 12
+  function(x) cos(x),                      # 13
+  function(x) exp(-x^2),                   # 14
+  function(x) 2^(1/3)                      # 15
+)
+
+valores_iniciales <- c(0.5, 0.6, 0.7, 1, 2, 0.5, 0.5, 0.8, 1, 1.5, 0.5, 1.5, 0.5, 0.5, 1)
+
+
+resultados_punto_fijo <- list()
+
+for (i in 1:15) {
+  cat("\n\nEjercicio", i, "\n")
+  res <- punto_fijo(g_funciones[[i]], valores_iniciales[i], tol = 1e-5, max_iter = 10)
+  print(res)
+  resultados_punto_fijo[[i]] <- res
+  graficar_punto_fijo(g_funciones[[i]], res, paste("Ejercicio", i))
+}
+
+
+```

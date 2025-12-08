@@ -1,0 +1,160 @@
+---
+title: "Tarea 2 de Metodos Numericos"
+author: "Flores Salazar Angel Rodrigo"
+date: "r format(Sys,time(), ´%d,%B,%Y)"
+output:
+  html_document:                            
+      toc: true
+      toc_float: true
+      toc:depth: 3
+      code_folding: show
+      theme: bootstrap
+      word_document: default
+---
+
+# TAREA 2 - Métodos Numéricos
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## 1) Funciones: sustitución hacia adelante y hacia atrás
+```{r}
+sus_adelante <- function(L, b){
+  n <- nrow(L)
+  x <- numeric(n)
+  for(i in 1:n){
+    if(abs(L[i,i]) < .Machine$double.eps) stop("Error: pivote cero en sustitución hacia adelante.")
+    x[i] <- (b[i] - sum(L[i,1:(i-1)] * x[1:(i-1)])) / L[i,i]
+  }
+  return(x)
+}
+
+sus_atras <- function(U, b){
+  n <- nrow(U)
+  x <- numeric(n)
+  for(i in n:1){
+    if(abs(U[i,i]) < .Machine$double.eps) stop("Error: pivote cero en sustitución hacia atrás.")
+    if(i == n) x[i] <- b[i] / U[i,i]
+    else x[i] <- (b[i] - sum(U[i,(i+1):n] * x[(i+1):n])) / U[i,i]
+  }
+  return(x)
+}
+
+L <- matrix(c(2,0,0, 1,3,0, 4,-2,1), 3,3, byrow=TRUE)
+U <- matrix(c(2,1,1, 0,3,2, 0,0,4), 3,3, byrow=TRUE)
+b1 <- c(2, 11, 3)
+b2 <- c(5, 14, 8)
+
+cat("Resultado sustitución hacia adelante:\n")
+print(sus_adelante(L,b1))
+cat("Resultado sustitución hacia atrás:\n")
+print(sus_atras(U,b2))
+```
+
+
+# 2) Programar el método de sustitución-hacia-atrás y sustitución-hacia-adelante como dos 
+funciones
+
+```{r}
+eliminacion_gaussiana <- function(A, b){
+  if(!is.matrix(A)) stop("A debe ser una matriz cuadrada.")
+  n <- nrow(A)
+  if(ncol(A) != n) stop("A debe ser cuadrada.")
+  if(length(b) != n) stop("El tamaño de b no coincide con A.")
+  
+  M <- as.matrix(A)
+  bb <- as.numeric(b)
+  escala <- apply(abs(M), 1, max)
+  if(any(escala == 0)) stop("Se detectó un renglón nulo en la matriz.")
+  indices <- 1:n
+  
+  for(k in 1:(n-1)){
+    razones <- abs(M[k:n, k]) / escala[k:n]
+    p_rel <- which.max(razones) + (k-1)
+    
+    if(p_rel != k){
+      M[c(k,p_rel), ] <- M[c(p_rel,k), ]
+      bb[c(k,p_rel)] <- bb[c(p_rel,k)]
+      escala[c(k,p_rel)] <- escala[c(p_rel,k)]
+      indices[c(k,p_rel)] <- indices[c(p_rel,k)]
+    }
+    
+    for(i in (k+1):n){
+      if(M[k,k] == 0) stop("Error: pivote cero durante la eliminación.")
+      m <- M[i,k] / M[k,k]
+      M[i, k:n] <- M[i, k:n] - m * M[k, k:n]
+      bb[i] <- bb[i] - m * bb[k]
+    }
+  }
+  x <- sus_atras(M, bb)
+  return(list(solucion=x, U=M, b_modificado=bb, permutacion=indices))
+}
+
+A1 <- matrix(c(0.0003, 1, 1, 1, 2, 3, 1, 5, 6), 3,3, byrow=TRUE)
+b1 <- c(2, 5, 9)
+resultado <- eliminacion_gaussiana(A1, b1)
+
+cat("Solución encontrada:\n")
+print(resultado$solucion)
+cat("Matriz U final:\n")
+print(resultado$U)
+```
+
+# 3) Implementar en C/C++ el método de Eliminación Gaussiana CON PIVOTEO PARCIAL ESCALADO  usando solo 4 dígitos
+
+```{r}
+redondear4 <- function(A, b){
+  A4 <- matrix(signif(as.numeric(A), 4), nrow=nrow(A), ncol=ncol(A))
+  b4 <- signif(as.numeric(b), 4)
+  return(list(A4=A4, b4=b4))
+}
+
+A_hilb <- matrix(0, 4, 4)
+for(i in 1:4) for(j in 1:4) A_hilb[i,j] <- 1/(i+j-1)
+b_hilb <- rep(1,4)
+
+res_doble <- eliminacion_gaussiana(A_hilb, b_hilb)
+
+r4 <- redondear4(A_hilb, b_hilb)
+res_4dig <- eliminacion_gaussiana(r4$A4, r4$b4)
+
+cat("Solución (doble precisión):\n")
+print(res_doble$solucion)
+cat("Solución (4 dígitos significativos):\n")
+print(res_4dig$solucion)
+
+norma_dif <- sqrt(sum((res_doble$solucion - res_4dig$solucion)^2))
+cat("Norma 2 de la diferencia ||x_doble - x_4dig|| = ", norma_dif, "\n")
+```
+
+# 4)  Escribir programas en C/C++ e algunas propiedades de algebra matricial
+mencionadas
+
+```{r}
+
+A <- matrix(c(4,2,1, 0,3,-1, 0,0,2), 3,3, byrow=TRUE)
+B <- matrix(c(1,0,2, 0,5,1, 0,0,3), 3,3, byrow=TRUE)
+x <- c(1,2,3)
+y <- c(3,-1,2)
+
+C <- matrix(c(2,1,0, 1,2,1, 0,1,2), 3,3, byrow=TRUE)
+dif1 <- max(abs(A %*% (B + C) - (A %*% B + A %*% C)))
+
+dif2 <- max(abs(A %*% (x + y) - (A %*% x + A %*% y)))
+
+Ai <- solve(A)
+Bi <- solve(B)
+dif3 <- max(abs(solve(A %*% B) - (Bi %*% Ai)))
+
+dif4 <- max(abs(solve(Ai) - A))
+
+cat("Diferencia distributiva:", dif1, "\n")
+cat("Diferencia A(x+y) vs Ax+Ay:", dif2, "\n")
+cat("Diferencia (AB)^-1 vs B^-1 A^-1:", dif3, "\n")
+cat("Diferencia (A^-1)^-1 vs A:", dif4, "\n")
+```
+
+
+

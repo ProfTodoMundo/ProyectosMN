@@ -1,0 +1,142 @@
+---
+title: "CLASE DE MÉTODOS NÚMERICOS"
+author: "Monserrath Antonio cordero"
+output: html_document
+date: "2025-10-22"
+ 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# MÉTODO DE LA SECANTE
+
+## EJEMPLO 1
+
+
+```{r}
+N <- 0.01
+a <- -10
+b <- 10
+x <- seq(a,b,N)
+
+head(x,10)
+```
+# Graficamos la funcion $f(x)=2x^{3}-3x^{2}-11x-6$ 
+
+```{r}
+A <- 2
+B <- -3
+C <- -11
+D <- 6
+ f_x <-  A*x^3+B*x^2+C*x+D
+ head(f_x,10)
+```
+
+# Graficamos la función
+
+ 
+```{r}
+plot(x,f_x, col="pink",
+     type="l",
+     main="GRAFICA DE UNA FUNCIÓN CÚBICA",
+     xlab="x",
+     ylab="f(x)")
+abline (v= 0,type="-", col="purple")
+abline (h= 0,type="-", col="purple")
+```
+
+```{r}
+f_secante <- function(x0,x1){ 
+  A <- 2 ; B<- -3 ; C <- -11 ; D <- -6;
+  fx0 <- A*x0^{3}+B*x0^{2}+C*x0+D
+  fx1 <- A*x1^{3}+B*x1^{2}+C*x1+D
+   x2 <- x1-(fx1*(x1-x0)/(fx1-fxo)) 
+ list(next_x = x2,fx0=fx0,fx1=fx1)
+}
+```
+
+```{r}
+x0 <- 2.5;
+x1 <- 3.5;
+r <- f_secante(x0,x1)
+x2 <- r$next_x2;(x2)
+mi_error <- abs(x2-x1); (mi_error)
+```
+
+```{r}
+x0 <- x1;
+x1 <- x2;
+r <- f_secante(x0,x1)
+x3 <- r$x3; (x3)
+mi_error <- abs(x2-x1); (mi_error)
+```
+
+```{r}
+x0 <- x2;
+x1 <- x3;
+r <- f_secante(x0,x1)
+x4 <- r$next_x; 
+print(x4)
+fx4<- A*x4^{3}+B*x4^{2}+C*x4+D;
+print(fx4)
+mi_error <- abs(x3-x2);
+print(mi_error)
+
+```
+
+```{r}
+x0 <- x3;
+x1 <- x4;
+r <- f_secante(x0,x1)
+x5 <- r$next_x; 
+print(x5) 
+fx5<- A*x5^{3}+B*x5^{2}+C*x5+D;
+print(fx5)
+mi_error <- abs(x4-x3);
+print (mi_error)
+```
+
+```{r}
+x0 <- x4;
+x1 <- x5;
+r <- f_secante(x0,x1)
+x6 <- r$next_x; 
+print(x6) 
+fx6<- A*x6^{3}+B*x6^{2}+C*x6+D;
+print(x6)
+mi_error <- abs(x3-x2);
+print (mi_error)
+```
+mejoras
+```{r}
+mi_pol <-function(x0,x1)
+  A <- 2 ; B<- -3 ; C <- -11 ; D <- -6;
+fx0 <-  A*x0^{3}+B*x0^{2}+C*x0+D
+
+```
+
+```{r}
+x0 <- 2.5; x1 <- 3.5
+fx
+
+```
+
+```{r}
+r <- f_secante2(x0,x1)
+x2 <- r$next_x;
+print(x2)
+fx2 <- mi_pol(x2)
+paste0("el valor de la funcion en el nuevo punto")
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+

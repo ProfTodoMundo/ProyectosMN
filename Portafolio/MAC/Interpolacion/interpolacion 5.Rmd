@@ -1,0 +1,289 @@
+---
+title: "Interpolacion Ejercicio- 5"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **Interpolación de Lagrange y Newton**
+
+Este documento presenta los cálculos de interpolación para tres conjuntos de puntos,
+utilizando los métodos de **Lagrange** y **Newton (diferencias divididas)**.
+
+---
+
+#### **Ejercicio 5**
+
+
+```{r}
+## Datos dados
+
+x <- c(0, 1, 2)
+y <- c(1, 3, 11)
+
+## Definimos función del polinomio de Lagrange
+P_Lagrange <- function(xv) {
+  L0 <- (xv - 1)*(xv - 2) / ((0 - 1)*(0 - 2))
+  L1 <- (xv - 0)*(xv - 2) / ((1 - 0)*(1 - 2))
+  L2 <- (xv - 0)*(xv - 1) / ((2 - 0)*(2 - 1))
+  return(1*L0 + 3*L1 + 11*L2)
+}
+
+## Comprobamos el polinomio con varios puntos
+xx <- seq(0, 2, by=0.5)
+yy <- P_Lagrange(xx)
+
+## Ajuste simbólico para obtener coeficientes del polinomio
+fit <- lm(yy ~ poly(xx, 2, raw=TRUE))
+coeficientes <- coef(fit)
+a0 <- round(coeficientes[1], 6)
+a1 <- round(coeficientes[2], 6)
+a2 <- round(coeficientes[3], 6)
+
+cat("Polinomio interpolante por Lagrange:\n")
+cat("P(x) =", a2, "* x^2 +", a1, "* x +", a0, "\n\n")
+```
+
+#### b) Verificación con diferencias divididas (Newton)
+
+```{r}
+## Calculamos las diferencias divididas
+f_x0 <- y[1]
+f_x0x1 <- (y[2]-y[1])/(x[2]-x[1])
+f_x1x2 <- (y[3]-y[2])/(x[3]-x[2])
+f_x0x1x2 <- (f_x1x2 - f_x0x1)/(x[3]-x[1])
+
+cat("Tabla de diferencias divididas:\n")
+cat("f[x0] =", f_x0, "\n")
+cat("f[x0,x1] =", f_x0x1, "\n")
+cat("f[x1,x2] =", f_x1x2, "\n")
+cat("f[x0,x1,x2] =", f_x0x1x2, "\n\n")
+
+## Forma de Newton:
+## P(x) = f[x0] + f[x0,x1]*(x - x0) + f[x0,x1,x2]*(x - x0)*(x - x1)
+P_Newton <- function(xv) {
+  f_x0 + f_x0x1*(xv - x[1]) + f_x0x1x2*(xv - x[1])*(xv - x[2])
+}
+
+## Comprobamos que ambos métodos coinciden
+test_points <- seq(0,2,by=0.5)
+cat("Comparación Lagrange vs Newton:\n")
+for (i in seq_along(test_points)) {
+  cat("x =", test_points[i], 
+      "Lagrange =", round(P_Lagrange(test_points[i]),4), 
+      "Newton =", round(P_Newton(test_points[i]),4), "\n")
+}
+```
+
+
+#### c) Evaluación del polinomio en x = 1.5
+
+```{r}
+x_eval <- 1.5
+P_val <- 3*x_eval^2 - x_eval + 1
+cat("\nEvaluación en x = 1.5:\n")
+cat("P(1.5) =", P_val, "\n\n")
+
+cat("Conclusión: el polinomio 3x² - x + 1 coincide en ambos métodos.\n")
+cat("El valor en x=1.5 es 6.25, igual al obtenido por ajuste visual cuadrático.\n")
+```
+
+## d) Gráfico del polinomio y los puntos
+
+```{r}
+xs_plot <- seq(min(x)-0.5, max(x)+0.5, length.out=200)
+ys_plot <- 3*xs_plot^2 - xs_plot + 1
+
+plot(xs_plot, ys_plot, type="l", lwd=2, col="blue",
+     xlab="x", ylab="y", main="Interpolación por Lagrange y Newton")
+points(x, y, pch=19, col="red")
+text(x, y, labels=paste0("(",x,",",y,")"), pos=3, col="red")
+points(x_eval, P_val, pch=17, col="darkgreen", cex=1.2)
+legend("topleft", legend=c("Polinomio 3x² - x + 1", "Puntos dados", "P(1.5)"),
+       col=c("blue","red","darkgreen"), pch=c(NA,19,17), lty=c(1,NA,NA), bty="n")
+
+
+```
+
+#### **Ejercicio 5.1**
+
+```{r}
+## Datos
+
+x <- c(1,2,3,4)
+y <- c(2,5,10,17)
+```
+
+## a) Polinomio interpolante por Newton
+```{r}
+n <- length(x)
+dd <- matrix(NA, nrow=n, ncol=n)
+dd[,1] <- y
+for (j in 2:n) {
+  for (i in 1:(n-j+1)) {
+    dd[i,j] <- (dd[i+1,j-1] - dd[i,j-1]) / (x[i+j-1] - x[i])
+  }
+}
+coef_newton <- dd[1,]
+```
+## b) Tabla de diferencias divididas
+
+```{r}
+dd_print <- dd
+dd_print[is.na(dd_print)] <- ""
+cat("**Tabla de diferencias divididas (Newton):**\n\n")
+print(knitr::kable(dd_print, digits=6, col.names=paste0("Orden ",0:(n-1))))
+
+## Forma de Newton
+
+P_newton_eval <- function(xv) {
+  s <- coef_newton[1]
+  term <- 1
+  for (k in 2:length(coef_newton)) {
+    term <- term * (xv - x[k-1])
+    s <- s + coef_newton[k]*term
+  }
+  return(s)
+}
+```
+
+
+## c) Evaluar en x = 2.5
+
+```{r}
+x_eval <- 2.5
+P_at_2_5 <- P_newton_eval(x_eval)
+cat("\n**Evaluación del polinomio en x = 2.5:**\n")
+cat("P(2.5) =", round(P_at_2_5, 6), "\n")
+```
+## d) Comparar con f(x) = x² + 1
+
+```{r}
+f_direct <- function(xv) xv^2 + 1
+f_at_2_5 <- f_direct(x_eval)
+cat("\n**Comparación con f(x) = x² + 1:**\n")
+cat("f(2.5) =", round(f_at_2_5, 6), "\n")
+cat("Diferencia =", round(P_at_2_5 - f_at_2_5, 12), "\n")
+
+if (abs(P_at_2_5 - f_at_2_5) < 1e-10) {
+  cat("\n El polinomio interpolante coincide con f(x)=x²+1.\n")
+} else {
+  cat("\n Hay una pequeña diferencia numérica.\n")
+}
+```
+
+## e) Gráfica comparativa
+
+```{r}
+xs_plot <- seq(min(x)-0.5, max(x)+0.5, length.out=300)
+ys_poly <- sapply(xs_plot, P_newton_eval)
+ys_fx <- xs_plot^2 + 1
+
+plot(xs_plot, ys_poly, type="l", lwd=2, col="blue",
+     xlab="x", ylab="y", main="Interpolación Newton y f(x)=x²+1")
+lines(xs_plot, ys_fx, lty=2, lwd=2, col="darkgreen")
+points(x, y, pch=19, col="red")
+points(x_eval, P_at_2_5, pch=17, col="purple", cex=1.2)
+legend("topleft",
+       legend=c("Polinomio Newton","f(x)=x²+1","Puntos dados","P(2.5)"),
+       col=c("blue","darkgreen","red","purple"),
+       lty=c(1,2,NA,NA), pch=c(NA,NA,19,17), bty="n")
+```
+#### **Ejercicio 5.2**
+
+
+```{r}
+## Datos
+x_pts <- c(-1, 0, 2)
+y_pts <- c(4, 1, 3)
+```
+## Construcción simbólica mediante fórmulas de Lagrange (evaluación y expansión)
+
+```{r}
+L0 <- function(xv) { (xv - x_pts[2])*(xv - x_pts[3]) / ((x_pts[1] - x_pts[2])*(x_pts[1] - x_pts[3])) }
+L1 <- function(xv) { (xv - x_pts[1])*(xv - x_pts[3]) / ((x_pts[2] - x_pts[1])*(x_pts[2] - x_pts[3])) }
+L2 <- function(xv) { (xv - x_pts[1])*(xv - x_pts[2]) / ((x_pts[3] - x_pts[1])*(x_pts[3] - x_pts[2])) }
+```
+
+## Polinomio Lagrange como función
+
+```{r}
+P_L <- function(xv) {
+  y_pts[1]*L0(xv) + y_pts[2]*L1(xv) + y_pts[3]*L2(xv)
+}
+```
+
+## Expandir el polinomio numéricamente para obtener coeficientes a0,a1,a2
+## Evaluamos en 3 puntos y resolvemos sistema Vandermonde para coeficientes
+
+```{r}
+A <- matrix(c(1, -1, 1^2,    ## x=-1 -> [1, -1, 1]
+              1,  0, 0^2,    ## x=0  -> [1,  0, 0]
+              1,  2, 2^2),   ## x=2  -> [1,  2, 4]
+            nrow=3, byrow=TRUE)
+b <- c(P_L(-1), P_L(0), P_L(2))
+coef <- solve(A, b)   
+
+a0 <- round(as.numeric(coef[1]), 8)
+a1 <- round(as.numeric(coef[2]), 8)
+a2 <- round(as.numeric(coef[3]), 8)
+
+cat("**Resultado (forma general):**\n\n")
+cat(paste0("Se obtiene el polinomio cuadrático\n\n \\(P_2(x) = ", a0, " + (", a1, ")x + (", a2, ")x^2\\)\n\n"))
+```
+
+## Mostrar polinomio ordenado (coeficientes agrupados)
+
+```{r}
+cat("**Polinomio simplificado:**\n\n")
+cat(paste0("$$P_2(x)= ", a2, "x^2 + ", a1, "x + ", a0, "$$\n\n"))
+```
+
+## Verificación en los puntos dados
+
+```{r}
+vals <- c(P_L(-1), P_L(0), P_L(2))
+names(vals) <- c("P(-1)","P(0)","P(2)")
+cat("**Verificación en los puntos dados:**\n\n")
+for (i in 1:3) {
+  cat(names(vals)[i], " = ", round(vals[i],8), "\n\n")
+}
+```
+
+## Comprobación simbólica rápida (también mostrar coincidencia con y_pts)
+
+```{r}
+cat("Comprobación comparando con los valores originales:\n\n")
+comp <- c(round(vals[1],8)==y_pts[1], round(vals[2],8)==y_pts[2], round(vals[3],8)==y_pts[3])
+print(data.frame(Punto = c("(-1,4)","(0,1)","(2,3)"),
+                 Valor_Interpolado = round(vals,8),
+                 Valor_Original = y_pts,
+                 Coincide = comp))
+```
+
+## Gráfica (polinomio y puntos)
+
+```{r}
+xs <- seq(min(x_pts)-1, max(x_pts)+1, length.out=300)
+ys <- sapply(xs, P_L)
+plot(xs, ys, type="l", lwd=2, xlab="x", ylab="y", main="Polinomio interpolante (Lagrange)")
+points(x_pts, y_pts, pch=19, col="red")
+text(x_pts, y_pts, labels=paste0("(", x_pts, ",", y_pts, ")"), pos=3, col="red")
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

@@ -1,0 +1,89 @@
+---
+title: "Untitled"
+author: "Monserrath Antonio Cordero"
+date: "2025-10-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# PRIMER PASO: GRAFICAMOS LA FUNCIÓN
+
+```{r}
+x <- seq(-5,5,0.1)
+y <- cos(x)-x
+plot (x,y,main = "Funcion original",type = "l",
+      xlab="x",
+      ylab="f(x)",
+      col="pink")
+abline(v =0,type ="-",col ="red")
+abline(h = 0, type = "-", col = "red")
+```
+# SEGUNDO PASO: DEFINIMOS LA FUNCIÓN
+Primero la función $f(x)=cos(x)-x$
+
+```{r}
+fx <- function(x){cos(x)-x}
+fx(1)
+```
+
+AHORA LA DERIVADA DE LA FUNCIÓN $f(x)$
+
+```{r}
+dfx <- function(x){-sin(x)-1}
+dfx(1)
+```
+
+FINALMENTE LA FUNCION $g(x)$ que se utilizará en el método del punto fijo
+
+```{r}
+gx <- function(x){cos(x)}
+gx(1)
+
+```
+# Iteración de Newton-Raphson
+
+```{r}
+x0 <- 1
+f <- fx(x0)
+df <- dfx(x0);
+x1 <- x0-(f/df); (x1)
+Nerror <- x1-x0; (Nerror)
+
+```
+# Segunda iteración
+
+```{r}
+k <- 1
+xk <- c()
+Nerror <-15245
+tolerancia <- 0.0000001
+MaxIter <- 50
+x0 <- 1;
+f <- fx(x0)
+df <-dfx(x0);
+x[1] <- x0-(f/df);(x[1])
+k <-k+1
+while ((k<=MaxIter)|(Nerror > tolerancia)){
+  x0 <- x[k-1]; (x0)
+  f <- fx(x0); (f)
+  df <- dfx(x0);(df)
+  xk[k] <- x0-(f/df);
+  (xk[k])
+  Nerror <- xk[k]-xk[k-1]; (Nerror)
+  k <- k+1
+  k <= MaxIter
+  Nerror > tolerancia
+
+}
+(xk)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

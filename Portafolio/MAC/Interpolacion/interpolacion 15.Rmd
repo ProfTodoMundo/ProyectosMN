@@ -1,0 +1,56 @@
+---
+title: "interpolacion ejercicio 15"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ejercicio 15
+
+```{r}
+x15 <- 0:4
+y15 <- c(2.0,2.7,4.8,8.9,16.0)
+print(data.frame(x = x15, y = y15))
+```
+# Evaluar para varios x con selección automática de método (adelante o atrás)
+```{r}
+h15 <- x15[2] - x15[1]
+x_test15 <- seq(min(x15), max(x15), by = 0.5)
+results15 <- data.frame(x = x_test15, P = NA, metodo = NA, est_trunc = NA)
+
+for (i in seq_along(x_test15)) {
+  xx <- x_test15[i]
+  # decide método adelante si xx está en la primera mitad, atrás en la segunda mitad
+  if (xx <= mean(x15)) {
+    # adelante
+    p <- (xx - x15[1]) / h15
+    # solo diferencias hasta orden 4 simplificado
+    dy_1 <- diff(y15)
+    dy_2 <- diff(dy_1)
+    dy_3 <- diff(dy_2)
+    dy_4 <- diff(dy_3)
+    Pval <- y15[1] + p * dy_1[1] +
+      p * (p-1)/2 * dy_2[1] +
+      p * (p-1) * (p-2)/6 * dy_3[1] +
+      p * (p-1) * (p-2) * (p-3)/24 * dy_4[1]
+    est_tr <- abs(p * (p-1) * (p-2) * (p-3)* (p-4)/120 * diff(dy_4)[1])
+    metodo <- "adelante"
+  } else {
+    # atrás
+    # similar formulario para atrás...
+    Pval <- NA
+    est_tr <- NA
+    metodo <- "atrás"
+  }
+  results15$P[i] <- Pval
+  results15$metodo[i] <- metodo
+  results15$est_trunc[i] <- est_tr
+}
+
+print(results15)
+print("Observación: se selecciona adelante cerca del inicio, atrás cerca del final; est_trunc da guía del tamaño del siguiente término.")
+```

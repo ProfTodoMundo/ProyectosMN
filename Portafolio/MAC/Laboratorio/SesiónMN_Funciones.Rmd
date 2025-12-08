@@ -1,0 +1,76 @@
+---
+title: "Clase 10 de septiembre"
+output: html_document
+date: "2025-09-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+Discriminante <- function(a,b,c){
+ soluciones <- b^2-4*a*c
+ 
+  if(soluciones<0){
+resp <- "No hay solucion"
+} else{
+  resp <-"Si hay solucion"
+}
+ respuesta <- cat(resp," ", soluciones)
+ return(respuesta)
+}
+```
+
+```{r}
+intento1 <- Discriminante (5,2,3)
+```
+
+```{r}
+valores <- c(15,13,8,3,27,-4,-2,10,4)
+A <- matrix(valores, nrow = 3)
+tA <- matrix(t(valores), nrow = 3);(tA)
+
+valores2 <- c(15,13,8,3,27,-4,-2,10,4)
+A2 <- matrix(valores2, nrow = 3)
+
+b <- c(-3,2,-1)
+b <- matrix(c(-3,2,-1), nrow = 3);(b)
+
+Ab <- cbind(A,b);(Ab)
+bA <- cbind (b,A);(bA)
+Abt <- rbind(A,t(b));(Abt)
+btA <- rbind(t(b),A);(btA)
+
+```
+
+```{r}
+r1 <- Ab[1,];(r1)
+r2 <- Ab[2,];(r2)
+r3 <- Ab[3,];(r3)
+c1 <- Ab[,1];(c1)
+c2 <- Ab[,2];(c2)
+c3 <- Ab[,3];(c3)
+a11 <- Ab[1,1];(a11)
+a22 <- Ab[2,2];(a22)
+a32 <- Ab [3,3];(a32)
+a23 <- Ab [2.3];(a23)
+a14 <- Ab [1.4];(a14)
+a24 <- Ab [2,4];(a24)
+
+```
+
+##ELIMINACION SIMPLE
+```{r}
+
+m1 <- -Ab[2,1]/Ab[1,1];(m1)
+m2 <- -Ab[3,1]/Ab[1,1];(m2)
+A1 <- Ab[1,];(A1)
+A2 <- m1*Ab[1,]+Ab[2,];(A2)
+A3 <- m2*Ab[1,]+Ab[3,];(A3)
+
+```
+
+
+

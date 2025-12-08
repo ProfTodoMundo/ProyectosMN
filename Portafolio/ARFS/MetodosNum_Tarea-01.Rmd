@@ -1,0 +1,133 @@
+---
+title: "Tarea 1 de Metodos Numericos"
+author: "Flores Salazar Angel Rodrigo"
+date: "r format(Sys,time(), ´%d,%B,%Y)"
+output:
+  html_document:                            
+      toc: true
+      toc_float: true
+      toc:depth: 3
+      code_folding: show
+      theme: bootstrap
+      word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+ TAREA 1 - ANÁLISIS NUMÉRICO EN R
+
+
+# 1.- Verificar si las siguientes conversiones de base son correctas
+
+```{r}
+deci_bin <- function(x) {
+  int_part <- floor(x)
+  frac_part <- x - int_part
+  bin <- paste(rev(as.integer(intToBits(int_part))[1:ceiling(log2(int_part+1))]), collapse="")
+  
+  frac_bin <- ""
+  while(frac_part > 0 && nchar(frac_bin) < 10) {
+    frac_part <- frac_part * 2
+    bit <- floor(frac_part)
+    frac_bin <- paste0(frac_bin, bit)
+    frac_part <- frac_part - bit
+  }
+  if(nchar(frac_bin) > 0)
+    return(paste0(bin, ".", frac_bin))
+  else
+    return(bin)
+}
+
+
+deci_bin(17)
+deci_bin(17.25)
+```
+
+
+# 2.- Verificar que multiplicar por 2 un numero en base 2 es correrlo a la izquierda y 
+rellenar por ceros por la derecha. 
+
+```{r}
+bin_num <- "1001"
+paste0(bin_num, "0")
+substr(bin_num, 1, nchar(bin_num)-1)
+```
+
+
+# 3.-Escribir los 3 números del punto anterior en formato normalizado en base 2 de la 
+IEEE en float y en double
+
+```{r}
+bin_deci <- function(bin_str) {
+  parts <- strsplit(bin_str, "\\.")[[1]]  
+  int_part <- strtoi(parts[1], base = 2)
+  frac_part <- 0
+  if (length(parts) > 1) {
+    frac <- strsplit(parts[2], "")[[1]]
+    for (i in seq_along(frac)) {
+      frac_part <- frac_part + as.numeric(frac[i]) * 2^(-i)
+    }
+  }
+  
+  return(int_part + frac_part)
+}
+
+bin_deci("100011011.000110101011")
+```
+
+
+# 4.-  Hacer el cálculo paso a paso de la distancia absoluta entre 1 y su número anterior 
+en representación maquina
+
+```{r}
+
+epsi <- .Machine$double.eps
+cat("Epsilon máquina (double):", epsi, "\n")
+```
+
+# 5.- Hacer una función en C/C++ que redondea por truncamiento a n dígitos de precisión 
+el valor que se le manda por parámetro.
+
+```{r}
+digitos <- function(val, nDigits) {
+  pow <- 10^(floor(log10(abs(val))) - nDigits + 1)
+  val_trunc <- trunc(val / pow) * pow
+  return(val_trunc)
+}
+
+a <- 3.141592; digitos(a, 3)
+b <- 31415.92; digitos(b, 4)
+```
+
+# 6.- Reproduccion del ejemplo 5 del libro: "Análisis Numérico" de Richard Burden y J. Douglas Faires
+
+```{r}
+quad_roots <- function(a, b, c, numDigitos=5) {
+  disc <- b^2 - 4*a*c
+  root1 <- (-b + sqrt(disc)) / (2*a)
+  root2 <- (-b - sqrt(disc)) / (2*a)
+  r1 <- digitos(root1, numDigitos)
+  r2 <- digitos(root2, numDigitos)
+  return(c(r1, r2))
+}
+
+quad_roots(1, -3, 2, 5)
+```
+
+
+# 7.- programa en C/C++ para calcular el epsilon machine, 
+ejecutarlo para float y double
+
+```{r}
+calculo_epsilon <- function() {
+  eps <- 1.0
+  while ((1.0 + eps/2) > 1.0) eps <- eps / 2
+  return(eps)
+}
+cat("Epsilon calculado:", calculo_epsilon(), "\n")
+```
+
+
+

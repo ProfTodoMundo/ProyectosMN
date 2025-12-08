@@ -1,0 +1,135 @@
+---
+title: "Métodos Numéricos - Tarea 1"
+author: "Contreras Garcia Alexis Ulises"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    code_folding: show
+    #theme: flatly
+    theme: journal
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# TAREA 1 - ANÁLISIS NUMÉRICO EN R
+
+
+## i) Verificar conversiones de base
+
+```{r}
+decimal_a_binario <- function(x) {
+  parte_entera <- floor(x)
+  parte_frac <- x - parte_entera
+  entero_bin <- paste(rev(as.integer(intToBits(parte_entera))[1:ceiling(log2(parte_entera+1))]), collapse="")
+  
+  frac_bin <- ""
+  while(parte_frac > 0 && nchar(frac_bin) < 10) {
+    parte_frac <- parte_frac * 2
+    bit <- floor(parte_frac)
+    frac_bin <- paste0(frac_bin, bit)
+    parte_frac <- parte_frac - bit
+  }
+  if(nchar(frac_bin) > 0)
+    return(paste0(entero_bin, ".", frac_bin))
+  else
+    return(entero_bin)
+}
+
+decimal_a_binario(17)
+decimal_a_binario(17.25)
+```
+
+
+## ii) Multiplicar y dividir por 2 en binario
+
+```{r}
+num_bin <- "1001"
+# Multiplicación por 2
+paste0(num_bin, "0")
+# División entre 2
+substr(num_bin, 1, nchar(num_bin)-1)
+```
+
+
+## iii) Conversiones a binario y decimal
+
+```{r}
+binario_a_decimal <- function(bin_str) {
+  parts <- strsplit(bin_str, "\\.")[[1]]  
+  part_entera <- strtoi(parts[1], base = 2)
+  part_frac <- 0
+  if (length(parts) > 1) {
+    frac <- strsplit(parts[2], "")[[1]]
+    for (i in seq_along(frac)) {
+      part_frac <- part_frac + as.numeric(frac[i]) * 2^(-i)
+    }
+  }
+  
+  return(part_entera + part_frac)
+}
+
+binario_a_decimal("100011011.000110101011")
+```
+
+
+## iv) Distancia absoluta entre 1 y su número anterior
+
+```{r}
+
+epsilon_doble <- .Machine$double.eps
+cat("Epsilon de máquina (doble):", epsilon_doble, "\n")
+```
+
+## v) Función que trunca a n dígitos
+
+```{r}
+trucarnDigitos <- function(val, nDigits) {
+  pow <- 10^(floor(log10(abs(val))) - nDigits + 1)
+  val_trunc <- trunc(val / pow) * pow
+  return(val_trunc)
+}
+
+a <- 3.141592; trucarnDigitos(a, 3)
+b <- 31415.92; trucarnDigitos(b, 4)
+```
+
+## vi) Ejemplo Burden & Faires
+
+```{r}
+raices_cuadraticas <- function(a, b, c, nDigits=5) {
+  disc <- b^2 - 4*a*c
+  raiz1 <- (-b + sqrt(disc)) / (2*a)
+  raiz2 <- (-b - sqrt(disc)) / (2*a)
+  r1 <- trucarnDigitos(raiz1, nDigits)
+  r2 <- trucarnDigitos(raiz2, nDigits)
+  return(c(r1, r2))
+}
+
+raices_cuadraticas(1, -3, 2, 5)
+```
+
+
+## vii) Epsilon máquina calculado
+
+```{r}
+calc_epsilon <- function() {
+  eps <- 1.0
+  while ((1.0 + eps/2) > 1.0) {
+    eps <- eps / 2
+  }
+  return(eps)
+}
+
+epsilon_calculada <- calc_epsilon()
+cat("Epsilon calculado (double):", epsilon_calculada, "\n")
+cat("Epsilon según .Machine$double.eps:", .Machine$double.eps, "\n")
+```
+
+
+

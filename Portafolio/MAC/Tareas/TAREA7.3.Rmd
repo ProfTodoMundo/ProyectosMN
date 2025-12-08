@@ -1,0 +1,184 @@
+---
+title: "Tarea 7.3: Eliminación Gaussiana Simple"
+author: "MONSERRATH ANTONIO CORDERO"
+output: html_document
+date: "2025-10-03"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# Función para redondear a 4 cifras significativas
+round_4sig <- function(x) signif(x, digits = 4)
+
+# Eliminación Gaussiana Simple con redondeo
+gauss_simple <- function(M) {
+  n <- nrow(M)
+  for (k in 1:(n-1)) {
+    for (i in (k+1):n) {
+      factor <- round_4sig(M[i,k] / M[k,k])
+      M[i, k:ncol(M)] <- round_4sig(M[i, k:ncol(M)] - factor * M[k, k:ncol(M)])
+    }
+    cat(sprintf("\nMatriz después de eliminar la columna %d:\n", k))
+    print(M)
+  }
+  return(M)
+}
+
+# Sustitución regresiva con redondeo
+back_substitution <- function(M) {
+  n <- nrow(M)
+  x <- numeric(n)
+  for (i in n:1) {
+    suma <- if (i == n) 0 else sum(M[i, (i+1):n] * x[(i+1):n])
+    x[i] <- round_4sig((M[i, ncol(M)] - suma) / M[i,i])
+  }
+  return(x)
+}
+```
+
+# ---  Ejercicio 1 ---
+
+```{r}
+A1 <- matrix(c(
+  1, -2, 0.5, -5,
+  -2, 5, -1.5, 0,
+  -0.2, 1.75, -1, 10
+), nrow=3, byrow=TRUE)
+
+cat("Ejercicio 1 - Matriz aumentada original:\n")
+print(A1)
+
+M1 <- gauss_simple(A1)
+x1 <- back_substitution(M1)
+
+cat("\nSolución Ejercicio 1:\n")
+for (i in 1:length(x1)) cat(sprintf("x%d = %.4g\n", i, x1[i]))
+```
+
+
+
+# --- Ejercicio 2 ---
+```{r}
+A2 <- matrix(c(
+  0.003000, 59.14, 59.17,
+  5.291, -6.130, 46.78
+), nrow=2, byrow=TRUE)
+
+cat("\nEjercicio 2 - Matriz aumentada original:\n")
+print(A2)
+
+M2 <- gauss_simple(A2)
+x2 <- back_substitution(M2)
+
+cat("\nSolución Ejercicio 2:\n")
+for (i in 1:length(x2)) cat(sprintf("x%d = %.4g\n", i, x2[i]))
+```
+
+
+# --- Ejercicio 3 ---
+
+```{r}
+A3 <- matrix(c(
+  3, -0.1, -0.2, 7.85,
+  0.1, 7, -0.3, -19.3,
+  0.3, -0.2, 10, 71.4
+), nrow=3, byrow=TRUE)
+
+cat("\nEjercicio 3 - Matriz aumentada original:\n")
+print(A3)
+
+M3 <- gauss_simple(A3)
+x3 <- back_substitution(M3)
+
+cat("\nSolución Ejercicio 3:\n")
+for (i in 1:length(x3)) cat(sprintf("x%d = %.4g\n", i, x3[i]))
+```
+
+# --- Ejercicio 4 ---
+```{r}
+A4 <- matrix(c(
+  4, 2, 0, 2,
+  2, 3, 1, -1,
+  0, 1, 2.5, 3
+), nrow = 3, byrow = TRUE)
+
+cat("\nEjercicio 4 - Matriz aumentada original:\n")
+print(A4)
+
+M4 <- gauss_simple(A4)
+x4 <- back_substitution(M4)
+
+cat("\nSolución Ejercicio 4:\n")
+for (i in 1:length(x4)) cat(sprintf("x%d = %.4g\n", i, x4[i]))
+
+```
+
+# --- Ejercicio 5 ---
+
+```{r}
+A5 <- matrix(c(
+  3, -0.1, -0.2, 7.85,
+  0.1, 7, -0.3, -19.3,
+  0.3, -0.2, 10, 71.4
+), nrow = 3, byrow = TRUE)
+
+cat("Ejercicio 5 - Matriz aumentada original:\n")
+print(A5)
+
+M5 <- gauss_simple(A5)
+x5 <- back_substitution(M5)
+
+cat("\nSolución Ejercicio 5:\n")
+for (i in 1:length(x5)) cat(sprintf("x%d = %.4g\n", i, x5[i]))
+
+
+```
+
+# --- Ejercicio 9 ---
+
+```{r}
+A9 <- matrix(c(
+  1.133, 5.281, -2.454, 6.414,
+  24.14, -1.21, 5.281, 113.8,
+  -10.123, 6.387, -1, 1
+), nrow = 3, byrow = TRUE)
+
+cat("Ejercicio 9 - Matriz aumentada original:\n")
+print(A9)
+
+M9 <- gauss_simple(A9)
+x9 <- back_substitution(M9)
+
+cat("\nSolución Ejercicio 9:\n")
+for (i in 1:length(x9)) cat(sprintf("x%d = %.4g\n", i, x9[i]))
+
+```
+
+# --- Ejercicio 10 ---
+
+```{r}
+A10 <- matrix(c(
+  2, 3, 2, 4,
+  4, 10, -4, 0,
+  -3, -2, -5, -2,
+  -2, 4, 4, -7
+), nrow = 4, byrow = TRUE)
+
+b10 <- c(9, -15, 6, 2)
+
+Ab10 <- cbind(A10, b10)
+
+cat("Ejercicio 10 - Matriz aumentada original:\n")
+print(A1)
+
+M10 <- gauss_simple(A10)
+x10 <- back_substitution(M10)
+
+cat("\nSolución Ejercicio 10:\n")
+for (i in 1:length(x10)) cat(sprintf("x%d = %.4g\n", i, x10[i]))
+```

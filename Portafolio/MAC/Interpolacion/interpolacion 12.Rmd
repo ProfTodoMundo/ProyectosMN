@@ -1,0 +1,46 @@
+---
+title: "interpolacion ejercicio 12"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ejercicio 12
+
+# Datos: x = 1,2,3,4 ; f(x) = x^3 = {1,8,27,64}
+```{r}
+x12 <- c(1,2,3,4)
+y12 <- c(1,8,27,64)
+print(data.frame(x = x12, y = y12))
+```
+
+# Diferencias regresivas tomando x4 = 4
+```{r}
+dy12_1 <- diff(y12)
+dy12_2 <- diff(dy12_1)
+dy12_3 <- diff(dy12_2)
+# Para regresivas: ∇y4 = dy1[3] etc
+print(paste("∇y4 =", dy12_1[3]))
+print(paste("∇²y4 =", dy12_2[2]))
+print(paste("∇³y4 =", dy12_3[1]))
+```
+# h = 1 ; q = (3.4 − 4) = -0.6
+```{r}
+q <- -0.6
+y4 <- y12[4]
+term1 <- q * dy12_1[3]
+term2 <- q * (q + 1) / 2 * dy12_2[2]
+term3 <- q * (q + 1) * (q + 2) / 6 * dy12_3[1]
+P12 <- y4 + term1 + term2 + term3
+print(paste("P(3.4) =", P12))
+```
+# Comparación con valor exacto 3.4^3
+```{r}
+true12 <- 3.4^3
+print(paste("Valor exacto =", true12))
+print(paste("Error =", P12 - true12))
+```

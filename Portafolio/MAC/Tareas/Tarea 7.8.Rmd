@@ -1,0 +1,903 @@
+---
+title: "TAREA 7.8"
+author: "Monserrath Antonio Cordero"
+date: "2025-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 2.- Resuelva el mismo sistema anterior pero ahora aplicando eliminaciÓn gaussiana con pivoteo parcial.
+
+```{r}
+# Matriz de coeficientes
+A <- matrix(c(2, 1, -1,
+              -1, 3, 2,
+               1, 2, 3), nrow = 3, byrow = TRUE)
+
+# Vector de términos independientes
+b <- c(1, 12, 7)
+
+# Matriz aumentada
+Ab <- cbind(A, b)
+Ab
+
+```
+
+```{r}
+gauss_pivoteo_parcial <- function(Ab) {
+  n <- nrow(Ab)
+  
+  for (k in 1:(n-1)) {
+    cat("\n--- Paso", k, "---\n")
+    cat("Submatriz desde fila", k, "para pivoteo parcial:\n")
+    print(Ab[k:n, k])
+    
+    # Pivoteo parcial
+    max_index <- which.max(abs(Ab[k:n, k])) + k - 1
+    cat("Fila con máximo pivote en columna", k, ":", max_index, "\n")
+    
+    # Intercambiar filas si es necesario
+    if (max_index != k) {
+      cat("Intercambiando fila", k, "con fila", max_index, "\n")
+      temp <- Ab[k, ]
+      Ab[k, ] <- Ab[max_index, ]
+      Ab[max_index, ] <- temp
+    } else {
+      cat("No se requiere intercambio de filas.\n")
+    }
+    
+    cat("Matriz después del pivoteo:\n")
+    print(Ab)
+    
+    # Eliminación hacia abajo
+    for (i in (k+1):n) {
+      factor <- Ab[i, k] / Ab[k, k]
+      cat("Eliminando fila", i, "usando fila", k, "con factor =", factor, "\n")
+      Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - factor * Ab[k, k:ncol(Ab)]
+      print(Ab)
+    }
+  }
+  
+  cat("\nMatriz triangular superior final:\n")
+  print(Ab)
+  
+  return(Ab)
+}
+
+Ab_triangular <- gauss_pivoteo_parcial(Ab)
+
+
+```
+
+
+
+```{r}
+sustitucion_regresiva <- function(Ab) {
+  n <- nrow(Ab)
+  x <- numeric(n)
+  
+  cat("\n--- Sustitución regresiva ---\n")
+  for (i in n:1) {
+    if (i == n) {
+      x[i] <- Ab[i, n+1] / Ab[i, i]
+      cat("x[", i, "] = ", Ab[i, n+1], "/", Ab[i, i], " = ", x[i], "\n")
+    } else {
+      suma <- sum(Ab[i, (i+1):n] * x[(i+1):n])
+      x[i] <- (Ab[i, n+1] - suma) / Ab[i, i]
+      cat("x[", i, "] = (", Ab[i, n+1], " - ", suma, ") / ", Ab[i, i], " = ", x[i], "\n")
+    }
+  }
+  return(x)
+}
+
+solucion <- sustitucion_regresiva(Ab_triangular)
+
+```
+
+```{r}
+cat("\n--- Solución final del sistema ---\n")
+cat("x =", solucion[1], "\n")
+cat("y =", solucion[2], "\n")
+cat("z =", solucion[3], "\n")
+
+
+```
+
+
+## 3.- Eliminación Gaussiana con Pivoteo y Escalamiento
+
+```{r}
+
+A <- matrix(c(10, 2, 1,
+              2, 20, 2,
+              1, 2, 30), nrow = 3, byrow = TRUE)
+b <- c(7, 9, 12)
+
+# Matriz aumentada
+Ab <- cbind(A, b)
+cat("Matriz aumentada inicial:\n")
+print(Ab)
+```
+
+```{r}
+gauss_escalamiento <- function(Ab) {
+  n <- nrow(Ab)
+  s <- apply(abs(Ab[, 1:n]), 1, max)  # Escalamiento por fila
+  cat("Factores de escalamiento por fila:\n")
+  print(s)
+  
+  for (k in 1:(n-1)) {
+    cat("\n--- Paso", k, "---\n")
+    
+    # Escalamiento: comparar valores normalizados
+    razones <- abs(Ab[k:n, k]) / s[k:n]
+    max_index <- which.max(razones) + k - 1
+    
+    cat("Razones para elegir pivote (|a_ik| / s_i):\n")
+    print(razones)
+    cat("Fila con mejor pivote escalado:", max_index, "\n")
+    
+    # Intercambio de filas si es necesario
+    if (max_index != k) {
+      cat("Intercambiando fila", k, "con fila", max_index, "\n")
+      temp <- Ab[k, ]
+      Ab[k, ] <- Ab[max_index, ]
+      Ab[max_index, ] <- temp
+      
+      # También intercambiar escalamiento
+      temp_s <- s[k]
+      s[k] <- s[max_index]
+      s[max_index] <- temp_s
+    } else {
+      cat("No se requiere intercambio de filas.\n")
+    }
+    
+    cat("Matriz después del pivoteo escalado:\n")
+    print(Ab)
+    
+    # Eliminación
+    for (i in (k+1):n) {
+      factor <- Ab[i, k] / Ab[k, k]
+      cat("Eliminando fila", i, "usando fila", k, "con factor =", factor, "\n")
+      Ab[i, k:ncol(Ab)] <- Ab[i, k:ncol(Ab)] - factor * Ab[k, k:ncol(Ab)]
+      print(Ab)
+    }
+  }
+  
+  cat("\nMatriz triangular superior final:\n")
+  print(Ab)
+  return(Ab)
+}
+
+Ab_triangular <- gauss_escalamiento(Ab)
+
+
+```
+
+```{r}
+sustitucion_regresiva <- function(Ab) {
+  n <- nrow(Ab)
+  x <- numeric(n)
+  
+  cat("\n--- Sustitución regresiva ---\n")
+  for (i in n:1) {
+    if (i == n) {
+      x[i] <- Ab[i, n+1] / Ab[i, i]
+      cat("x[", i, "] = ", Ab[i, n+1], "/", Ab[i, i], " = ", x[i], "\n")
+    } else {
+      suma <- sum(Ab[i, (i+1):n] * x[(i+1):n])
+      x[i] <- (Ab[i, n+1] - suma) / Ab[i, i]
+      cat("x[", i, "] = (", Ab[i, n+1], " - ", suma, ") / ", Ab[i, i], " = ", x[i], "\n")
+    }
+  }
+  return(x)
+}
+
+solucion <- sustitucion_regresiva(Ab_triangular)
+
+cat("\n--- Solución del sistema ---\n")
+cat("x =", solucion[1], "\n")
+cat("y =", solucion[2], "\n")
+cat("z =", solucion[3], "\n")
+
+```
+
+
+
+
+## 6.- Factorización de Cholesky y resolución de Ax = b
+
+
+```{r}
+A <- matrix(c(25, 15, -5,
+              15, 18,  0,
+              -5,  0, 11), nrow = 3, byrow = TRUE)
+
+b <- c(35, 33, 6)
+
+cat("Matriz A:\n")
+print(A)
+
+cat("\nVector b:\n")
+print(b)
+
+```
+
+```{r}
+is_symmetric <- all(A == t(A))
+cat("¿La matriz A es simétrica? ", is_symmetric, "\n")
+
+eigenvalues <- eigen(A)$values
+cat("Valores propios de A:\n")
+print(eigenvalues)
+
+is_positive_definite <- all(eigenvalues > 0)
+cat("¿La matriz A es definida positiva? ", is_positive_definite, "\n")
+
+```
+
+```{r}
+cholesky_manual <- function(A) {
+  n <- nrow(A)
+  L <- matrix(0, n, n)
+  
+  for (i in 1:n) {
+    for (j in 1:i) {
+      sum_k <- sum(L[i, 1:(j-1)] * L[j, 1:(j-1)])
+      if (i == j) {
+        L[i, j] <- sqrt(A[i, i] - sum_k)
+        cat("L[", i, ",", j, "] = sqrt(", A[i, i], " - ", sum_k, ") = ", L[i, j], "\n")
+      } else {
+        L[i, j] <- (A[i, j] - sum_k) / L[j, j]
+        cat("L[", i, ",", j, "] = (", A[i, j], " - ", sum_k, ") / ", L[j, j], " = ", L[i, j], "\n")
+      }
+    }
+  }
+  
+  cat("\nMatriz L:\n")
+  print(L)
+  
+  return(L)
+}
+
+L <- cholesky_manual(A)
+
+
+```
+
+```{r}
+sustitucion_progresiva <- function(L, b) {
+  n <- length(b)
+  y <- numeric(n)
+  
+  for (i in 1:n) {
+    y[i] <- (b[i] - sum(L[i, 1:(i-1)] * y[1:(i-1)])) / L[i, i]
+    cat("y[", i, "] = (", b[i], " - ", sum(L[i, 1:(i-1)] * y[1:(i-1)]), ") / ", L[i, i], " = ", y[i], "\n")
+  }
+  
+  return(y)
+}
+
+y <- sustitucion_progresiva(L, b)
+
+
+```
+
+```{r}
+sustitucion_regresiva <- function(U, y) {
+  n <- length(y)
+  x <- numeric(n)
+  
+  for (i in n:1) {
+    if (i == n) {
+      x[i] <- y[i] / U[i, i]
+      cat("x[", i, "] = ", y[i], " / ", U[i, i], " = ", x[i], "\n")
+    } else {
+      suma <- sum(U[i, (i+1):n] * x[(i+1):n])
+      x[i] <- (y[i] - suma) / U[i, i]
+      cat("x[", i, "] = (", y[i], " - ", suma, ") / ", U[i, i], " = ", x[i], "\n")
+    }
+  }
+  
+  return(x)
+}
+
+
+x <- sustitucion_regresiva(t(L), y)
+cat("\n--- Solución final del sistema Ax = b ---\n")
+cat("x =", x[1], "\n")
+cat("y =", x[2], "\n")
+cat("z =", x[3], "\n")
+
+
+```
+
+## 10.- Método de Jacobi
+
+```{r}
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+
+b <- c(6, 25, -11, 15)
+
+# Condición inicial
+x0 <- c(0, 0, 0, 0)
+
+cat("Matriz A:\n")
+print(A)
+
+cat("\nVector b:\n")
+print(b)
+
+cat("\nCondición inicial x^(0):\n")
+print(x0)
+
+```
+
+```{r}
+jacobi <- function(A, b, x0, iteraciones) {
+  n <- length(b)
+  x_ant <- x0
+  x_nuevo <- numeric(n)
+  
+  for (k in 1:iteraciones) {
+    cat("\n--- Iteración", k, "---\n")
+    for (i in 1:n) {
+      suma <- sum(A[i, -i] * x_ant[-i])
+      x_nuevo[i] <- (b[i] - suma) / A[i, i]
+      cat("x[", i, "] = (", b[i], " - ", suma, ") / ", A[i, i], " = ", x_nuevo[i], "\n")
+    }
+    x_ant <- x_nuevo
+    cat("x^(", k, ") = ", x_nuevo, "\n")
+  }
+  
+  return(x_nuevo)
+}
+
+# Ejecutar 3 iteraciones
+x_aprox <- jacobi(A, b, x0, 3)
+
+
+```
+
+```{r}
+
+cat("\n--- Aproximación después de 3 iteraciones ---\n")
+cat("x =", x_aprox[1], "\n")
+cat("y =", x_aprox[2], "\n")
+cat("z =", x_aprox[3], "\n")
+cat("w =", x_aprox[4], "\n")
+
+```
+
+## Método de Gauss-Seidel vs Jacobi
+
+```{r}
+# Matriz A del sistema
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+
+# Vector b
+b <- c(6, 25, -11, 15)
+
+# Condición inicial
+x0 <- c(0, 0, 0, 0)
+
+cat("Matriz A:\n")
+print(A)
+
+cat("\nVector b:\n")
+print(b)
+
+cat("\nCondición inicial x^(0):\n")
+print(x0)
+
+```
+
+# 11.- Metodo de jacobi
+
+```{r}
+jacobi <- function(A, b, x0, iteraciones) {
+  n <- length(b)
+  x_ant <- x0
+  x_nuevo <- numeric(n)
+  historial <- matrix(0, nrow = iteraciones, ncol = n)
+  
+  for (k in 1:iteraciones) {
+    for (i in 1:n) {
+      suma <- sum(A[i, -i] * x_ant[-i])
+      x_nuevo[i] <- (b[i] - suma) / A[i, i]
+    }
+    x_ant <- x_nuevo
+    historial[k, ] <- x_nuevo
+  }
+  return(historial)
+}
+
+jacobi_result <- jacobi(A, b, x0, 10)
+
+
+```
+# metodo de gauss seidel
+
+```{r}
+gauss_seidel <- function(A, b, x0, iteraciones) {
+  n <- length(b)
+  x <- x0
+  historial <- matrix(0, nrow = iteraciones, ncol = n)
+  
+  for (k in 1:iteraciones) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x[i] <- (b[i] - suma1 - suma2) / A[i, i]
+    }
+    x0 <- x
+    historial[k, ] <- x
+  }
+  return(historial)
+}
+
+# Ejecutar Gauss-Seidel por 10 iteraciones
+gs_result <- gauss_seidel(A, b, x0, 10)
+
+
+```
+#  Comparacion 
+```{r}
+# Mostrar las 10 iteraciones de ambos métodos
+iteraciones <- 1:10
+colnames(jacobi_result) <- c("x", "y", "z", "w")
+colnames(gs_result) <- c("x", "y", "z", "w")
+
+cat("\n--- Comparación de iteraciones ---\n")
+resultado_comparado <- cbind(iter = iteraciones, 
+                              Jacobi = round(jacobi_result, 5), 
+                              GaussSeidel = round(gs_result, 5))
+print(resultado_comparado)
+
+
+```
+# grafico
+```{r}
+
+if (!require(ggplot2)) install.packages("ggplot2", dependencies=TRUE)
+library(ggplot2)
+
+
+df_jacobi <- as.data.frame(jacobi_result)
+df_jacobi$iter <- 1:nrow(df_jacobi)
+df_jacobi$metodo <- "Jacobi"
+
+df_gs <- as.data.frame(gs_result)
+df_gs$iter <- 1:nrow(df_gs)
+df_gs$metodo <- "Gauss-Seidel"
+
+df_total <- rbind(df_jacobi, df_gs)
+df_melt <- reshape2::melt(df_total, id.vars = c("iter", "metodo"))
+
+# Graficar
+ggplot(df_melt, aes(x = iter, y = value, color = metodo, linetype = metodo)) +
+  geom_line() +
+  facet_wrap(~variable, scales = "free_y") +
+  labs(title = "Comparación de convergencia: Jacobi vs Gauss–Seidel",
+       x = "Iteración", y = "Valor aproximado") +
+  theme_minimal()
+
+```
+## 12.- Comparación de Jacobi, Gauss-Seidel y SOR
+# Aplique el método SOR con ω = 1.25 al mismo sistema y compare las tres trayectorias de convergencia.
+
+```{r}
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+b <- c(6, 25, -11, 15)
+x0 <- c(0, 0, 0, 0)
+
+
+```
+
+```{r}
+
+# Jacobi
+jacobi <- function(A, b, x0, iter) {
+  n <- length(b)
+  x_old <- x0
+  hist <- matrix(0, nrow = iter, ncol = n)
+  
+  for (k in 1:iter) {
+    x_new <- numeric(n)
+    for (i in 1:n) {
+      suma <- sum(A[i, -i] * x_old[-i])
+      x_new[i] <- (b[i] - suma) / A[i, i]
+    }
+    x_old <- x_new
+    hist[k, ] <- x_new
+  }
+  return(hist)
+}
+
+# Gauss-Seidel
+gauss_seidel <- function(A, b, x0, iter) {
+  n <- length(b)
+  x <- x0
+  hist <- matrix(0, nrow = iter, ncol = n)
+  
+  for (k in 1:iter) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x[i] <- (b[i] - suma1 - suma2) / A[i, i]
+    }
+    x0 <- x
+    hist[k, ] <- x
+  }
+  return(hist)
+}
+
+# SOR
+sor <- function(A, b, x0, omega, iter) {
+  n <- length(b)
+  x <- x0
+  hist <- matrix(0, nrow = iter, ncol = n)
+  
+  for (k in 1:iter) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x_new_i <- (b[i] - suma1 - suma2) / A[i, i]
+      x[i] <- (1 - omega) * x0[i] + omega * x_new_i
+    }
+    x0 <- x
+    hist[k, ] <- x
+  }
+  return(hist)
+}
+
+
+```
+
+```{r}
+iter <- 15  # número de iteraciones
+
+jacobi_res <- jacobi(A, b, x0, iter)
+gs_res <- gauss_seidel(A, b, x0, iter)
+sor_res <- sor(A, b, x0, omega = 1.25, iter)
+
+
+```
+
+```{r}
+library(knitr)
+df <- data.frame(
+  Iteracion = 1:iter,
+  Jacobi_x = round(jacobi_res[,1], 5),
+  GS_x = round(gs_res[,1], 5),
+  SOR_x = round(sor_res[,1], 5),
+  Jacobi_y = round(jacobi_res[,2], 5),
+  GS_y = round(gs_res[,2], 5),
+  SOR_y = round(sor_res[,2], 5),
+  Jacobi_z = round(jacobi_res[,3], 5),
+  GS_z = round(gs_res[,3], 5),
+  SOR_z = round(sor_res[,3], 5),
+  Jacobi_w = round(jacobi_res[,4], 5),
+  GS_w = round(gs_res[,4], 5),
+  SOR_w = round(sor_res[,4], 5)
+)
+
+kable(df, caption = "Comparación de valores por iteración para Jacobi, GS y SOR")
+
+
+```
+
+```{r}
+library(ggplot2)
+library(reshape2)
+
+# Convertir datos a formato largo para ggplot
+to_df <- function(mat, metodo) {
+  df <- as.data.frame(mat)
+  df$Iteracion <- 1:nrow(df)
+  df$Metodo <- metodo
+  df_melt <- melt(df, id.vars = c("Iteracion", "Metodo"))
+  return(df_melt)
+}
+
+df_jacobi <- to_df(jacobi_res, "Jacobi")
+df_gs <- to_df(gs_res, "Gauss-Seidel")
+df_sor <- to_df(sor_res, "SOR")
+
+df_total <- rbind(df_jacobi, df_gs, df_sor)
+
+ggplot(df_total, aes(x = Iteracion, y = value, color = Metodo)) +
+  geom_line(size = 1) +
+  facet_wrap(~variable, scales = "free_y") +
+  labs(title = "Convergencia de Jacobi, Gauss-Seidel y SOR (ω=1.25)",
+       y = "Valor aproximado", x = "Iteración") +
+  theme_minimal()
+
+
+```
+
+## 14.- Código ejemplo completo para encontrar ω óptimo
+
+```{r}
+# Matriz y vector del sistema
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+b <- c(6, 25, -11, 15)
+x0 <- rep(0, 4)
+
+# Función SOR del código anterior
+sor <- function(A, b, x0, omega, iter) {
+  n <- length(b)
+  x <- x0
+  for (k in 1:iter) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x_new_i <- (b[i] - suma1 - suma2) / A[i, i]
+      x[i] <- (1 - omega) * x0[i] + omega * x_new_i
+    }
+    x0 <- x
+  }
+  return(x)
+}
+
+# Solución exacta para comparar (usamos solve)
+x_exact <- solve(A, b)
+
+# Probar valores omega de 1 a 2 en pasos de 0.05
+omega_vals <- seq(1, 2, by = 0.05)
+iter <- 50  # número fijo de iteraciones para comparar
+
+# Almacenar errores
+errors <- numeric(length(omega_vals))
+
+for (i in seq_along(omega_vals)) {
+  omega <- omega_vals[i]
+  x_approx <- sor(A, b, x0, omega, iter)
+  errors[i] <- sqrt(sum((x_approx - x_exact)^2))  # norma euclidiana del error
+}
+
+# Mostrar resultados ordenados por error
+resultado <- data.frame(omega = omega_vals, error = errors)
+resultado_ordenado <- resultado[order(resultado$error), ]
+print(head(resultado_ordenado, 5))
+
+# Graficar error vs omega
+plot(resultado$omega, resultado$error, type = "b", pch = 19,
+     xlab = expression(omega), ylab = "Error (norma Euclidiana)",
+     main = "Búsqueda experimental de omega óptimo para SOR")
+
+```
+
+# PASO A PASO CON EL EJERCICIO 10
+
+# Definir matriz A y vector b
+```{r}
+A <- matrix(c(10, -1, 2, 0,
+              -1, 11, -1, 3,
+              2, -1, 10, -1,
+              0, 3, -1, 8), nrow = 4, byrow = TRUE)
+b <- c(6, 25, -11, 15)
+x0 <- rep(0, 4)  # vector inicial
+```
+
+# FUNCIÓN MÉTODO SOR
+
+```{r}
+sor <- function(A, b, x0, omega, iter) {
+  n <- length(b)
+  x <- x0
+  for (k in 1:iter) {
+    for (i in 1:n) {
+      suma1 <- if (i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      suma2 <- if (i < n) sum(A[i, (i+1):n] * x0[(i+1):n]) else 0
+      x_new_i <- (b[i] - suma1 - suma2) / A[i, i]
+      x[i] <- (1 - omega) * x0[i] + omega * x_new_i
+    }
+    x0 <- x
+  }
+  return(x)
+}
+
+```
+# SOLUCION EXACTA
+
+```{r}
+x_exact <- solve(A, b)
+x_exact
+
+```
+# BUSQUEDA EXPERIMENTAL
+
+```{r}
+omega_vals <- seq(1, 2, by = 0.05)
+iter <- 50
+errors <- numeric(length(omega_vals))
+
+for (i in seq_along(omega_vals)) {
+  omega <- omega_vals[i]
+  x_approx <- sor(A, b, x0, omega, iter)
+  errors[i] <- sqrt(sum((x_approx - x_exact)^2))  # error Euclidiano
+}
+
+resultado <- data.frame(Omega = omega_vals, Error = errors)
+resultado_ordenado <- resultado[order(resultado$Error), ]
+resultado_ordenado[1:5, ]
+
+
+```
+# GRAFICO
+
+```{r}
+plot(resultado$Omega, resultado$Error, type = "b", pch = 19,
+     xlab = expression(omega), ylab = "Error (norma Euclidiana)",
+     main = "Búsqueda experimental de omega óptimo para SOR")
+abline(v = resultado_ordenado$Omega[1], col = "red", lty = 2)
+text(resultado_ordenado$Omega[1], min(resultado$Error),
+     labels = paste0("Óptimo ≈ ", round(resultado_ordenado$Omega[1], 3)),
+     pos = 4, col = "red")
+
+```
+
+## 13.- Escriba la matriz de iteracion TJ y el vector cJ del metodo de Jacobi para el sistema. 
+```{r}
+A <- matrix(c(4, 1,
+              1, 3), nrow = 2, byrow = TRUE)
+b <- c(9, 7)
+
+```
+
+# Matriz de iteración Tj y vector Cj
+	
+```{r}
+D <- diag(diag(A))
+
+L <- A
+L[upper.tri(L, diag = TRUE)] <- 0
+
+U <- A
+U[lower.tri(U, diag = TRUE)] <- 0
+
+D_inv <- solve(D)
+
+T_J <- -D_inv %*% (L + U)
+c_J <- D_inv %*% b
+
+T_J
+c_J
+
+```
+# Cálculo del radio espectral 
+
+```{r}
+eigenvals <- eigen(T_J)$values
+rho_TJ <- max(abs(eigenvals))
+rho_TJ
+
+```
+# Verificación de convergencia
+
+```{r}
+if (rho_TJ < 1) {
+  cat("El método de Jacobi converge porque rho(T_J) =", round(rho_TJ, 4), "< 1")
+} else {
+  cat("El método de Jacobi NO converge porque rho(T_J) =", round(rho_TJ, 4), "≥ 1")
+}
+
+```
+
+
+## 15.- Genere una matriz aleatoria sim´etrica definida positiva 5 × 5 en R y resuelva Ax = b:
+
+```{r}
+set.seed(123)  # Para reproducibilidad
+
+n <- 5
+
+# Generar matriz aleatoria de enteros entre -10 y 10
+M_int <- matrix(sample(-10:10, n^2, replace=TRUE), n, n)
+
+# Construir matriz simétrica definida positiva sumando M_int^T * M_int + identidad
+A <- t(M_int) %*% M_int + diag(n)
+
+# El resultado es simétrico, definida positiva y con entradas enteras
+
+# Vector b con enteros también (por ejemplo entre -10 y 10)
+b <- sample(-10:10, n, replace=TRUE)
+
+# Mostrar matriz y vector
+A
+b
+```
+
+# Implementación método Gauss-Seidel
+
+```{r}
+gauss_seidel <- function(A, b, x0=NULL, iterations=20) {
+  n <- length(b)
+  if (is.null(x0)) x0 <- rep(0, n)
+  x <- x0
+  for (k in 1:iterations) {
+    for (i in 1:n) {
+      sum1 <- if(i > 1) sum(A[i, 1:(i-1)] * x[1:(i-1)]) else 0
+      sum2 <- if(i < n) sum(A[i, (i+1):n] * x[(i+1):n]) else 0
+      x[i] <- (b[i] - sum1 - sum2) / A[i, i]
+    }
+  }
+  return(x)
+}
+
+```
+
+# Usando factorizacion LU
+```{r}
+library(Matrix)
+
+start_lu <- Sys.time()
+lu_decomp <- lu(Matrix(A))
+x_lu <- solve(lu_decomp, b)
+end_lu <- Sys.time()
+
+tiempo_lu <- end_lu - start_lu
+tiempo_lu
+
+```
+
+# Usando factorizacion de Cholesky
+
+```{r}
+start_chol <- Sys.time()
+chol_decomp <- chol(A)
+x_chol <- backsolve(chol_decomp, forwardsolve(t(chol_decomp), b))
+end_chol <- Sys.time()
+
+tiempo_chol <- end_chol - start_chol
+tiempo_chol
+
+```
+
+
+# Usando Gauss–Seidel con 20 iteraciones
+
+```{r}
+start_gs <- Sys.time()
+x_gs <- gauss_seidel(A, b, iterations=20)
+end_gs <- Sys.time()
+
+tiempo_gs <- end_gs - start_gs
+tiempo_gs
+
+```
+
+# Comparacion
+
+```{r}
+x_exact <- solve(A, b)
+
+error_lu <- norm(x_lu - x_exact, type="2") / norm(x_exact, type="2")
+error_chol <- norm(x_chol - x_exact, type="2") / norm(x_exact, type="2")
+error_gs <- norm(x_gs - x_exact, type="2") / norm(x_exact, type="2")
+
+data.frame(
+  Metodo = c("LU", "Cholesky", "Gauss-Seidel"),
+  Tiempo_seg = c(as.numeric(tiempo_lu, units="secs"),
+                 as.numeric(tiempo_chol, units="secs"),
+                 as.numeric(tiempo_gs, units="secs")),
+  Error_relativo = c(error_lu, error_chol, error_gs)
+)
+
+```

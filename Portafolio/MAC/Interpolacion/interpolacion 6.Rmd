@@ -1,0 +1,200 @@
+---
+title: "interpolacion ejercicio 6"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Newton diferencias progresivas
+
+## Ejercicio 6
+## FUNCIONES AUXILIARES
+
+## Tabla de diferencias progresivas
+```{r}
+forward_diffs <- function(x, y) {
+  n <- length(y)
+  diffs <- list(y)
+  for (k in 1:(n - 1)) {
+    prev <- diffs[[k]]
+    diffs[[k + 1]] <- diff(prev)
+  }
+  ## Crear data.frame para mostrar
+  df <- data.frame(x = x)
+  for (k in 1:length(diffs)) {
+    col <- c(rep(NA, k - 1), diffs[[k]])
+    df[[paste0("Δ", k - 1)]] <- col
+  }
+  return(list(diffs = diffs, table = df))
+}
+```
+## Tabla de diferencias regresivas
+```{r}
+backward_diffs <- function(x, y) {
+  n <- length(y)
+  diffs <- list(y)
+  for (k in 1:(n - 1)) {
+    prev <- diffs[[k]]
+    diffs[[k + 1]] <- diff(prev)
+  }
+  df <- data.frame(x = x)
+  for (k in 1:length(diffs)) {
+    col <- c(diffs[[k]], rep(NA, k - 1))
+    df[[paste0("∇", k - 1)]] <- col
+  }
+  return(list(diffs = diffs, table = df))
+}
+
+## Factorial
+fact <- function(n) if (n <= 1) 1 else prod(1:n)
+```
+## Newton hacia adelante
+```{r}
+newton_forward_eval <- function(x_nodes, y_nodes, x_eval) {
+  h <- x_nodes[2] - x_nodes[1]
+  diffs_list <- forward_diffs(x_nodes, y_nodes)$diffs
+  a <- sapply(diffs_list, function(v) v[1])
+  s <- (x_eval - x_nodes[1]) / h
+  p <- a[1]
+  for (k in 2:length(a)) {
+    term <- a[k]
+    num <- 1
+    for (j in 0:(k - 2)) num <- num * (s - j)
+    p <- p + term * num / fact(k - 1)
+  }
+  return(p)
+}
+```
+
+```{r}
+## Newton hacia atrás
+newton_backward_eval <- function(x_nodes, y_nodes, x_eval) {
+  h <- x_nodes[2] - x_nodes[1]
+  diffs_list <- forward_diffs(x_nodes, y_nodes)$diffs
+  n <- length(y_nodes)
+  a <- sapply(diffs_list, function(v) v[length(v)])
+  s <- (x_eval - x_nodes[n]) / h
+  p <- a[1]
+  for (k in 2:length(a)) {
+    term <- a[k]
+    num <- 1
+    for (j in 0:(k - 2)) num <- num * (s + j)
+    p <- p + term * num / fact(k - 1)
+  }
+  return(p)
+}
+```
+
+
+#### Datos:  
+x = 0, 1, 2, 3, 4  
+f(x) = 1, 2, 4, 8, 16
+
+###### a) Tabla de diferencias progresivas
+
+```{r}
+x1 <- 0:4
+y1 <- c(1, 2, 4, 8, 16)
+res1 <- forward_diffs(x1, y1)
+print("Tabla de diferencias progresivas (Δyi):")
+print(res1$table)
+```
+
+###### b) Polinomio interpolante con Newton hacia adelante
+
+```{r}
+coefs1 <- sapply(res1$diffs, function(v) v[1])
+print("Coeficientes del polinomio de Newton hacia adelante:")
+print(coefs1)
+
+h1 <- x1[2] - x1[1]
+print("Forma general del polinomio:")
+print(paste0(
+  "P(x) = ", coefs1[1],
+  " + ", coefs1[2], "·s",
+  " + ", coefs1[3], "·s(s−1)/2!",
+  " + ", coefs1[4], "·s(s−1)(s−2)/3!",
+  " + ", coefs1[5], "·s(s−1)(s−2)(s−3)/4!"
+))
+print(paste("donde s = (x −", x1[1], ")/", h1))
+```
+
+###### c) Calcule f(2.5) y compare con 2^2.5
+
+```{r}
+x_eval1 <- 2.5
+p1_25 <- newton_forward_eval(x1, y1, x_eval1)
+real_25 <- 2^(2.5)
+print(paste("f(2.5) interpolado =", round(p1_25, 4)))
+print(paste("2^2.5 =", round(real_25, 4)))
+print(paste("Error =", round(abs(p1_25 - real_25), 6)))
+```
+
+####  Datos:  
+x = 1, 2, 3, 4  
+f(x) = 1, 8, 27, 64
+
+###### a) Tabla de diferencias regresivas
+
+```{r}
+x2 <- 1:4
+y2 <- c(1, 8, 27, 64)
+res2 <- backward_diffs(x2, y2)
+print("Tabla de diferencias regresivas (∇yi):")
+print(res2$table)
+```
+
+###### b) Aplique Newton hacia atrás para estimar f(3.4)
+
+```{r}
+x_eval2 <- 3.4
+p2_34 <- newton_backward_eval(x2, y2, x_eval2)
+real_34 <- (x_eval2)^3
+print(paste("f(3.4) interpolado =", round(p2_34, 4)))
+print(paste("Valor exacto =", round(real_34, 4)))
+print(paste("Error =", round(abs(p2_34 - real_34), 6)))
+```
+
+
+####  Datos experimentales  
+x = 10, 20, 30, 40, 50  
+y = 20.5, 24.0, 32.0, 42.5, 51.0
+
+###### a) Verifique que los nodos sean equiespaciados
+
+```{r}
+x3 <- seq(10, 50, by = 10)
+y3 <- c(20.5, 24.0, 32.0, 42.5, 51.0)
+espacios <- diff(x3)
+print("Diferencias entre nodos (deben ser iguales):")
+print(espacios)
+```
+
+###### b) Calcule las diferencias progresivas hasta el tercer orden
+
+```{r}
+res3 <- forward_diffs(x3, y3)
+print("Tabla de diferencias progresivas (hasta tercer orden):")
+print(res3$table)
+```
+
+###### c) Estime y(25) usando Newton hacia adelante
+
+```{r}
+x_eval3 <- 25
+p3_25 <- newton_forward_eval(x3, y3, x_eval3)
+print(paste("Estimación de y(25) =", round(p3_25, 4)))
+```
+
+###### d) Comentario sobre estabilidad numérica
+
+```{r}
+print("Comentario:")
+print("Usar un polinomio de orden más alto no siempre mejora la precisión.
+En datos experimentales, puede generar oscilaciones (fenómeno de Runge),
+por lo que un polinomio de orden moderado ofrece mejor estabilidad numérica.")
+```

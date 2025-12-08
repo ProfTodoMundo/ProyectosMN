@@ -1,0 +1,45 @@
+---
+title: "interpolacion ejercicio 10"
+author: "Monserrath Antonio Cordero"
+date: "2025-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Datos
+```{r}
+x10 <- c(-1, 0, 2)
+y10 <- c(4, 1, 3)
+```
+## Sistema para P2(x) = a0 + a1*x + a2*x^2
+```{r}
+A10 <- matrix(c(1, -1, 1,
+1, 0, 0,
+1, 2, 4), ncol = 3, byrow = TRUE)
+coef10 <- solve(A10, y10)
+
+print("Coeficientes del polinomio (a0, a1, a2):")
+print(coef10)
+```
+## Polinomio
+```{r}
+P10 <- function(x) coef10[1] + coef10[2]*x + coef10[3]*x^2
+```
+## Verificación de puntos
+```{r}
+print("Verificación de P2(x) en los nodos originales:")
+for (xi in x10) {
+print(paste("x =", xi, "→ P2(x) =", P10(xi)))
+}
+```
+## Gráfica
+```{r}
+plot(x10, y10, pch = 19, col = "blue", main = "Ejercicio 10: Interpolación cuadrática",
+xlab = "x", ylab = "P2(x)")
+curve(P10(x), add = TRUE, col = "red", lwd = 2)
+legend("topleft", legend = c("Datos", "Polinomio interpolante"),
+col = c("blue", "red"), pch = c(19, NA), lty = c(NA, 1))
+```

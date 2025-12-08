@@ -1,0 +1,211 @@
+---
+title: "Portafolio Metodos Numericos"
+author: "Flores Salazar Angel Rodrigo"
+date: "r format(Sys,time(), ´%d,%B,%Y)"
+output:
+  html_document:                            
+      toc: true
+      toc_float: true
+      toc:depth: 3
+      code_folding: show
+      theme: bootstrap
+      word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introducción
+
+Este documento es la parte final del portafolio donde se da una revisión completa de los métodos para resolver **sistemas de ecuaciones lineales** en **R**, incluyendo:
+
+- Métodos directos  
+- Métodos numéricos  
+- Descomposiciones matriciales  
+- Métodos iterativos  
+- Ejercicios completamente resueltos  
+- Ejercicios propuestos para practicar  
+
+Los sistemas lineales tienen la forma:
+
+\[
+A\mathbf{x} = \mathbf{b}
+\]
+
+donde:
+
+- \( A \) es una matriz de coeficientes,
+- \( \mathbf{x} \) es el vector incógnita,
+- \( \mathbf{b} \) es el vector de términos independientes.
+
+---
+
+# 1. Método directo: `solve()`
+
+La función **`solve()`** es la forma más sencilla de resolver un sistema lineal en R.
+
+Funciona si:
+
+- La matriz \(A\) es cuadrada.
+- El determinante no es cero.
+
+## Ejemplo 1: sistema de 2 ecuaciones
+
+Resolver:
+
+\[
+\begin{cases}
+3x + 2y = 16 \\
+2x - y = 1
+\end{cases}
+\]
+
+```{r}
+A <- matrix(c(3, 2,
+              2, -1),
+            nrow = 2, byrow = TRUE)
+
+b <- c(16, 1)
+
+sol <- solve(A, b)
+print(sol)
+```
+
+2. Sistemas sobredeterminados: lm()
+
+Cuando hay más ecuaciones que incógnitas, el sistema no tiene solución exacta.
+
+Debe resolverse mediante mínimos cuadrados:
+
+𝑥=min∣∣𝐴𝑥−b∣∣
+
+Esto se hace con lm().
+```{r}
+A <- matrix(c(1, 1,
+              1, 2,
+              1, 3),
+            nrow = 3, byrow = TRUE)
+
+b <- c(2, 2.2, 2.9)
+
+modelo <- lm(b ~ A - 1)  # -1 evita intercepto
+coef(modelo)
+```
+
+3. Descomposición LU (paquete Matrix)
+
+La descomposición LU divide la matriz en:
+
+𝐴=𝐿𝑈
+donde:
+L = matriz triangular inferior
+U = matriz triangular superior
+Es útil para matrices grandes.
+```{r}
+library(Matrix)
+
+A <- matrix(c(4, 3,
+              6, 3),
+            2, 2, byrow = TRUE)
+
+b <- c(10, 12)
+
+A_sparse <- Matrix(A, sparse = TRUE)
+lu_A <- lu(A_sparse)
+
+solve(lu_A, b)
+```
+4. Métodos iterativos
+
+Se emplean cuando:
+
+La matriz es grande.
+El método directo es costoso.
+La matriz es dispersa.
+
+4.1 Método de Jacobi
+
+Idea:Cada ecuación despeja una variable usando valores anteriores.
+```{r}
+jacobi <- function(A, b, x0, tol = 1e-6, maxiter = 1000) {
+  n <- length(b)
+  x <- x0
+  
+  for (k in 1:maxiter) {
+    x_new <- numeric(n)
+    for (i in 1:n) {
+      x_new[i] <- (b[i] - sum(A[i, -i] * x[-i])) / A[i, i]
+    }
+    if (max(abs(x_new - x)) < tol) break
+    x <- x_new
+  }
+  return(x)
+}
+```
+
+Ejemplo
+```{r}
+A <- matrix(c(4, 1,
+              2, 3), 2, 2, byrow = TRUE)
+b <- c(1, 2)
+
+jacobi(A, b, x0 = c(0, 0))
+
+```
+
+4.2 Método de Gauss–Seidel
+
+Usa valores actualizados para mejorar la convergencia.
+```{r}
+gauss_seidel <- function(A, b, x0, tol = 1e-6, maxiter = 1000) {
+  n <- length(b)
+  x <- x0
+  
+  for (k in 1:maxiter) {
+    x_old <- x
+    for (i in 1:n) {
+      x[i] <- (b[i] - sum(A[i, -i] * x[-i])) / A[i, i]
+    }
+    if (max(abs(x - x_old)) < tol) break
+  }
+  return(x)
+}
+```
+
+Ejemplo
+```{r}
+gauss_seidel(A, b, x0 = c(0, 0))
+```
+
+#Ejercicios aplicando estos metodos
+x+y+z=6
+2x+3y+7z=20
+x−y+2z=4
+	
+```{r}
+A <- matrix(c(1, 1, 1,
+              2, 3, 7,
+              1, -1, 2),
+            nrow = 3, byrow = TRUE)
+
+b <- c(6, 20, 4)
+
+solve(A, b)
+```
+Ejercicio 2
+
+Resolver por Jacobi:
+
+10x−y+z=11
+−x+10y−z=10
+x+y+10z=10
+```{r}
+A <- matrix(c(10, -1, 1,
+              -1, 10, -1,
+              1, 1, 10), 3, 3, byrow = TRUE)
+b <- c(11, 10, 10)
+
+jacobi(A, b, x0 = c(0,0,0))
+```
+
